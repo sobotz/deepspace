@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.autonomous.PathL1R1R;
 // import frc.robot.commands.ExampleCommand;
 // import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.*;
@@ -42,6 +43,7 @@ public class Robot extends TimedRobot {
     m_drivesubsystem = new DriveSubsystem();
     m_intake = new IntakeSubsystem();
     m_oi = new OI();
+    m_chooser.addDefault("Path L1R1R", new PathL1R1R(true));
 
     // m_chooser.setDefaultOption("Default Auto", new ExampleCommand());
     // chooser.addOption("My Auto", new MyAutoCommand());
