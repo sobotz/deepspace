@@ -1,30 +1,34 @@
 package frc.robot.navigation;
 
+import java.util.HashMap;
+
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 public class Controller {
 	
+	
+	/*----------------------------------------------------------------------------*/
+	/*																			  */
+	/* INSTANTIATION OF THE PATH OBJECT			          			   	          */
+	/*																			  */
+	/*----------------------------------------------------------------------------*/
+
 	Path genPath;
 	
-	
-	private double time;			//time for time difference in rate limiter
-	private double output;			//rate limiter output
-	private Timer t = new Timer();	//timer for rate limiter
-	private double maxRate;			//maximum rate of acceleration - rate limiter
-	
 	/*----------------------------------------------------------------------------*/
 	/*																			  */
-	/* INSTANTIATION OF THE LOCATION AND LOOK AHEAD VARAIBLES                     */
+	/* INSTANTIATION OF THE LOOK AHEAD VARAIBLES          			   	          */
 	/*																			  */
 	/*----------------------------------------------------------------------------*/
 	
-	private Gyro g;							//gyroscope for angle
+
 	private Point lPoint = new Point(0,0);	//look ahead point
 	private double lDistance;				//look ahead distance
 	private Point currentPosition;
 	
+
 	/*----------------------------------------------------------------------------*/
 	/*																			  */
 	/* INSTANTIATION OF THE RATE LIMITER VARIABLES		                          */
@@ -35,8 +39,10 @@ public class Controller {
 	private double xLocation;
 	private double yLocation;
 	private double distance;
-	private Encoder lEncoder = new Encoder(0,1),
-			rEncoder = new Encoder(2,3);	//encoders for getting location.
+	private double time;			//time for time difference in rate limiter
+	private double output;			//rate limiter output
+	private Timer t = new Timer();	//timer for rate limiter
+	private double maxRate;			//maximum rate of acceleration - rate limiter
 	
 	
 	/*----------------------------------------------------------------------------*/
@@ -60,8 +66,11 @@ public class Controller {
 	private double fbL;				//Left feedback term
 	private double ffR;				//Right feed forward term
 	private double fbR;				//Right feedback term
+	private Double Left;
+	private Double Right;
 	
-	
+	private HashMap<String, Double> wV = new HashMap<>();
+	public boolean isFinished = false;
 	
 	
 	
@@ -81,20 +90,24 @@ public class Controller {
 	
 	
 	
-	
-	public void controlLoop() {
+	public HashMap<String, Double> controlLoop(double lPosition, double rPosition, double heading, double lSpeed, double rSpeed) {
 		
-		distance = Math.abs((6*3.14)*(rEncoder.get() + lEncoder.get()/2)/360);
-		xLocation = distance * Math.cos(g.getAngle());
-		yLocation = distance * Math.sin(g.getAngle());
+		distance = Math.abs((6*3.14)*(rPosition + lPosition/2)/360);
+		xLocation = distance * Math.cos(heading);
+		yLocation = distance * Math.sin(heading);
 		currentPosition = new Point(xLocation, yLocation);
-		
-		while(genPath.size() > 1) {
+
+		wV.put("Left", 0.0);
+		wV.put("Right", 0.0);
+
+		while(genPath.size() > 1 || isFinished != false) {
 			
 			lPoint = Path.findLookAheadPoint(genPath, lDistance, currentPosition, lPoint);
 
-			C = Point.curvature(lDistance, currentPosition, g.getAngle(), lPoint);
+			C = Point.curvature(lDistance, currentPosition, heading, lPoint);
 			
+			genPath.setTarVel();
+
 			genPath = Path.copyPath(genPath.closestPoint(currentPosition));
 			
 			V = rateLimiter(genPath.get(0).getVel());
@@ -106,17 +119,20 @@ public class Controller {
 			
 			ffL = kV * L + kA * tAccel;
 			ffR = kV * R + kA * tAccel;
-			fbL = kP * (L - getSpeed());
-			fbR = kP * (R - getSpeed());
+			fbL = kP * (L - lSpeed);
+			fbR = kP * (R - rSpeed);
 			
-			//Code to give each side of the drive train is the (FF + FB) for each side independently.
+			Left = (ffL + fbL);
+			Right = (ffR + fbR);
 			
+			wV.put("Left", Left);
+			wV.put("Right", Right);
+			
+			return wV;
 		}
 		
-	}
-	
-	public double getSpeed() {
-		return 99;
+		this.isFinished = true;
+		return wV;
 	}
 
 	public double rateLimiter(double input) {
