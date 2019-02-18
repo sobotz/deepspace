@@ -21,6 +21,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.DriveCommand;
+import frc.robot.navigation.*;
+
+import java.util.HashMap;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -30,7 +33,7 @@ import com.kauailabs.navx.frc.AHRS;
 
 public class DriveSubsystem extends Subsystem {
 
-    WPI_TalonSRX frontLeftTalon, backLeftTalon, frontRightTalon, backRightTalon;
+    public WPI_TalonSRX frontLeftTalon, backLeftTalon, frontRightTalon, backRightTalon;
 
     private double talonPIDkF = 0.0;
     private double talonPIDkP = 0.0;
@@ -45,7 +48,7 @@ public class DriveSubsystem extends Subsystem {
     private DoubleSolenoid gearShifter;
     private boolean gearShifterState = false;
 
-    final AHRS ahrs = new AHRS(SPI.Port.kMXP);;
+    public final AHRS ahrs = new AHRS(SPI.Port.kMXP);;
 
     private static VisionSubsystem vision = new VisionSubsystem();
     public VisionState visionState = VisionState.SEEKING;
