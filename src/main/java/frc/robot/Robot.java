@@ -29,6 +29,7 @@ public class Robot extends TimedRobot {
   public static OI m_oi;
   public static DriveSubsystem m_drivesubsystem;
   public static IntakeSubsystem m_intake;
+  public static LiftSubsystem m_lift;
 
 
   Command m_autonomousCommand;
@@ -42,6 +43,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     m_drivesubsystem = new DriveSubsystem();
     m_intake = new IntakeSubsystem();
+    m_lift = new LiftSubsystem();
     m_oi = new OI();
     m_chooser.addDefault("Path L1R1R", new PathL1R1R(true));
 

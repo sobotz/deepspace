@@ -9,7 +9,6 @@ package frc.robot.commands;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
@@ -19,7 +18,7 @@ import frc.robot.Robot;
 public class LiftCommand extends Command {
   public LiftCommand() {
     // Use requires() here to declare subsystem dependencies
-    requires(Robot.m_intake);
+    requires(Robot.m_lift);
   }
 
   // Called just before this Command runs the first time
@@ -30,12 +29,7 @@ public class LiftCommand extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-      if (Robot.m_oi.operatorJoystick.getRawButton(4) == true) {
-        Robot.m_intake.rollerTalon.set(ControlMode.PercentOutput, 0.3);
-      }
-      if (Robot.m_oi.operatorJoystick.getRawButton(5) == true) {
-        Robot.m_intake.rollerTalon.set(ControlMode.PercentOutput, -0.3);
-      }
+        Robot.m_lift.control(Robot.m_oi.operatorJoystick.getRawAxis(5));
   }
 
   // Make this return true when this Command no longer needs to run execute()

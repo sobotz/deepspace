@@ -7,13 +7,15 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotMap;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+
 
 /**
  * An example subsystem.  You can replace me with your own Subsystem.
@@ -21,14 +23,37 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 public class LiftSubsystem extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
-  public WPI_TalonSRX liftTalon;
+  public TalonSRX liftTalon;
+  public TalonSRX liftTalonSlave;
 
 
   public LiftSubsystem() {
-    liftTalon = new WPI_TalonSRX(RobotMap.liftMotor);
-
-    liftTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative,	0, 30);
+    liftTalon = new TalonSRX(RobotMap.liftMotor);
+    liftTalonSlave = new TalonSRX(RobotMap.liftMotorSlave);
+    liftTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder,	0, 30);
+    liftTalon.setSensorPhase(true);
+    liftTalon.configPeakOutputReverse(-0.3);
+    liftTalon.configPeakOutputForward(0.3);
+    liftTalonSlave.follow(liftTalon);
   }
+
+
+
+    public double talonUnitsToInches(TalonSRX talon) {
+        return (talon.getSelectedSensorPosition() / 4096.0);
+    }
+
+
+    @Override
+    public void periodic() {
+      SmartDashboard.putNumber("LIFT ENCODER POSITION", liftTalon.getSelectedSensorPosition());
+    }
+
+
+    public void control(double output){
+      liftTalon.set(ControlMode.PercentOutput, output);
+    }
+
 
   @Override
   public void initDefaultCommand() {
