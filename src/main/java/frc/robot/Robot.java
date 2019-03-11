@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.autonomous.PathL1R1R;
+import frc.robot.autonomous.*;
 // import frc.robot.commands.ExampleCommand;
 // import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.*;
@@ -45,8 +45,15 @@ public class Robot extends TimedRobot {
     m_intake = new IntakeSubsystem();
     m_lift = new LiftSubsystem();
     m_oi = new OI();
-    m_chooser.addDefault("Path L1R1R", new PathL1R1R(true));
-
+    m_chooser.addDefault("Path L1C4 (Pure Pursuit)", new PathL1C4(true));
+    m_chooser.addObject("Path L1C4 (Regular)", new PathL1C4(false));
+    m_chooser.addObject("Path L1C5 (Pure Pursuit)", new PathL1C5(true));
+    m_chooser.addObject("Path L1C5 (Regular)", new PathL1C5(false));
+    m_chooser.addObject("Path L1R1R (Pure Pursuit)", new PathL1R1R(true));
+    m_chooser.addObject("Path L1R1R (Regular)", new PathL1R1R(false));
+    m_chooser.addObject("Path L1R1L (Pure Pursuit)", new PathL1R1L(true));
+    m_chooser.addObject("Path L1R1L (Regular)", new PathL1R1L(false));
+    
     // m_chooser.setDefaultOption("Default Auto", new ExampleCommand());
     // chooser.addOption("My Auto", new MyAutoCommand());
     SmartDashboard.putData("Auto mode", m_chooser);
