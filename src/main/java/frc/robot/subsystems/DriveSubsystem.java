@@ -27,6 +27,7 @@ import java.util.HashMap;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
@@ -63,6 +64,10 @@ public class DriveSubsystem extends Subsystem {
     private double driveToTargetOutput = 0.0;
     private DriveToTargetInput driveToTargetInput;
 
+
+    private int PRIMARY_PID = 0;
+    private int Talon_PID_TIMEOUT = 30;
+
     public static enum VisionState {
         HASTARGET, SEEKING
     }
@@ -72,7 +77,7 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public DriveSubsystem() {
-        // gearShifter = new DoubleSolenoid(0, 1);
+        gearShifter = new DoubleSolenoid(0, 1);
         rotateToTargetInput = new RotateToTargetInput();
 
         rotateToTargetPID = new PIDController(rkP, rkI, rkD, rotateToTargetInput, new RotateToTargetOutput());
@@ -97,8 +102,10 @@ public class DriveSubsystem extends Subsystem {
         frontRightTalon.configFactoryDefault();
         backRightTalon.configFactoryDefault();
 
+
         frontLeftTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 30);
         frontLeftTalon.setSensorPhase(true);
+
         frontRightTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 30);
         frontRightTalon.setSensorPhase(true);
 
@@ -106,6 +113,9 @@ public class DriveSubsystem extends Subsystem {
         frontLeftTalon.configPeakOutputForward(0.5);
         frontRightTalon.configPeakOutputReverse(-0.5);
         frontRightTalon.configPeakOutputForward(0.5);
+
+        frontLeftTalon.selectProfileSlot(0, 0);
+        frontRightTalon.selectProfileSlot(0, 0);
         talonsPIDTuner = new PIDController(0, 0, 0, new DriveToTargetInput(), new DriveToTargetOutput());
         SmartDashboard.putData("Talon PID", talonsPIDTuner);
 
@@ -143,10 +153,10 @@ public class DriveSubsystem extends Subsystem {
     public void shiftGear() {
 
         if (gearShifterState) {
-            // gearShifter.set(DoubleSolenoid.Value.kForward);
+     gearShifter.set(DoubleSolenoid.Value.kForward);
             gearShifterState = false;
         } else {
-            // gearShifter.set(DoubleSolenoid.Value.kReverse);
+            gearShifter.set(DoubleSolenoid.Value.kReverse);
             gearShifterState = true;
         }
     }
@@ -182,7 +192,7 @@ public class DriveSubsystem extends Subsystem {
 
     public boolean distanceCascadePID(double setPoint, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE type, double minOutput,
             double maxOutput, int errorMargin) {
-
+        
         rotateToTargetInput.setType(type);
         driveToTargetPID.setAbsoluteTolerance(errorMargin);
         driveToTargetPID.setSetpoint(setPoint);
@@ -205,6 +215,8 @@ public class DriveSubsystem extends Subsystem {
         if (!rotateToTargetPID.isEnabled()) {
             rotationCascadePID(0, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION,errorMargin);
         }
+        frontLeftTalon.selectProfileSlot(1, 0);
+        frontRightTalon.selectProfileSlot(1, 0);
         backLeftTalon.follow(frontLeftTalon);
         backRightTalon.follow(frontRightTalon);
 
@@ -223,6 +235,8 @@ public class DriveSubsystem extends Subsystem {
         if (!rotateToTargetPID.isEnabled()) {
             rotationCascadePID(angle, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION,errorMargin);
         }
+        frontLeftTalon.selectProfileSlot(1, 0);
+        frontRightTalon.selectProfileSlot(1, 0);
         backLeftTalon.follow(frontLeftTalon);
         backRightTalon.follow(frontRightTalon);
 
@@ -241,6 +255,8 @@ public class DriveSubsystem extends Subsystem {
         if (!driveToTargetPID.isEnabled()) {
            distanceCascadePID(0,DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION,errorMargin);
         }
+        frontLeftTalon.selectProfileSlot(1, 0);
+        frontRightTalon.selectProfileSlot(1, 0);
         backLeftTalon.follow(frontLeftTalon);
         backRightTalon.follow(frontRightTalon);
         double rightOutput = (driveToTargetOutput+rotateToTargetOutput);
@@ -258,6 +274,8 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public boolean driveToTarget(double distance, int errorMargin) {
+        frontLeftTalon.selectProfileSlot(0, 0);
+        frontRightTalon.selectProfileSlot(0, 0);
         backLeftTalon.follow(frontLeftTalon);
         backRightTalon.follow(frontRightTalon);
 
@@ -276,6 +294,8 @@ public class DriveSubsystem extends Subsystem {
         if (!driveToTargetPID.isEnabled()) {
             distanceCascadePID(0, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION,errorMargin);
         }
+        frontLeftTalon.selectProfileSlot(1, 0);
+        frontRightTalon.selectProfileSlot(1, 0);
         backLeftTalon.follow(frontLeftTalon);
         backRightTalon.follow(frontRightTalon);
         double rightOutput = (driveToTargetOutput+rotateToTargetOutput);
@@ -458,15 +478,20 @@ public class DriveSubsystem extends Subsystem {
 
     public void setTalonPIDGains(double kF, double kP, double kI, double kD) {
 
-        frontLeftTalon.config_kF(0, kF, 30);
-        frontLeftTalon.config_kP(0, kP, 30);
-        frontLeftTalon.config_kI(0, kI, 30);
-        frontLeftTalon.config_kD(0, kD, 30);
+      
 
-        frontRightTalon.config_kF(0, kF, 30);
-        frontRightTalon.config_kP(0, kP, 30);
-        frontRightTalon.config_kI(0, kI, 30);
-        frontRightTalon.config_kD(0, kD, 30);
+
+        frontLeftTalon.config_kF(0, talonsPIDTuner.getF());
+        frontLeftTalon.config_kP(0, talonsPIDTuner.getP());
+        frontLeftTalon.config_kI(0, talonsPIDTuner.getI());
+        frontLeftTalon.config_kD(0, talonsPIDTuner.getD());
+
+
+        frontRightTalon.config_kF(0, talonsPIDTuner.getF());
+        frontRightTalon.config_kP(0, talonsPIDTuner.getP());
+        frontRightTalon.config_kI(0, talonsPIDTuner.getI());
+        frontRightTalon.config_kD(0, talonsPIDTuner.getD());
+        
     }
 
 }

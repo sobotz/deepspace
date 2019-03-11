@@ -9,8 +9,10 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import frc.robot.autonomous.PathL1C4;
 import frc.robot.commands.AlignCommand;
 import frc.robot.commands.ShiftGearCommand;
+import frc.robot.commands.liftGotoCommand;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -25,11 +27,21 @@ public class OI {
 
   public OI(){
     JoystickButton aOperator = new JoystickButton(operatorJoystick, 1);
-    aOperator.toggleWhenPressed(new AlignCommand());
+    aOperator.toggleWhenPressed(new PathL1C4(true));
+    JoystickButton bOperator = new JoystickButton(operatorJoystick, 2);
+    JoystickButton xOperator = new JoystickButton(operatorJoystick, 3);
+    JoystickButton yOperator = new JoystickButton(operatorJoystick, 4);
+
+    bOperator.toggleWhenPressed(new liftGotoCommand(12));
+    xOperator.toggleWhenPressed(new liftGotoCommand(24));
+    yOperator.toggleWhenPressed(new liftGotoCommand(0));
+
+
+
 
 
     JoystickButton gearShiftButton = new JoystickButton(driverJoystick, 1);
-    //gearShiftButton.toggleWhenPressed(new ShiftGearCommand());
+    gearShiftButton.toggleWhenPressed(new ShiftGearCommand());
 
   }
 
