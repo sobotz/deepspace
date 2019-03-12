@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
-import edu.wpi.first.wpilibj.Talon;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotMap;
@@ -30,8 +30,6 @@ public class LiftSubsystem extends Subsystem {
   // here. Call these from Commands.
   public TalonSRX liftTalon;
   public TalonSRX liftTalonSlave;
-  private SlotConfiguration liftSlotConfiguration1 = new SlotConfiguration();
-  private int Talon_PID_TIMEOUT = 30;
   private PIDController liftPidController;
 
   public LiftSubsystem() {
@@ -76,13 +74,10 @@ public class LiftSubsystem extends Subsystem {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("LIFT UNITs", (liftTalon.getSelectedSensorPosition() / 4096.0));
-    SmartDashboard.putNumber("RAW UNITs", (liftTalon.getSelectedSensorPosition()));
-    SmartDashboard.putNumber("LIFT ENCODER POSITION", talonUnitsToInches());
+    SmartDashboard.putNumber("TALON VELOCITY", talonVelocityToNormal());
     SmartDashboard.putNumber("INCHES TO  ENCODER POSITION", inchesToTalonUnits(talonUnitsToInches()));
     SmartDashboard.putNumber("LIFT PID ERROR", liftTalon.getClosedLoopError());
-    SmartDashboard.putBoolean("LIMIT REVERSE SWITCH ", liftTalon.getSensorCollection().isRevLimitSwitchClosed());
-    SmartDashboard.putBoolean("LIMIT FORWARD SWITCH ", liftTalon.getSensorCollection().isFwdLimitSwitchClosed());
+    SmartDashboard.putBoolean("On Target", onTarget(2));
 
     liftTalon.config_kF(0, liftPidController.getF());
     liftTalon.config_kP(0, liftPidController.getP());
@@ -100,11 +95,16 @@ public class LiftSubsystem extends Subsystem {
     SmartDashboard.putNumber("LIFT PID TARGET", liftTalon.getClosedLoopTarget());
   }
 
-  public double inchesToTalonUnits(double position) {
-    return 3.75 * 4096 * (constrain(position - 2));
+  public boolean onTarget(int margin) {
+    liftTalon.configAllowableClosedloopError(0, (int) inchesToTalonUnits(margin), 30);
+    if (talonUnitsToInches((double) Math.abs(liftTalon.getClosedLoopError())) <= margin) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
-  public static double constrain(double position) {
+  public static double positionConstraint(double position) {
     if (position < 0) {
       return 0;
     }
@@ -114,20 +114,28 @@ public class LiftSubsystem extends Subsystem {
   public void reset() {
     liftTalon.setSelectedSensorPosition(0);
   }
-  
 
-  //velocity is in/s
-  public double talonUitsToVelocity(double speed) {
-    return inchesToTalonUnits(speed) / 10.0;
+  // velocity is in/s
+
+  public double inchesToTalonUnits(double position) {
+    return 3.75 * 4096 * (positionConstraint(position - 2));
   }
 
   public double talonUnitsToInches() {
     return ((liftTalon.getSelectedSensorPosition() / 4096.0) / 3.75);
   }
 
-  public double talonVelocityUnitsToNormal() {
-    return ((liftTalon.getSelectedSensorVelocity()/ 4096.0) / 3.75) * 10;
-}
+  public double talonUnitsToInches(double units) {
+    return ((units / 4096.0) / 3.75);
+  }
+
+  public double velocityToTalonVelocity(double speed) {
+    return inchesToTalonUnits(speed) / 10.0;
+  }
+
+  public double talonVelocityToNormal() {
+    return talonUnitsToInches(liftTalon.getSelectedSensorVelocity()) * 10;
+  }
 
   @Override
   public void initDefaultCommand() {

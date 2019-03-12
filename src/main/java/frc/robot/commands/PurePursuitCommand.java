@@ -35,7 +35,7 @@ public class PurePursuitCommand extends Command {
   @Override
   protected void execute() {
 
-    wV = purePursuit.controlLoop(Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontLeftTalon), Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontRightTalon), Robot.m_drivesubsystem.ahrs.getYaw(),Robot.m_drivesubsystem.talonVelocityUnitsToNormal(Robot.m_drivesubsystem.frontLeftTalon),Robot.m_drivesubsystem.talonVelocityUnitsToNormal(Robot.m_drivesubsystem.frontRightTalon));
+    wV = purePursuit.controlLoop(Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontLeftTalon), Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontRightTalon), Robot.m_drivesubsystem.ahrs.getYaw(),Robot.m_drivesubsystem.talonVelocityToNormal(Robot.m_drivesubsystem.frontLeftTalon),Robot.m_drivesubsystem.talonVelocityToNormal(Robot.m_drivesubsystem.frontRightTalon));
   
   }
 

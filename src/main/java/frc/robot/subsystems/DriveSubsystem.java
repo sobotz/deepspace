@@ -220,8 +220,8 @@ public class DriveSubsystem extends Subsystem {
         backLeftTalon.follow(frontLeftTalon);
         backRightTalon.follow(frontRightTalon);
 
-        double rightTalonTargetVelocity = talonUitsToVelocity(-rotateToTargetOutput * 12);
-        double leftTalonTargetVelocity = talonUitsToVelocity(rotateToTargetOutput * 12);
+        double rightTalonTargetVelocity = velocityToTalonVelocity(-rotateToTargetOutput * 12);
+        double leftTalonTargetVelocity = velocityToTalonVelocity(rotateToTargetOutput * 12);
         SmartDashboard.putNumber("rightTalonTargetVelocity", rightTalonTargetVelocity);
         SmartDashboard.putNumber("leftTalonTargetVelocity", leftTalonTargetVelocity);
         frontLeftTalon.set(ControlMode.Velocity, leftTalonTargetVelocity);
@@ -240,8 +240,8 @@ public class DriveSubsystem extends Subsystem {
         backLeftTalon.follow(frontLeftTalon);
         backRightTalon.follow(frontRightTalon);
 
-        double rightTalonTargetVelocity = talonUitsToVelocity(-rotateToTargetOutput * 12);
-        double leftTalonTargetVelocity = talonUitsToVelocity(rotateToTargetOutput * 12);
+        double rightTalonTargetVelocity = velocityToTalonVelocity(-rotateToTargetOutput * 12);
+        double leftTalonTargetVelocity = velocityToTalonVelocity(rotateToTargetOutput * 12);
         SmartDashboard.putNumber("rightTalonTargetVelocity", rightTalonTargetVelocity);
         SmartDashboard.putNumber("leftTalonTargetVelocity", leftTalonTargetVelocity);
         frontLeftTalon.set(ControlMode.Velocity, leftTalonTargetVelocity);
@@ -261,8 +261,8 @@ public class DriveSubsystem extends Subsystem {
         backRightTalon.follow(frontRightTalon);
         double rightOutput = (driveToTargetOutput+rotateToTargetOutput);
         double leftOutput = (driveToTargetOutput-rotateToTargetOutput);
-        double rightTalonTargetVelocity = talonUitsToVelocity(rightOutput * 12);
-        double leftTalonTargetVelocity = talonUitsToVelocity(leftOutput * 12);
+        double rightTalonTargetVelocity = velocityToTalonVelocity(rightOutput * 12);
+        double leftTalonTargetVelocity = velocityToTalonVelocity(leftOutput * 12);
         SmartDashboard.putNumber("rightTalonTargetVelocity", rightTalonTargetVelocity);
         SmartDashboard.putNumber("leftTalonTargetVelocity", leftTalonTargetVelocity);
         frontLeftTalon.set(ControlMode.Velocity, leftTalonTargetVelocity);
@@ -300,8 +300,8 @@ public class DriveSubsystem extends Subsystem {
         backRightTalon.follow(frontRightTalon);
         double rightOutput = (driveToTargetOutput+rotateToTargetOutput);
         double leftOutput = (driveToTargetOutput-rotateToTargetOutput);
-        double rightTalonTargetVelocity = talonUitsToVelocity(rightOutput * 12);
-        double leftTalonTargetVelocity = talonUitsToVelocity(leftOutput * 12);
+        double rightTalonTargetVelocity = velocityToTalonVelocity(rightOutput * 12);
+        double leftTalonTargetVelocity = velocityToTalonVelocity(leftOutput * 12);
         SmartDashboard.putNumber("rightTalonTargetVelocity", rightTalonTargetVelocity);
         SmartDashboard.putNumber("leftTalonTargetVelocity", leftTalonTargetVelocity);
         frontLeftTalon.set(ControlMode.Velocity, leftTalonTargetVelocity);
@@ -325,8 +325,8 @@ public class DriveSubsystem extends Subsystem {
         SmartDashboard.putNumber("Talon left Error", frontLeftTalon.getClosedLoopError());
         SmartDashboard.putNumber("Talon right Error", frontRightTalon.getClosedLoopError());
 
-        SmartDashboard.putNumber("Talon left Velocity", talonVelocityUnitsToNormal(frontLeftTalon));
-        SmartDashboard.putNumber("Talon right Velocity", talonVelocityUnitsToNormal(frontRightTalon));
+        SmartDashboard.putNumber("Talon left Velocity", talonVelocityToNormal(frontLeftTalon));
+        SmartDashboard.putNumber("Talon right Velocity", talonVelocityToNormal(frontRightTalon));
     }
 
     public void reset() {
@@ -467,11 +467,11 @@ public class DriveSubsystem extends Subsystem {
         return (inches / (Math.PI * wheelDiameter)) * 4096.0;
     }
 
-    public double talonUitsToVelocity(double speed) {
+    public double velocityToTalonVelocity(double speed) {
         return inchesToTalonUnits(speed) / 10.0;
     }
 
-    public double talonVelocityUnitsToNormal(TalonSRX talon) {
+    public double talonVelocityToNormal(TalonSRX talon) {
 
         return talonUnitsToInches((double) talon.getSelectedSensorVelocity()) * 10;
     }
