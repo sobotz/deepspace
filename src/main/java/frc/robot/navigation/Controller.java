@@ -52,8 +52,10 @@ public class Controller {
 	/*----------------------------------------------------------------------------*/
 	
 	private double V;				//target robot velocity
-	private double L;				//target Left wheels speed
-	private double R;				//target right wheels speed
+	private double LO = 0;				//target Left wheels speed
+	private double LF;				//target Left wheels speed
+	private double RO = 0;				//target right wheels speed
+	private double RF;				//target right wheels speed
 	private double C;				//curvature of arc
 	private double T = 26.296875;	//track width
 	private double tAccel;			//target acceleration
@@ -97,9 +99,6 @@ public class Controller {
 		yLocation = distance * Math.sin(heading);
 		currentPosition = new Point(xLocation, yLocation);
 
-		wV.put("Left", 0.0);
-		wV.put("Right", 0.0);
-
 		while(genPath.size() > 1 || isFinished != false) {
 			
 			lPoint = Path.findLookAheadPoint(genPath, lDistance, currentPosition, lPoint);
@@ -112,18 +111,23 @@ public class Controller {
 			
 			V = rateLimiter(genPath.get(0).getVel());
 			
-			tAccel = (T * V) / 2;
+			LF = (V * (2 + (C * T))) / 2;
+			RF = (V * (2 - (C * T))) / 2;
 			
-			L = (V * (2 + (C * T))) / 2;
-			R = (V * (2 - (C * T))) / 2;
+			double distance = currentPosition.distFrom(lPoint);
+
+			tAccel = rateLimiter(((LF * LF) - (LO * LO)) / (2 * distance));
 			
-			ffL = kV * L + kA * tAccel;
-			ffR = kV * R + kA * tAccel;
-			fbL = kP * (L - lSpeed);
-			fbR = kP * (R - rSpeed);
+			ffL = kV * LF + kA * tAccel;
+			ffR = kV * RF + kA * tAccel;
+			fbL = kP * (LF - lSpeed);
+			fbR = kP * (RF - rSpeed);
 			
 			Left = (ffL + fbL);
 			Right = (ffR + fbR);
+
+			LO = LF;
+			RO = RF;
 			
 			wV.put("Left", Left);
 			wV.put("Right", Right);
