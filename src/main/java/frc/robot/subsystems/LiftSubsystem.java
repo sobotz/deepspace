@@ -40,8 +40,8 @@ public class LiftSubsystem extends Subsystem {
     liftTalonSlave.configFactoryDefault();
     liftTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 30);
     liftTalon.setInverted(true);
-    liftTalon.configPeakOutputReverse(-0.3);
-    liftTalon.configPeakOutputForward(0.3);
+    liftTalon.configPeakOutputReverse(-0.5);
+    liftTalon.configPeakOutputForward(0.5);
     liftTalonSlave.follow(liftTalon);
     liftTalonSlave.setInverted(true);
 
@@ -75,8 +75,9 @@ public class LiftSubsystem extends Subsystem {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("TALON VELOCITY", talonVelocityToNormal());
-    SmartDashboard.putNumber("INCHES TO  ENCODER POSITION", inchesToTalonUnits(talonUnitsToInches()));
+    SmartDashboard.putNumber("INCHES TO  ENCODER POSITION", liftTalon.getSelectedSensorPosition());
     SmartDashboard.putNumber("LIFT PID ERROR", liftTalon.getClosedLoopError());
+    SmartDashboard.putNumber("INCHES", talonUnitsToInches());
     SmartDashboard.putBoolean("On Target", onTarget(2));
 
     liftTalon.config_kF(0, liftPidController.getF());
@@ -118,7 +119,7 @@ public class LiftSubsystem extends Subsystem {
   // velocity is in/s
 
   public double inchesToTalonUnits(double position) {
-    return 3.75 * 4096 * (positionConstraint(position - 2));
+    return 3.75 * 4096 * (positionConstraint(position - 4));
   }
 
   public double talonUnitsToInches() {

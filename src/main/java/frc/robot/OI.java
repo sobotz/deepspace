@@ -27,14 +27,15 @@ public class OI {
 
   public OI(){
     JoystickButton aOperator = new JoystickButton(operatorJoystick, 1);
-    aOperator.toggleWhenPressed(new PathL1C4(true));
+   
     JoystickButton bOperator = new JoystickButton(operatorJoystick, 2);
     JoystickButton xOperator = new JoystickButton(operatorJoystick, 3);
     JoystickButton yOperator = new JoystickButton(operatorJoystick, 4);
 
     bOperator.toggleWhenPressed(new liftGotoCommand(12));
     xOperator.toggleWhenPressed(new liftGotoCommand(24));
-    yOperator.toggleWhenPressed(new liftGotoCommand(0));
+    yOperator.toggleWhenPressed(new liftGotoCommand(36));
+    aOperator.toggleWhenPressed(new liftGotoCommand(0));
 
 
 
