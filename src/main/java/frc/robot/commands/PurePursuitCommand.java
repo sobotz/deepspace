@@ -38,7 +38,7 @@ public class PurePursuitCommand extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    this.wV = purePursuit.controlLoop(Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontLeftTalon), Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontRightTalon), Robot.m_drivesubsystem.ahrs.getYaw(),Robot.m_drivesubsystem.talonVelocityUnitsToNormal(Robot.m_drivesubsystem.frontLeftTalon),Robot.m_drivesubsystem.talonVelocityUnitsToNormal(Robot.m_drivesubsystem.frontRightTalon), time.get());
+    //this.wV = purePursuit.controlLoop(Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontLeftTalon), Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontRightTalon), Robot.m_drivesubsystem.ahrs.getYaw(),Robot.m_drivesubsystem.talonVelocityUnitsToNormal(Robot.m_drivesubsystem.frontLeftTalon),Robot.m_drivesubsystem.talonVelocityUnitsToNormal(Robot.m_drivesubsystem.frontRightTalon), time.get());
     System.out.print(wV.get("Left") + " " + wV.get("Right"));
   }
 
