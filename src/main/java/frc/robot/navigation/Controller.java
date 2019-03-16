@@ -2,6 +2,7 @@ package frc.robot.navigation;
 import java.util.HashMap;
 
 import edu.wpi.first.wpilibj.PIDController;
+import frc.robot.Robot;
 
 public class Controller {
     
@@ -74,7 +75,6 @@ public class Controller {
 	//private Double Right;
 	//private PIDController pid;
     
-    private HashMap<String, Double> wV = new HashMap<>();
     public boolean isFinished = false;
     
     
@@ -96,52 +96,53 @@ public class Controller {
     
     
     
-	public HashMap<String, Double> controlLoop(double lPosition, double rPosition, double heading, 
-		double lSpeed, double rSpeed) {
+	public boolean controlLoop(double lPosition, double rPosition, double heading) {
         
         this.distance = Math.abs((6*3.14)*(rPosition + lPosition/2)/360);
         this.xLocation += this.distance * Math.cos(heading);
         this.yLocation += this.distance * Math.sin(heading);
+
         robotPosition = new Point(this.xLocation, this.yLocation);
         
-        while(genPath.size() > 1 || this.isFinished != false) {
-            
-            this.lookAheadPoint = genPath.get(genPath.findLookAheadIndex(this.lDistance, robotPosition, this.lookAheadPointIndex));
+        this.lookAheadPoint = genPath.get(genPath.findLookAheadIndex(this.lDistance, robotPosition, this.lookAheadPointIndex));
 
-            this.curvature = Point.curvature(this.lDistance, robotPosition, heading, this.lookAheadPoint);
+        this.curvature = Point.curvature(this.lDistance, robotPosition, heading, this.lookAheadPoint);
 
-            this.closestPoint = genPath.get(genPath.closestPoint(robotPosition, 0));
+        this.closestPoint = genPath.get(genPath.closestPoint(robotPosition, 0));
 			
-            this.targetVelocity = genPath.rateLimiter(this.closestPoint.getVel());
+        this.targetVelocity = genPath.rateLimiter(this.closestPoint.getVel());
             
-            this.targetLeft = (this.targetVelocity * (2 + (this.curvature * this.trackWidth))) / 2;
-            this.targetRight = (this.targetVelocity * (2 - (this.curvature * this.trackWidth))) / 2;
+        this.targetLeft = (this.targetVelocity * (2 + (this.curvature * this.trackWidth))) / 2;
+        this.targetRight = (this.targetVelocity * (2 - (this.curvature * this.trackWidth))) / 2;
+
+        Robot.m_drivesubsystem.PurePursuit(this.targetLeft, this.targetRight);
 			
-			/*
-            double dist = robotPosition.distFrom(this.lookAheadPoint);
+		/*
+        double dist = robotPosition.distFrom(this.lookAheadPoint);
 
-            this.targetAccelerationLeft = ( ( (this.LeftFinal * this.LeftFinal) - (this.LeftOriginal * this.LeftOriginal) ) / (2 * dist) );
-            this.targetAccelerationRight = ( ( (this.RightFinal * this.RightFinal) - (this.RightOriginal * this.RightOriginal) ) / (2 * dist) );
+        this.targetAccelerationLeft = ( ( (this.LeftFinal * this.LeftFinal) - (this.LeftOriginal * this.LeftOriginal) ) / (2 * dist) );
+        this.targetAccelerationRight = ( ( (this.RightFinal * this.RightFinal) - (this.RightOriginal * this.RightOriginal) ) / (2 * dist) );
             
-            this.ffL = this.kV * this.LeftFinal + this.kA * this.targetAccelerationLeft;
-            this.ffR = this.kV * this.RightFinal + this.kA * this.targetAccelerationRight;
-            this.fbL = this.kP * (this.LeftFinal - lSpeed);
-            this.fbR = this.kP * (this.RightFinal - rSpeed);
+        this.ffL = this.kV * this.LeftFinal + this.kA * this.targetAccelerationLeft;
+        this.ffR = this.kV * this.RightFinal + this.kA * this.targetAccelerationRight;
+        this.fbL = this.kP * (this.LeftFinal - lSpeed);
+        this.fbR = this.kP * (this.RightFinal - rSpeed);
             
-            this.Left = (this.ffL + this.fbL);
-            this.Right = (this.ffR + this.fbR);
+        this.Left = (this.ffL + this.fbL);
+        this.Right = (this.ffR + this.fbR);
 
-            this.LeftOriginal = this.RightFinal;
-            this.RightOriginal = this.RightFinal;
+        this.LeftOriginal = this.RightFinal;
+        this.RightOriginal = this.RightFinal;
             
-            this.wV.put("Left", Left);
-            this.wV.put("Right", Right);
+        this.wV.put("Left", Left);
+        this.wV.put("Right", Right);
             
-			return this.wV;
-			*/
+		return this.wV;
+		*/
+
+        if(genPath.indexOf(closestPoint) == (genPath.size() - 1)) {
+            this.isFinished = true;
         }
-        
-        this.isFinished = true;
-        return this.wV;
+        return this.isFinished;
     }
 }

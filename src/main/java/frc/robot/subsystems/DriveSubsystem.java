@@ -312,6 +312,13 @@ public class DriveSubsystem extends Subsystem {
         return driveToTargetPID.onTarget();
     }
 
+    public void PurePursuit(double targetLeft, double targetRight) {
+        double targetLeftVelocity = velocityToTalonVelocity(targetLeft);
+        double targetRightVelocity = velocityToTalonVelocity(targetRight);
+        frontLeftTalon.set(ControlMode.Velocity, targetLeftVelocity);
+        frontRightTalon.set(ControlMode.Velocity, targetRightVelocity);
+    }
+
     public void dashboard() {
         SmartDashboard.putNumber("L ENCODER position", frontLeftTalon.getSelectedSensorPosition(0));
         SmartDashboard.putNumber("R ENCODER position", frontRightTalon.getSelectedSensorPosition(0));
