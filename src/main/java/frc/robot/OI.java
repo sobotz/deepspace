@@ -37,10 +37,6 @@ public class OI {
     yOperator.toggleWhenPressed(new liftGotoCommand(36));
     aOperator.toggleWhenPressed(new liftGotoCommand(0));
 
-
-
-
-
     JoystickButton gearShiftButton = new JoystickButton(driverJoystick, 1);
     gearShiftButton.toggleWhenPressed(new ShiftGearCommand());
 

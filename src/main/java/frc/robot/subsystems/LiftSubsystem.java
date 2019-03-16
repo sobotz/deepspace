@@ -21,6 +21,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 /**
  * An example subsystem. You can replace me with your own Subsystem.
@@ -40,10 +41,13 @@ public class LiftSubsystem extends Subsystem {
     liftTalonSlave.configFactoryDefault();
     liftTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 30);
     liftTalon.setInverted(true);
-    liftTalon.configPeakOutputReverse(-0.5);
-    liftTalon.configPeakOutputForward(0.5);
+    liftTalon.configPeakOutputReverse(-0.65);
+    liftTalon.configPeakOutputForward(0.65);
     liftTalonSlave.follow(liftTalon);
     liftTalonSlave.setInverted(true);
+
+    liftTalon.setNeutralMode(NeutralMode.Brake);
+    liftTalonSlave.setNeutralMode(NeutralMode.Brake);
 
     /// THIS IS A DUMMY Object !!! NEEDED only for testing !!!!!!!
     liftPidController = new PIDController(0, 0, 0, new PIDSource() {
@@ -70,6 +74,10 @@ public class LiftSubsystem extends Subsystem {
       }
     });
     SmartDashboard.putData("LIFT PID", liftPidController);
+    liftTalon.configMotionCruiseVelocity((int)velocityToTalonVelocity(60), 30);
+    liftTalon.configMotionAcceleration((int)velocityToTalonVelocity(60), 30);
+    
+   liftTalon.configClearPositionOnLimitR(true,30);
   }
 
   @Override
@@ -79,11 +87,17 @@ public class LiftSubsystem extends Subsystem {
     SmartDashboard.putNumber("LIFT PID ERROR", liftTalon.getClosedLoopError());
     SmartDashboard.putNumber("INCHES", talonUnitsToInches());
     SmartDashboard.putBoolean("On Target", onTarget(2));
+    SmartDashboard.putBoolean("LIMIT REVERSE ", liftTalon.getSensorCollection().isRevLimitSwitchClosed());
+    SmartDashboard.putBoolean("LIMIT FORWARD ", liftTalon.getSensorCollection().isFwdLimitSwitchClosed());
 
     liftTalon.config_kF(0, liftPidController.getF());
     liftTalon.config_kP(0, liftPidController.getP());
     liftTalon.config_kI(0, liftPidController.getI());
     liftTalon.config_kD(0, liftPidController.getD());
+
+    if(liftTalon.getSensorCollection().isRevLimitSwitchClosed()){
+     // reset();
+    }
   }
 
   public void control(double output) {
@@ -92,7 +106,7 @@ public class LiftSubsystem extends Subsystem {
 
   // 12 inches -> 45 rotation #from the belly pan
   public void goTo(int position) {
-    liftTalon.set(ControlMode.Position, inchesToTalonUnits(position));
+    liftTalon.set(ControlMode.MotionMagic, inchesToTalonUnits(position));
     SmartDashboard.putNumber("LIFT PID TARGET", liftTalon.getClosedLoopTarget());
   }
 
@@ -104,6 +118,8 @@ public class LiftSubsystem extends Subsystem {
       return false;
     }
   }
+
+
 
   public static double positionConstraint(double position) {
     if (position < 0) {
@@ -131,7 +147,7 @@ public class LiftSubsystem extends Subsystem {
   }
 
   public double velocityToTalonVelocity(double speed) {
-    return inchesToTalonUnits(speed) / 10.0;
+    return (3.75 * 4096 * speed) / 10.0;
   }
 
   public double talonVelocityToNormal() {
