@@ -15,7 +15,6 @@ public class Path extends ArrayList<Point>{
 	private final double MAXCHANGE = DEFAULTACCELERATION * 0.02;
 	private double k = 1;
 	private double fIndex = 0;
-	private double time = 0;
 	private double targetOutput = 0;
 	
 	public Path() {
@@ -65,11 +64,11 @@ public class Path extends ArrayList<Point>{
 	column is the Y value, adds a new Point with those values of X and Y
 	**/
 
-	public double[][] pathToMatrix(){
-		double[][] genPath = new double[size()][2];
-		for(int i = 0; i < size(); i++){
-			genPath[i][0] = get(i).getX();
-			genPath[i][1] = get(i).getY();
+	public static double[][] pathToMatrix(Path path){
+		double[][] genPath = new double[path.size()][2];
+		for(int i = 0; i < path.size(); i++){
+			genPath[i][0] = path.get(i).getX();
+			genPath[i][1] = path.get(i).getY();
 		}
 		return genPath;
 	}
@@ -173,34 +172,7 @@ public class Path extends ArrayList<Point>{
 	**/
 
 	public Path smoother(double a, double b, double tolerance){
-		return new Path(matrixToPath(smoother(this.pathToMatrix(), a, b,tolerance)));
-	}
-	
-	/**
-	The setSmoother method is a method that uses the modified smoother class, and is called by the fullGeneration class
-	to create a new Path object that is smoothed.
-	**/
-
-	public void setSmoother(double a, double b, double tolerance){
-		Path g = this.smoother(a, b, tolerance);
-		this.clear();
-		for(Point pint: g) 
-			this.add(new Point(pint.getX(), pint.getY()));
-	}
-
-	/**
-	The fullGeneration method is a simple method that allows easy testing with 
-	the Pure Pursuit algorithm, allowing us to easily create a path, without the many 
-	lines of code it usually takes up in the main method, making our workspace
-	better organized and easy to read.
-	**/
-
-	public void fullGeneration(double spacing, double a, double b, double tolerance) {
-		Path temp = new Path(generatePath(numPointForArray(spacing)));
-		temp.setSmoother(a, b, tolerance);
-		this.clear();
-		for(Point pint: temp)
-			this.add(new Point(pint.getX(), pint.getY()));
+		return new Path(matrixToPath(smoother(pathToMatrix(this), a, b,tolerance)));
 	}
 
 	/**
@@ -267,8 +239,8 @@ public class Path extends ArrayList<Point>{
 			if(i == size() - 1) {
 				get(i).setVel(0);
 			} else {
-				current = get(i);
-				previous = get(i + 1);
+				current = new Point(get(i).getX(), get(i).getY());
+				previous = new Point(get(i + 1).getX(), get(i + 1).getY());
 				distance = previous.getDist_Along_Path() - current.getDist_Along_Path();
 
 				oldVelocity = current.getVel();
@@ -288,13 +260,13 @@ public class Path extends ArrayList<Point>{
 
 		for(int i = 0; i < size(); i ++) {
 
-			current = get(i);
+			current = new Point(get(i).getX(), get(i).getY());
 
 			if (i == 0){
 				current.setDist_Along_Path(0);
 				current.setCurvature(0);
 			} else {
-				previous = get(i - 1);
+				previous = new Point(get(i - 1).getX(), get(i - 1).getY());
 				current.setDist_Along_Path((previous.getDist_Along_Path() + current.distFrom(previous)));
 	
 				if(i < size()) {
@@ -302,7 +274,7 @@ public class Path extends ArrayList<Point>{
 						current.setCurvature(0);
 					}
 					else {
-						next = get(i + 1);
+						next = new Point(get(i + 1).getX(), get(i + 1).getY());
 						current.setCurvature(curvatureOfArc(previous, current, next));
 					}
 				}
@@ -395,15 +367,16 @@ public class Path extends ArrayList<Point>{
 		double fractional = 0;
 		Point current = null;
 		Point next = null;
+		int i = 0;
 
-		for(int i = lastLookAheadPointIndex; i < size() - 1; i++) {
-			current = get(i);
-			next = get(i + 1);
+		for(i = lastLookAheadPointIndex; i < size() - 1; i++) {
+			current = new Point(get(i).getX(), get(i).getY());
+			next = new Point(get(i + 1).getX(), get(i + 1).getY());;
 	
 			fractional = lookAhead(current, next, robotPosition, lookAheadDistance);
 
 			if(fractional >= 0 && fractional <= 1) {
-				if((i + fractional) > fIndex) {
+				if((i + fractional) > this.fIndex) {
 					fIndex = (i + fractional);
 					return (i + 1);
 				}
