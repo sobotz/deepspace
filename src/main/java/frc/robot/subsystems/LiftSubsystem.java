@@ -35,10 +35,6 @@ public class LiftSubsystem extends Subsystem {
   public TalonSRX liftTalonSlave;
   private PIDController liftPidController;
 
-  private boolean startRecordPeakOutput = false;
-  private ArrayList<Integer> velocities= new ArrayList<>();
-  private Timer recordPeakOutputTimer = new Timer();
-  private double deltaRecordPeakOutputTimer = 0.0;
 
   public LiftSubsystem() {
 
@@ -169,23 +165,7 @@ public class LiftSubsystem extends Subsystem {
     return talonUnitsToInches(liftTalon.getSelectedSensorVelocity()) * 10;
   }
 
-  public void recordPeakOuput(){
-
-    if(!startRecordPeakOutput){
-      recordPeakOutputTimer.start();
-      startRecordPeakOutput = true;
-    }
-
-    if(recordPeakOutputTimer.get() <= 5){
-      if((recordPeakOutputTimer.get()-deltaRecordPeakOutputTimer) >= (0.05)){
-        deltaRecordPeakOutputTimer += recordPeakOutputTimer.get();
-        velocities.add(liftTalon.getSelectedSensorPosition());
-      }
-    }else{
-
-    }
-    
-  }
+  
 
   @Override
   public void initDefaultCommand() {

@@ -215,8 +215,7 @@ public class DriveSubsystem extends Subsystem {
         if (!rotateToTargetPID.isEnabled()) {
             rotationCascadePID(0, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION,errorMargin);
         }
-        frontLeftTalon.selectProfileSlot(1, 0);
-        frontRightTalon.selectProfileSlot(1, 0);
+       
         backLeftTalon.follow(frontLeftTalon);
         backRightTalon.follow(frontRightTalon);
 
@@ -235,8 +234,7 @@ public class DriveSubsystem extends Subsystem {
         if (!rotateToTargetPID.isEnabled()) {
             rotationCascadePID(angle, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION,errorMargin);
         }
-        frontLeftTalon.selectProfileSlot(1, 0);
-        frontRightTalon.selectProfileSlot(1, 0);
+
         backLeftTalon.follow(frontLeftTalon);
         backRightTalon.follow(frontRightTalon);
 
@@ -255,8 +253,7 @@ public class DriveSubsystem extends Subsystem {
         if (!driveToTargetPID.isEnabled()) {
            distanceCascadePID(0,DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION,errorMargin);
         }
-        frontLeftTalon.selectProfileSlot(1, 0);
-        frontRightTalon.selectProfileSlot(1, 0);
+       
         backLeftTalon.follow(frontLeftTalon);
         backRightTalon.follow(frontRightTalon);
         double rightOutput = (driveToTargetOutput+rotateToTargetOutput);
@@ -274,8 +271,7 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public boolean driveToTarget(double distance, int errorMargin) {
-        frontLeftTalon.selectProfileSlot(0, 0);
-        frontRightTalon.selectProfileSlot(0, 0);
+      
         backLeftTalon.follow(frontLeftTalon);
         backRightTalon.follow(frontRightTalon);
 
@@ -294,8 +290,7 @@ public class DriveSubsystem extends Subsystem {
         if (!driveToTargetPID.isEnabled()) {
             distanceCascadePID(0, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION,errorMargin);
         }
-        frontLeftTalon.selectProfileSlot(1, 0);
-        frontRightTalon.selectProfileSlot(1, 0);
+      
         backLeftTalon.follow(frontLeftTalon);
         backRightTalon.follow(frontRightTalon);
         double rightOutput = (driveToTargetOutput+rotateToTargetOutput);
