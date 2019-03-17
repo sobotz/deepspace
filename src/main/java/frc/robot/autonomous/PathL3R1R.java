@@ -15,31 +15,17 @@ import frc.robot.navigation.*;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-public class PathL1C5 extends CommandGroup {
+public class PathL3R1R extends CommandGroup {
   boolean isPurePursuit;
-  public PathL1C5(boolean type) {
+  public PathL3R1R(boolean type) {
     isPurePursuit = type;
     if (isPurePursuit) {
-      Point[] path = {new Point(1,1,0), new Point(156.25,1)};
+      Point[] path = {new Point(1,1,0), new Point(1, 49.28), new Point(94.15, 142.35)};
       addSequential(new PurePursuitCommand(path));
     } else {
-      addSequential( new DriveToTargetCommand(156.25));
+      addSequential( new DriveToTargetCommand(48.28));
+      addSequential( new RotateToTargetCommand(45));
+      addSequential( new DriveToTargetCommand(131.63));
     }
-    // Add Commands here:
-    // e.g. addSequential(new Command1());
-    // addSequential(new Command2());
-    // these will run in order.
-
-    // To run multiple commands at the same time,
-    // use addParallel()
-    // e.g. addParallel(new Command1());
-    // addSequential(new Command2());
-    // Command1 and Command2 will run in parallel.
-
-    // A command group will require all of the subsystems that each member
-    // would require.
-    // e.g. if Command1 requires chassis, and Command2 requires arm,
-    // a CommandGroup containing them would require both the chassis and the
-    // arm.
   }
 }

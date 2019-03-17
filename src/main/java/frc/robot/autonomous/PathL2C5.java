@@ -15,19 +15,15 @@ import frc.robot.navigation.*;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
-public class PathL1R1R extends CommandGroup {
+public class PathL2C5 extends CommandGroup {
   boolean isPurePursuit;
-  public PathL1R1R(boolean type) {
+  public PathL2C5(boolean type) {
     isPurePursuit = type;
     if (isPurePursuit) {
-      Point[] path = {new Point(1,1,0), new Point(129.54,1), new Point(129.54,-88.625), new Point(142.27, -100.355)};
+      Point[] path = {new Point(1,1,0), new Point(1, 157.25)};
       addSequential(new PurePursuitCommand(path));
     } else {
-      addSequential( new DriveToTargetCommand(128.54));
-      addSequential( new RotateToTargetCommand(90));
-      addSequential( new DriveToTargetCommand(87.265));
-      addSequential( new RotateToTargetCommand(-45));
-      addSequential( new DriveToTargetCommand(18));
+      addSequential( new DriveToTargetCommand(156.25));
     }
     // Add Commands here:
     // e.g. addSequential(new Command1());

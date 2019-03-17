@@ -9,43 +9,19 @@ public class Path extends ArrayList<Point>{
 	/**
 	The constructors for the Path class.
 	**/
-	private double maxVelocity;
-	private final double DEFAULTMAX = 0.5;
-	private final double DEFAULTACCELERATION = 0.1;
-	private final double MAXCHANGE = DEFAULTACCELERATION * 0.02;
-	private double k = 1;
-	private double fIndex = 0;
-	private double time = 0;
-	private double targetOutput = 0;
 	
 	public Path() {
 		super();
-		this.maxVelocity = DEFAULTMAX;
 	}
 
 	public Path(Iterable<Point> path) {
 		for(Point g: path)
 			add(new Point(g.getX(), g.getY()));
-		this.maxVelocity = DEFAULTMAX;
-		
 	}
 	
 	public Path(Point[] path) {
 		for(Point g: path)
 			add(new Point(g.getX(), g.getY()));
-		this.maxVelocity = DEFAULTMAX;
-	}
-
-	public Path(Iterable<Point> path, double maxVelocity) {
-		for(Point g: path)
-			add(new Point(g.getX(), g.getY()));
-		this.maxVelocity = maxVelocity;
-	}
-	
-	public Path(Point[] path, double maxVelocity) {
-		for(Point g: path)
-			add(new Point(g.getX(), g.getY()));
-		this.maxVelocity = maxVelocity;
 	}
 	
 	/**
@@ -83,6 +59,41 @@ public class Path extends ArrayList<Point>{
 	}
 
 	/**
+	This method set's the overall maximum speed for the Path.
+	**/
+
+	
+	public Path removeToIndex(int i) {
+		for(int n = i; n >= 0; n--) {
+			this.remove(n);
+		}
+		return this;
+	}
+	
+	/**
+	The setTarVel method is used to set the target velocities at each Point in the 
+	Path. 
+	**/
+
+	public void setTarVel(){
+		//This is for the old target velocities
+		double vNot = get(0).getVel();
+		double a = 1;
+		for(int i = 0; i < size() - 2; i++)
+			get(i).setVel(Math.sqrt((Math.pow(vNot, 2) + (2 * a 
+					* get(i).distFrom(get(i+1))))));
+		
+		//actual target velocities
+		get(size()-1).setVel(0);
+		double distance = 0;
+		for(int i = size() - 2; i > -1; i--){
+			distance = get(i).distFrom(get(i+1));
+			get(i).setVel(Math.min(get(i).getVel(), 
+					Math.sqrt(Math.pow(get(i+1).getVel() , 2) + (2 * a * distance))));
+		}
+	}
+
+	/**
 	The generatePath method uses the numPointForArray method to determine the amount
 	of points should go into a line segment based on the distance between each point
 	**/
@@ -92,6 +103,16 @@ public class Path extends ArrayList<Point>{
 		for(int i = 0; i < numPoints.length; i++)
 			numPoints[i] = (int)((get(i).distFrom(get(i+1)))/dist)-1;
 		return numPoints;
+	}
+	
+	public static Path copyPath(Path yuh) {
+		Path path = new Path();
+		
+		for(int i = 0; i < yuh.size(); i++) {
+			path.add(yuh.get(i));
+		}
+		
+		return path;
 	}
 	
 	/**
@@ -217,103 +238,23 @@ public class Path extends ArrayList<Point>{
 	such as 0.001, and the issue will be fixed with minimal error.
 	**/
 	
-	public static double curvatureOfArc(Point P, Point Q, Point R){
+	public static double curvatureOfPath(Point P, Point Q, Point R){
 		double xOne = P.getX();
 		double xTwo = Q.getX();
 		double xThree = R.getX();
 		double yOne = P.getY();
 		double yTwo = Q.getY();
 		double yThree = R.getY();
-
-		if(xOne == xTwo) {
-			xOne += 0.001;
-		}
-
-		double kOne = 0.5 * ((Math.pow(xOne, 2) + Math.pow(yOne, 2) - Math.pow(xTwo, 2) 
-				- Math.pow(yTwo, 2)) / (xOne-xTwo));
-
+		double kOne = 0.5 * (Math.pow(xOne, 2) + Math.pow(yOne, 2) - Math.pow(xTwo, 2) 
+				- Math.pow(yTwo, 2) / (xOne-xTwo));
 		double kTwo = (yOne -yTwo) / (xOne-xTwo);
-
-		double b = 0.5 * (Math.pow(xTwo, 2) - 2 * xTwo * kOne + Math.pow(yTwo, 2)
+		double b = 0.5 * (Math.pow(xTwo, 2) - 2 * xTwo * kOne * Math.pow(yTwo, 2)
 				- Math.pow(xThree, 2) + 2  * xThree * kOne - Math.pow(yThree, 2))
 				/ (xThree * kTwo - yThree + yTwo - xTwo * kTwo);
-
 		double a = kOne - kTwo * b;
-
 		double r = Math.sqrt(Math.pow((xOne - a), 2)  + Math.pow((yOne - b), 2));
-
 		double curvature = 1 / r;
-
-		if(Double.isNaN(curvature)) {		//if line is straight, then curvature is 0
-			return 0;
-		}
-
 		return curvature;
-	}
-
-	public void adjustTargetVelocityForDeceleration() {
-
-		/*
-			Note, you are iterating backwards so previous would technically have a greater index
-		*/
-
-		Point current = null;
-		Point previous = null;
-		double distance = 0;
-		double oldVelocity = 0; 
-
-		for(int i = size() - 1; i >= 0; i--) {
-
-			if(i == size() - 1) {
-				get(i).setVel(0);
-			} else {
-				current = get(i);
-				previous = get(i + 1);
-				distance = previous.getDist_Along_Path() - current.getDist_Along_Path();
-
-				oldVelocity = current.getVel();
-
-				current.setVel(Math.min(oldVelocity, Math.sqrt(Math.pow(previous.getVel(), 2) 
-					+ 2 * this.DEFAULTACCELERATION * distance)));
-			}
-
-		}
-
-	}
-
-	public void calculatePointMetrix(){		//Set distance at point, curvature, and target velocities
-		Point previous = null;
-		Point current = null;
-		Point next = null;
-
-		for(int i = 0; i < size(); i ++) {
-
-			current = get(i);
-
-			if (i == 0){
-				current.setDist_Along_Path(0);
-				current.setCurvature(0);
-			} else {
-				previous = get(i - 1);
-				current.setDist_Along_Path((previous.getDist_Along_Path() + current.distFrom(previous)));
-	
-				if(i < size()) {
-					if(i == size() - 1) {
-						current.setCurvature(0);
-					}
-					else {
-						next = get(i + 1);
-						current.setCurvature(curvatureOfArc(previous, current, next));
-					}
-				}
-			}
-
-			current.setVel(Math.min(this.maxVelocity, (k / current.getCurvature())));
-
-		}
-
-
-
 	}
 	
 	/**
@@ -331,27 +272,21 @@ public class Path extends ArrayList<Point>{
 		}
 		return 0;
 	}
-
-    public double rateLimiter(double targetInput) {
-		double lastOutput = this.targetOutput;
-		return this.targetOutput += constrain((targetInput - lastOutput), -MAXCHANGE, MAXCHANGE);
-    }
 	
-	public int closestPoint(Point robotPosition, int previousIndex) {
+	public Path closestPoint(Point p) {
 		
-		int closestIndex = previousIndex;
-
-		if(robotPosition.distFrom(get(previousIndex)) < 0.5) {
-			previousIndex += 1;
-		}
-
-		for(int i = previousIndex; i < size(); i++) {
-			if(robotPosition.distFrom(get(i)) <= robotPosition.distFrom(get(previousIndex))) {
-				closestIndex = i;
+		Point closest = get(1);
+		int i;
+		
+		for(i = 1; i < size(); i++) {
+			if(p.distFrom(get(i)) < p.distFrom(closest)) {
+				closest = get(i);
 			}
 		}
 		
-		return closestIndex;
+		this.removeToIndex(i - 1);
+		
+		return this;
 	}
 	
 	/**
@@ -378,7 +313,6 @@ public class Path extends ArrayList<Point>{
 		double x1 = (-b - discriminant) / (2*a);
 		double x2 = (-b + discriminant) / (2*a);
 		
-
 		if(x1 >= 0 && x1 <= 1) {
 		    return x1;
 		}
@@ -390,26 +324,20 @@ public class Path extends ArrayList<Point>{
 		return -1;
 	}
 
-	public int findLookAheadIndex(double lookAheadDistance, Point robotPosition, int lastLookAheadPointIndex) {
-
-		double fractional = 0;
-		Point current = null;
-		Point next = null;
-
-		for(int i = lastLookAheadPointIndex; i < size() - 1; i++) {
-			current = get(i);
-			next = get(i + 1);
-	
-			fractional = lookAhead(current, next, robotPosition, lookAheadDistance);
-
-			if(fractional >= 0 && fractional <= 1) {
-				if((i + fractional) > fIndex) {
-					fIndex = (i + fractional);
-					return (i + 1);
+	public static Point findLookAheadPoint(Path path, double L, Point cPosition, Point lPoint) {
+		double t = 0;
+		double fIndex = 0;
+		int i = 0;
+		for(i = 0; i < path.size()-1; i++) {
+			t = lookAhead(path.get(i), path.get(i+1), cPosition, L);
+			fIndex = t + i;
+			if(t >= 0 && t <= 1) {
+				if(fIndex > lPoint.fIndex()) {
+					lPoint.setIndex(fIndex);
+					return lPoint = new Point(path.get(i).getX(), path.get(i).getY());
 				}
 			}
 		}
-
-		return lastLookAheadPointIndex;
+		return lPoint;
 	}
 }
