@@ -43,12 +43,12 @@ public class Robot extends TimedRobot {
     m_intake = new IntakeSubsystem();
     m_lift = new LiftSubsystem();
     m_oi = new OI();
-    m_chooser.addDefault("Path L1C4 (Pure Pursuit)", new PathL1C4(true));
-    m_chooser.addObject("Path L1C4 (Regular)", new PathL1C4(false));
-    m_chooser.addObject("Path L1C5 (Pure Pursuit)", new PathL1C5(true));
-    m_chooser.addObject("Path L1C5 (Regular)", new PathL1C5(false));
-    m_chooser.addObject("Path L1R1R (Pure Pursuit)", new PathL1R1R(true));
-    m_chooser.addObject("Path L1R1R (Regular)", new PathL1R1R(false));
+    m_chooser.addDefault("Path L2C4 (Pure Pursuit)", new PathL2C4(true));
+    m_chooser.addObject("Path L2C4 (Regular)", new PathL2C4(false));
+    m_chooser.addObject("Path L2C5 (Pure Pursuit)", new PathL2C5(true));
+    m_chooser.addObject("Path L2C5 (Regular)", new PathL2C5(false));
+    m_chooser.addObject("Path L3R1R (Pure Pursuit)", new PathL3R1R(true));
+    m_chooser.addObject("Path L3R1R (Regular)", new PathL3R1R(false));
     m_chooser.addObject("Path L1R1L (Pure Pursuit)", new PathL1R1L(true));
     m_chooser.addObject("Path L1R1L (Regular)", new PathL1R1L(false));
     
