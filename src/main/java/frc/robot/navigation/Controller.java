@@ -1,149 +1,144 @@
 package frc.robot.navigation;
-
 import java.util.HashMap;
 
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
+import edu.wpi.first.wpilibj.PIDController;
 
 public class Controller {
-	
-	
-	/*----------------------------------------------------------------------------*/
-	/*																			  */
-	/* INSTANTIATION OF THE PATH OBJECT			          			   	          */
-	/*																			  */
-	/*----------------------------------------------------------------------------*/
+    
+    
+    /*----------------------------------------------------------------------------*/
+    /*                                                                       	  */
+    /* DECLARATION OF THE PATH OBJECT      	                	             	  */
+    /*                                                                       	  */
+    /*----------------------------------------------------------------------------*/
 
-	Path genPath;
-	
-	/*----------------------------------------------------------------------------*/
-	/*																			  */
-	/* INSTANTIATION OF THE LOOK AHEAD VARAIBLES          			   	          */
-	/*																			  */
-	/*----------------------------------------------------------------------------*/
-	
+    private Path genPath;
+    
+    /*----------------------------------------------------------------------------*/
+    /*                                                                       	  */
+    /* DECLARATION OF THE LOOK AHEAD VARAIBLES                 	             	  */
+    /*                                                                       	  */
+    /*----------------------------------------------------------------------------*/
+    
 
-	private Point lPoint = new Point(0,0);	//look ahead point
-	private double lDistance;				//look ahead distance
-	private Point currentPosition;
-	
+	private int lookAheadPointIndex;  		//index of the look ahead point
+	private Point lookAheadPoint;
+    private double lDistance;               	//look ahead distance
+    private Point robotPosition = new Point(0,0); 
+    private Point closestPoint = null;  		//closest point
+    
 
-	/*----------------------------------------------------------------------------*/
-	/*																			  */
-	/* INSTANTIATION OF THE RATE LIMITER VARIABLES		                          */
-	/*																			  */
-	/*----------------------------------------------------------------------------*/
-	
+    /*----------------------------------------------------------------------------*/
+    /*                                                                       	  */
+    /* DECLARATION OF THE RATE LIMITER VARIABLES   	                          	  */
+    /*                                                                       	  */
+    /*----------------------------------------------------------------------------*/
+    
 
-	private double xLocation;
-	private double yLocation;
-	private double distance;
-	private double time;			//time for time difference in rate limiter
-	private double output;			//rate limiter output
-	private Timer t = new Timer();	//timer for rate limiter
-	private double maxRate;			//maximum rate of acceleration - rate limiter
+    private double xLocation;
+    private double yLocation;
+    private double distance;
+    
+    
+    /*----------------------------------------------------------------------------*/
+    /*                                                                         	  */
+    /* DECLARATION OF THE CONTROL LOOP VARIABLES   	 	                          */
+    /*                                                                       	  */
+    /*----------------------------------------------------------------------------*/
+    
+	private double targetVelocity;               //target robot velocity
+	private double targetLeft;
+	private double targetRight;
+
+	/*
+    private double LeftOriginal;              //target Left wheels speed
+    private double RightOriginal;              //target right wheels speed
+    private double LeftFinal;              //target Left wheels speed
+	private double RightFinal;              //target right wheels speed
+	*/
+    private double curvature;               //curvature of arc
+	private double trackWidth = 26.296875;   //track width
 	
-	
-	/*----------------------------------------------------------------------------*/
-	/*																			  */
-	/* INSTANTIATION OF THE CONTROL LOOP VARIABLES		                          */
-	/*																			  */
-	/*----------------------------------------------------------------------------*/
-	
-	private double V;				//target robot velocity
-	private double LO = 0;				//target Left wheels speed
-	private double LF;				//target Left wheels speed
-	private double RO = 0;				//target right wheels speed
-	private double RF;				//target right wheels speed
-	private double C;				//curvature of arc
-	private double T = 26.296875;	//track width
-	private double tAccel;			//target acceleration
-	
-	private double kA = 0.00;//2;	//acceleration constant
-	private double kP = 0.0;//1;	//proportional feedback constant
-	private double kV = 3.3;		//velocity constant
-	
-	private double ffL;				//Left feed forward term
-	private double fbL;				//Left feedback term
-	private double ffR;				//Right feed forward term
-	private double fbR;				//Right feedback term
-	private Double Left;
-	private Double Right;
-	
-	private HashMap<String, Double> wV = new HashMap<>();
-	public boolean isFinished = false;
-	
-	
-	
-	public Controller(Point[] path, double weight_smooth, double tol) {
+    //private double targetAccelerationLeft;          //target acceleration
+    //private double targetAccelerationRight;          //target acceleration
+    
+    //private double kA = 0.002;   //acceleration constant
+    //private double kP = 0.01;    //proportional feedback constant
+    //private double kV = 3.3;        //velocity constant
+    
+    //private double ffL;             //Left feed forward term
+    //private double fbL;             //Left feedback term
+    //private double ffR;             //Right feed forward term
+    //private double fbR;             //Right feedback term
+    //private Double Left;
+	//private Double Right;
+	//private PIDController pid;
+    
+    private HashMap<String, Double> wV = new HashMap<>();
+    public boolean isFinished = false;
+    
+    
+    
+    public Controller(Point[] path, double weight_smooth, double tol) {
+        
+        double a = 1 - weight_smooth;
+        
+		Path genPath = new Path(path);
 		
-		double a = 1 - weight_smooth;
-		
-		Path p = new Path(path);
-		
-		int[] numPoints = p.numPointForArray(6);
-		
-		this.genPath = new Path(p.generatePath(numPoints));
-		
-		genPath = genPath.smoother( a, weight_smooth, tol);
-		genPath.setTarVel();
-	}
-	
-	
-	
-	public HashMap<String, Double> controlLoop(double lPosition, double rPosition, double heading, double lSpeed, double rSpeed) {
-		
-		distance = Math.abs((6*3.14)*(rPosition + lPosition/2)/360);
-		xLocation = distance * Math.cos(heading);
-		yLocation = distance * Math.sin(heading);
-		currentPosition = new Point(xLocation, yLocation);
+		genPath.fullGeneration(6, a, weight_smooth, tol);
 
-		while(genPath.size() > 1 || isFinished != false) {
-			
-			lPoint = Path.findLookAheadPoint(genPath, lDistance, currentPosition, lPoint);
-
-			C = Point.curvature(lDistance, currentPosition, heading, lPoint);
-			
-			genPath.setTarVel();
-
-			genPath = Path.copyPath(genPath.closestPoint(currentPosition));
-			
-			V = rateLimiter(genPath.get(0).getVel());
-			
-			LF = (V * (2 + (C * T))) / 2;
-			RF = (V * (2 - (C * T))) / 2;
-			
-			double distance = currentPosition.distFrom(lPoint);
-
-			tAccel = rateLimiter(((LF * LF) - (LO * LO)) / (2 * distance));
-			
-			ffL = kV * LF + kA * tAccel;
-			ffR = kV * RF + kA * tAccel;
-			fbL = kP * (LF - lSpeed);
-			fbR = kP * (RF - rSpeed);
-			
-			Left = (ffL + fbL);
-			Right = (ffR + fbR);
-
-			LO = LF;
-			RO = RF;
-			
-			wV.put("Left", Left);
-			wV.put("Right", Right);
-			
-			return wV;
-		}
+		genPath.calculatePointMetrix();
+		genPath.adjustTargetVelocityForDeceleration();
 		
-		this.isFinished = true;
-		return wV;
-	}
+		lookAheadPointIndex = 0;
+		lookAheadPoint = new Point(genPath.get(lookAheadPointIndex).getX(), genPath.get(lookAheadPointIndex).getY());
+    }
+    
+    
+    
+	public HashMap<String, Double> controlLoop(double lPosition, double rPosition, double heading, 
+		double lSpeed, double rSpeed) {
+        
+        this.distance = Math.abs((6*3.14)*(rPosition + lPosition/2)/360);
+        this.xLocation += this.distance * Math.cos(heading);
+        this.yLocation += this.distance * Math.sin(heading);
+        robotPosition = new Point(this.xLocation, this.yLocation);
+        
+        while(genPath.size() > 1 || this.isFinished != false) {
+            
+            this.lookAheadPoint = genPath.get(genPath.findLookAheadIndex(this.lDistance, robotPosition, this.lookAheadPointIndex));
 
-	public double rateLimiter(double input) {
-		double deltaT = t.get() - this.time;
-		this.time = t.get();
-		double maxChange = deltaT * maxRate;
-		output += Path.constrain(input - output, -maxChange, maxChange);
-		return output;
-	}
-}
+            this.curvature = Point.curvature(this.lDistance, robotPosition, heading, this.lookAheadPoint);
+
+            this.closestPoint = genPath.get(genPath.closestPoint(robotPosition, 0));
+			
+            this.targetVelocity = genPath.rateLimiter(this.closestPoint.getVel());
+            
+            this.targetLeft = (this.targetVelocity * (2 + (this.curvature * this.trackWidth))) / 2;
+            this.targetRight = (this.targetVelocity * (2 - (this.curvature * this.trackWidth))) / 2;
+			
+			/*
+            double dist = robotPosition.distFrom(this.lookAheadPoint);
+            this.targetAccelerationLeft = ( ( (this.LeftFinal * this.LeftFinal) - (this.LeftOriginal * this.LeftOriginal) ) / (2 * dist) );
+            this.targetAccelerationRight = ( ( (this.RightFinal * this.RightFinal) - (this.RightOriginal * this.RightOriginal) ) / (2 * dist) );
+            
+            this.ffL = this.kV * this.LeftFinal + this.kA * this.targetAccelerationLeft;
+            this.ffR = this.kV * this.RightFinal + this.kA * this.targetAccelerationRight;
+            this.fbL = this.kP * (this.LeftFinal - lSpeed);
+            this.fbR = this.kP * (this.RightFinal - rSpeed);
+            
+            this.Left = (this.ffL + this.fbL);
+            this.Right = (this.ffR + this.fbR);
+            this.LeftOriginal = this.RightFinal;
+            this.RightOriginal = this.RightFinal;
+            
+            this.wV.put("Left", Left);
+            this.wV.put("Right", Right);
+            
+			return this.wV;
+			*/
+        }
+        
+        this.isFinished = true;
+        return this.wV;
+    }
