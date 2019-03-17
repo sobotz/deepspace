@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
 public class liftGotoCommand extends Command {
-  double position;
-  public liftGotoCommand(double p) {
+  int position;
+  public liftGotoCommand(int p) {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
      position = p;

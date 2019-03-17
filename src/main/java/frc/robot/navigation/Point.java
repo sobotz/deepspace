@@ -4,8 +4,8 @@ public class Point {
 	private double x;
 	private double y;
 	private double targetV;
-	private double dist_Along_Path;
-	private double curvature;
+	private double maxV;
+	private double fIndex;
 
 	public Point(double x, double y) {
 		this.x = x;
@@ -17,27 +17,13 @@ public class Point {
 		this.y = y;
 		this.targetV = tarV;
 	}
-
-	/**
-	 * @return the curvature
-	 */
-	public double getCurvature() {
-		return curvature;
+	
+	public void setMaxV(double v) {
+		maxV = v;
 	}
-
-	/**
-	 * @param curvature the curvature to set
-	 */
-	public void setCurvature(double curvature) {
-		this.curvature = curvature;
-	}
-
-	public void setDist_Along_Path(double d) {
-		this.dist_Along_Path = d;
-	}
-
-	public double getDist_Along_Path() {
-		return this.dist_Along_Path;
+	
+	public double getMaxV() {
+		return maxV;
 	}
 
 	public void setVel(double v){
@@ -54,6 +40,14 @@ public class Point {
 	
 	public double getY() {
 		return y;
+	}
+
+	public double fIndex() {
+		return fIndex;
+	}
+
+	public void setIndex(double i) {
+		fIndex = i;
 	}
 	
 	public void setX(double x) {
@@ -76,31 +70,24 @@ public class Point {
 		return "(" + x + ", " + y + ")";
 	}
 
-	public static double curvature(double lookAheadDistance, Point robotPosition, double heading, Point lookAheadPoint) {
+	public static double curvature(double L, Point cPosition, double rAngle, Point lPoint) {
 		
 		//variable instantiation
-		double robotX = robotPosition.getX();
-		double robotY = robotPosition.getY();
+		double localX = cPosition.getX();
+		double localY = cPosition.getY();
 		
-		double a = -Math.tan(heading);
+		double a = -Math.tan(rAngle);
 		double b = 1;
-		double c = Math.tan(heading) * robotX - robotY;
+		double c = Math.tan(rAngle) * localX;
 		
 		//calculations
-		double side = Math.signum(Math.sin(heading) * (lookAheadPoint.getX() - robotX) 
-				- Math.cos(heading) * (lookAheadPoint.getY() - robotY));
-
-		double x = Math.abs(a * lookAheadPoint.getX() + b * lookAheadPoint.getY() + c)
+		double side = Math.signum(Math.sin(rAngle) * (lPoint.getX() - localX) 
+				- Math.cos(rAngle) * (lPoint.getY() - localY));
+		double x = Math.abs(a * lPoint.getX() + b * lPoint.getY() + c)
 				/ Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
-
-		double curvature = (2 * x) / (Math.pow(lookAheadDistance, 2));
-
+		double curvature = (2*x)/(Math.pow(L, 2));
 		double sCurvature = side * curvature;
-
-		if(Double.isNaN(sCurvature) ){
-			return 0.001;
-		}
-
+		
 		return sCurvature;
 	}
 }

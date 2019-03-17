@@ -11,13 +11,14 @@ import frc.robot.*;
 import frc.robot.navigation.Controller;
 import frc.robot.navigation.Point;
 
+import java.util.HashMap;
 
 import edu.wpi.first.wpilibj.command.Command;
 
 public class PurePursuitCommand extends Command {
   Point[] purePursuitPath;
   Controller purePursuit;
-  private boolean isFinished = false;
+  private HashMap<String, Double> wV = new HashMap<>();
 
   public PurePursuitCommand(Point[] path) {
     purePursuitPath = path;
@@ -33,13 +34,15 @@ public class PurePursuitCommand extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    this.isFinished = purePursuit.controlLoop(Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontLeftTalon), Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontRightTalon), Robot.m_drivesubsystem.ahrs.getYaw());
+
+    wV = purePursuit.controlLoop(Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontLeftTalon), Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontRightTalon), Robot.m_drivesubsystem.ahrs.getYaw(),Robot.m_drivesubsystem.talonVelocityToNormal(Robot.m_drivesubsystem.frontLeftTalon),Robot.m_drivesubsystem.talonVelocityToNormal(Robot.m_drivesubsystem.frontRightTalon));
+  
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return this.isFinished;
+    return false;
   }
 
   // Called once after isFinished returns true
