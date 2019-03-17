@@ -51,6 +51,8 @@ public class Robot extends TimedRobot {
     m_chooser.addObject("Path L3R1R (Regular)", new PathL3R1R(false));
     m_chooser.addObject("Path L1R1L (Pure Pursuit)", new PathL1R1L(true));
     m_chooser.addObject("Path L1R1L (Regular)", new PathL1R1L(false));
+    m_chooser.addObject("Path L1C3 (Pure Pursuit)", new PathL1C3(true));
+    m_chooser.addObject("Path L1C3 (Regular)", new PathL1C3(false));
     
     // m_chooser.setDefaultOption("Default Auto", new ExampleCommand());
     // chooser.addOption("My Auto", new MyAutoCommand());
