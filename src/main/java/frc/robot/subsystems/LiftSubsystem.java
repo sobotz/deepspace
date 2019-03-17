@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotMap;
 import frc.robot.commands.LiftCommand;
 
+import java.util.ArrayList;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -32,6 +34,14 @@ public class LiftSubsystem extends Subsystem {
   public TalonSRX liftTalon;
   public TalonSRX liftTalonSlave;
   private PIDController liftPidController;
+
+  private boolean startRecordPeakOutput = false;
+  private ArrayList<Integer> velocities= new ArrayList<>();
+  private Timer recordPeakOutputTimer = new Timer();
+  private double deltaRecordPeakOutputTimer = 0.0;
+  private double RecordPeakOutputIterator = 0;
+  private int RecordPeakOutputMax = 0;
+
 
   public LiftSubsystem() {
 
@@ -74,8 +84,8 @@ public class LiftSubsystem extends Subsystem {
       }
     });
     SmartDashboard.putData("LIFT PID", liftPidController);
-    liftTalon.configMotionCruiseVelocity((int)velocityToTalonVelocity(60), 30);
-    liftTalon.configMotionAcceleration((int)velocityToTalonVelocity(60), 30);
+    liftTalon.configMotionCruiseVelocity((int)velocityToTalonVelocity(36), 30);
+    liftTalon.configMotionAcceleration((int)velocityToTalonVelocity(36), 30);
     
    liftTalon.configClearPositionOnLimitR(true,30);
   }
@@ -86,9 +96,7 @@ public class LiftSubsystem extends Subsystem {
     SmartDashboard.putNumber("INCHES TO  ENCODER POSITION", liftTalon.getSelectedSensorPosition());
     SmartDashboard.putNumber("LIFT PID ERROR", liftTalon.getClosedLoopError());
     SmartDashboard.putNumber("INCHES", talonUnitsToInches());
-    SmartDashboard.putBoolean("On Target", onTarget(2));
-    SmartDashboard.putBoolean("LIMIT REVERSE ", liftTalon.getSensorCollection().isRevLimitSwitchClosed());
-    SmartDashboard.putBoolean("LIMIT FORWARD ", liftTalon.getSensorCollection().isFwdLimitSwitchClosed());
+    
 
     liftTalon.config_kF(0, liftPidController.getF());
     liftTalon.config_kP(0, liftPidController.getP());
@@ -100,12 +108,22 @@ public class LiftSubsystem extends Subsystem {
     }
   }
 
-  public void control(double output) {
-    liftTalon.set(ControlMode.PercentOutput, output * -1);
+  public void control(double input) {
+    double targetVelocity = Math.pow(Math.abs(input),2);
+    if(input == 0){
+     // liftTalon.set(ControlMode.MotionMagic, liftTalon.getSelectedSensorPosition());
+    }else{
+    }
+
+    liftTalon.set(ControlMode.PercentOutput, input*-1);
+
+    SmartDashboard.putNumber("TALON RAW VELOCITY", liftTalon.getSelectedSensorVelocity());
+
+    targetVelocity = velocityToTalonVelocity(10) * targetVelocity;
+    
   }
 
-  // 12 inches -> 45 rotation #from the belly pan
-  public void goTo(int position) {
+  public void goTo(double position) {
     liftTalon.set(ControlMode.MotionMagic, inchesToTalonUnits(position));
     SmartDashboard.putNumber("LIFT PID TARGET", liftTalon.getClosedLoopTarget());
   }
@@ -119,8 +137,6 @@ public class LiftSubsystem extends Subsystem {
     }
   }
 
-
-
   public static double positionConstraint(double position) {
     if (position < 0) {
       return 0;
@@ -132,33 +148,52 @@ public class LiftSubsystem extends Subsystem {
     liftTalon.setSelectedSensorPosition(0);
   }
 
+
+
   // velocity is in/s
 
   public double inchesToTalonUnits(double position) {
-    return 3.75 * 4096 * (positionConstraint(position - 4));
+    return 3.83 * 4096 * (positionConstraint(position - 10));
   }
 
   public double talonUnitsToInches() {
-    return ((liftTalon.getSelectedSensorPosition() / 4096.0) / 3.75);
+    return ((liftTalon.getSelectedSensorPosition() / 4096.0) / 3.83);
   }
 
   public double talonUnitsToInches(double units) {
-    return ((units / 4096.0) / 3.75);
+    return ((units / 4096.0) / 3.83);
   }
 
   public double velocityToTalonVelocity(double speed) {
-    return (3.75 * 4096 * speed) / 10.0;
+    return (3.83 * 4096 * speed) / 10.0;
   }
 
   public double talonVelocityToNormal() {
     return talonUnitsToInches(liftTalon.getSelectedSensorVelocity()) * 10;
   }
 
+  public void recordPeakOuput(){
+
+    if(!startRecordPeakOutput){
+      recordPeakOutputTimer.start();
+      startRecordPeakOutput = true;
+    }
+
+    if(recordPeakOutputTimer.get() <= 5){
+      if((recordPeakOutputTimer.get()-deltaRecordPeakOutputTimer) >= (0.05)){
+        deltaRecordPeakOutputTimer += recordPeakOutputTimer.get();
+        velocities.add(liftTalon.getSelectedSensorPosition());
+      }
+    }else{
+      while(RecordPeakOutputIterator < velocities.size()){
+          
+      }
+    }
+    
+  }
+
   @Override
   public void initDefaultCommand() {
-    // Set the default command for a subsystem here.
-    // setDefaultCommand(new IntakeOpenCommand());
-
     setDefaultCommand(new LiftCommand());
   }
 }
