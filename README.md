@@ -10,7 +10,7 @@ For those looking in our code, the `autonomous` folder houses all of our autonom
 Our vision processing utilizes a Limelight camera, which helps us identify retroreflective tape on the field, and also enables us to align the robot with the white tape lines in front of the elements.
 
 ```
-public  boolean hasTarget() {
+public boolean hasTarget() {
   if (table.getEntry("tv").getDouble(0) > 0.0) {
     return true;
   } else {
@@ -52,4 +52,13 @@ public PathL2C4(boolean type) {
 
 Our simplest path, L2C4, travels straight from the middle section of Level 1 of the HAB to the 4th bay on the cargo ship. A boolean is passed through the function to determine whether to run pure pursuit or the regular autonomous. If pure pursuit is selected, the code runs the points inputted and travels between them. If regular is selected, the robot uses its encoders to drive 165 inches forwards.
 
+```
+protected void execute() {
+  Robot.m_drivesubsystem.manualDrive(Robot.m_oi.driverJoystick.getRawAxis(1), Robot.m_oi.driverJoystick.getRawAxis(0));
+}
+```
+
+This snippet is what runs our drivetrain during matches. Using input from a joystick, the `manualDrive` method sets the speed of each speed controller set. Differing speeds in each set of wheels allows us to drive like a tank, and turn by running one set of wheels faster than the other.
+
 ## Resources
+We used [this](https://www.ri.cmu.edu/pub_files/pub3/coulter_r_craig_1992_1/coulter_r_craig_1992_1.pdf) paper to help us write our pure pursuit algorithm.
