@@ -35,6 +35,11 @@ public class LiftSubsystem extends Subsystem {
   public TalonSRX liftTalonSlave;
   private PIDController liftPidController;
 
+  private ArrayList<Integer> velocities = new ArrayList<Integer>();
+  private Timer recordPeakVelocityTimer = new Timer();
+  private boolean recordPeakVelocityStarted = false;
+  private int peakVelocity = 0;
+
   public LiftSubsystem() {
 
     liftTalon = new TalonSRX(RobotMap.liftMotor);
@@ -50,6 +55,13 @@ public class LiftSubsystem extends Subsystem {
 
     liftTalon.setNeutralMode(NeutralMode.Brake);
     liftTalonSlave.setNeutralMode(NeutralMode.Brake);
+
+   /* liftTalon.configForwardSoftLimitThreshold((int)inchesToTalonUnits(60));
+    liftTalon.configReverseSoftLimitThreshold(0);
+
+    liftTalon.configForwardSoftLimitEnable(true);
+    liftTalon.configReverseSoftLimitEnable(true);
+    */
 
     /// THIS IS A DUMMY Object !!! NEEDED only for testing !!!!!!!
     liftPidController = new PIDController(0, 0, 0, new PIDSource() {
@@ -76,10 +88,10 @@ public class LiftSubsystem extends Subsystem {
       }
     });
     SmartDashboard.putData("LIFT PID", liftPidController);
-    liftTalon.configMotionCruiseVelocity((int)velocityToTalonVelocity(36), 30);
-    liftTalon.configMotionAcceleration((int)velocityToTalonVelocity(36), 30);
-    
-   liftTalon.configClearPositionOnLimitR(true,30);
+    liftTalon.configMotionCruiseVelocity((int) velocityToTalonVelocity(36), 30);
+    liftTalon.configMotionAcceleration((int) velocityToTalonVelocity(36), 30);
+
+    liftTalon.configClearPositionOnLimitR(true, 30);
   }
 
   @Override
@@ -88,36 +100,31 @@ public class LiftSubsystem extends Subsystem {
     SmartDashboard.putNumber("INCHES TO  ENCODER POSITION", liftTalon.getSelectedSensorPosition());
     SmartDashboard.putNumber("LIFT PID ERROR", liftTalon.getClosedLoopError());
     SmartDashboard.putNumber("INCHES", talonUnitsToInches());
-    
 
     liftTalon.config_kF(0, liftPidController.getF());
     liftTalon.config_kP(0, liftPidController.getP());
     liftTalon.config_kI(0, liftPidController.getI());
     liftTalon.config_kD(0, liftPidController.getD());
 
-    if(liftTalon.getSensorCollection().isRevLimitSwitchClosed()){
-     // reset();
+    if (liftTalon.getSensorCollection().isRevLimitSwitchClosed()) {
+      // reset();
     }
   }
 
   public void control(double input) {
-    double targetVelocity = Math.pow(Math.abs(input),2);
-    if(input == 0){
-     // liftTalon.set(ControlMode.MotionMagic, liftTalon.getSelectedSensorPosition());
+    if(Math.abs(input) < 0.01){
+      liftTalon.set(ControlMode.MotionMagic, liftTalon.getSelectedSensorPosition());
     }else{
+     input =  Math.pow(Math.abs(input), 2);
+      liftTalon.set(ControlMode.PercentOutput, input * -1);
     }
-
-    liftTalon.set(ControlMode.PercentOutput, input*-1);
-
     SmartDashboard.putNumber("TALON RAW VELOCITY", liftTalon.getSelectedSensorVelocity());
-
-    targetVelocity = velocityToTalonVelocity(10) * targetVelocity;
-    
   }
 
   public void goTo(double position) {
     liftTalon.set(ControlMode.MotionMagic, inchesToTalonUnits(position));
     SmartDashboard.putNumber("LIFT PID TARGET", liftTalon.getClosedLoopTarget());
+    recordPeakVelocity();
   }
 
   public boolean onTarget(int margin) {
@@ -138,9 +145,9 @@ public class LiftSubsystem extends Subsystem {
 
   public void reset() {
     liftTalon.setSelectedSensorPosition(0);
+    recordPeakVelocityStarted = true;
+    peakVelocity =0;
   }
-
-
 
   // velocity is in/s
 
@@ -164,7 +171,20 @@ public class LiftSubsystem extends Subsystem {
     return talonUnitsToInches(liftTalon.getSelectedSensorVelocity()) * 10;
   }
 
-  
+  public void recordPeakVelocity() {
+    if (recordPeakVelocityStarted) {
+      recordPeakVelocityTimer.start();
+      if (recordPeakVelocityTimer.get() < 10) {
+        if (peakVelocity < liftTalon.getSelectedSensorVelocity()/4096) {
+          peakVelocity = liftTalon.getSelectedSensorVelocity()/4096;
+        }
+      } else {
+        SmartDashboard.putNumber("PEAK VELOCITY", peakVelocity);
+        recordPeakVelocityStarted = false;
+      }
+    }
+  }
+
   @Override
   public void initDefaultCommand() {
     setDefaultCommand(new LiftCommand());
