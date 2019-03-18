@@ -69,14 +69,21 @@ public class Point {
 	}
 
 	public double distFrom(Point p) {
-		return Math.sqrt(Math.abs(p.getX()-x)*Math.abs(p.getX()-x) + Math.abs(p.getY()-y)*Math.abs(p.getY()-y));
+		return Math.sqrt(Math.abs(p.getX()-x)*Math.abs(p.getX()-x) + Math.abs(p.getY()-y)
+			*Math.abs(p.getY()-y));
 	}
 	
 	public String toString() {
 		return "(" + x + ", " + y + ")";
 	}
 
-	public static double curvature(double lookAheadDistance, Point robotPosition, double heading, Point lookAheadPoint) {
+	public String toStringAll() {
+		return "Point [x = " + this.x + ", y = " + this.y + ", targetV = " + this.targetV + 
+			", distance along the path = " + this.dist_Along_Path + ", curvature = " + this.curvature + "]";
+	}
+
+	public static double curvature(double lookAheadDistance, Point robotPosition, double heading, 
+		Point lookAheadPoint) {
 		
 		//variable instantiation
 		double robotX = robotPosition.getX();

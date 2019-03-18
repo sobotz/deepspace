@@ -13,7 +13,7 @@ public class Path extends ArrayList<Point>{
 	private final double DEFAULTMAX = 0.5;
 	private final double DEFAULTACCELERATION = 0.1;
 	private final double MAXCHANGE = DEFAULTACCELERATION * 0.02;
-	private double k = 1;
+	private double CURVE_SENSITIVITY_CONSTANT = .01;
 	private double fIndex = 0;
 	private double targetOutput = 0;
 	
@@ -216,8 +216,8 @@ public class Path extends ArrayList<Point>{
 
 		double curvature = 1 / r;
 
-		if(Double.isNaN(curvature)) {		//if line is straight, then curvature is 0
-			return 0;
+		if(Double.isNaN(curvature)) {		//if line is straight, then curve is flat
+			return 0.000001;
 		}
 
 		return curvature;
@@ -239,8 +239,8 @@ public class Path extends ArrayList<Point>{
 			if(i == size() - 1) {
 				get(i).setVel(0);
 			} else {
-				current = new Point(get(i).getX(), get(i).getY());
-				previous = new Point(get(i + 1).getX(), get(i + 1).getY());
+				current = get(i);
+				previous = get(i + 1);
 				distance = previous.getDist_Along_Path() - current.getDist_Along_Path();
 
 				oldVelocity = current.getVel();
@@ -253,34 +253,34 @@ public class Path extends ArrayList<Point>{
 
 	}
 
-	public void calculatePointMetrix(){		//Set distance at point, curvature, and target velocities
+	public void calculatePointMetrix(){		//Set distance at point and curvature
 		Point previous = null;
 		Point current = null;
 		Point next = null;
 
 		for(int i = 0; i < size(); i ++) {
 
-			current = new Point(get(i).getX(), get(i).getY());
+			previous = current;
+			current = get(i);
 
 			if (i == 0){
 				current.setDist_Along_Path(0);
 				current.setCurvature(0);
 			} else {
-				previous = new Point(get(i - 1).getX(), get(i - 1).getY());
+
 				current.setDist_Along_Path((previous.getDist_Along_Path() + current.distFrom(previous)));
 	
-				if(i < size()) {
-					if(i == size() - 1) {
-						current.setCurvature(0);
-					}
-					else {
-						next = new Point(get(i + 1).getX(), get(i + 1).getY());
-						current.setCurvature(curvatureOfArc(previous, current, next));
-					}
+				if(i == size() - 1) {
+					current.setCurvature(0);
+				}
+				else {
+					next = get(i + 1);
+					double curvature = curvatureOfArc(previous, current, next);
+					current.setCurvature(curvature);
 				}
 			}
 
-			current.setVel(Math.min(this.maxVelocity, (k / current.getCurvature())));
+			current.setVel(Math.min(this.maxVelocity, (this.CURVE_SENSITIVITY_CONSTANT / current.getCurvature())));
 
 		}
 
@@ -370,8 +370,8 @@ public class Path extends ArrayList<Point>{
 		int i = 0;
 
 		for(i = lastLookAheadPointIndex; i < size() - 1; i++) {
-			current = new Point(get(i).getX(), get(i).getY());
-			next = new Point(get(i + 1).getX(), get(i + 1).getY());;
+			current = get(i);
+			next = get(i + 1);
 	
 			fractional = lookAhead(current, next, robotPosition, lookAheadDistance);
 

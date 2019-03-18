@@ -1,9 +1,6 @@
 package frc.robot.navigation;
-import java.util.HashMap;
 
-import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Robot;
+//import frc.robot.Robot;
 
 public class Controller {
     
@@ -23,8 +20,8 @@ public class Controller {
     /*----------------------------------------------------------------------------*/
     
 
-	private int lookAheadPointIndex;  		//index of the look ahead point
-	private Point lookAheadPoint;
+	private int lookAheadPointIndex = 0;  		//index of the look ahead point
+	private Point lookAheadPoint = new Point(1,1);
     private double lDistance = 6;               	//look ahead distance
     private Point robotPosition = new Point(1,1); 
     private Point closestPoint = null;  		//closest point
@@ -92,14 +89,6 @@ public class Controller {
 
 		genPath.calculatePointMetrix();
 		genPath.adjustTargetVelocityForDeceleration();
-		
-		this.lookAheadPointIndex = 0;
-		this.lookAheadPoint = new Point(genPath.get(lookAheadPointIndex).getX(), genPath.get(lookAheadPointIndex).getY());
-        
-        for(Point x : genPath) {
-            System.out.println(x);
-        }
-        
         
     }
     
@@ -107,23 +96,45 @@ public class Controller {
     
 	public boolean controlLoop(double lPosition, double rPosition, double heading) {
         
-        this.distance = Math.abs((6*3.14)*(rPosition + lPosition/2)/360);
-        this.xLocation += this.distance * Math.cos(heading);
-        this.yLocation += this.distance * Math.sin(heading);
-        robotPosition = new Point(this.xLocation, this.yLocation);
+        this.distance = (rPosition + lPosition) / 2;
+        this.xLocation += this.distance * Math.cos(Math.toRadians(heading));
+        this.yLocation += this.distance * Math.sin(Math.toRadians(heading));
+        this.robotPosition = new Point(this.xLocation, this.yLocation);
+
+        System.out.println("[Robot Position: " + this.robotPosition.toString() + "]");
             
-        this.lookAheadPoint = genPath.get(genPath.findLookAheadIndex(this.lDistance, this.robotPosition, this.lookAheadPointIndex));
+        int nextLookAheadIndex = genPath.findLookAheadIndex(this.lDistance, robotPosition, this.lookAheadPointIndex);
+        
+        if(this.lookAheadPointIndex != nextLookAheadIndex) {
+        	System.err.println("Look Ahead Point changed: " + this.lookAheadPointIndex + " to " + nextLookAheadIndex);
+        }
+        
+        this.lookAheadPointIndex = nextLookAheadIndex;
+        this.lookAheadPoint = genPath.get(nextLookAheadIndex);
+        
+        //this.lookAheadPoint = genPath.get(genPath.findLookAheadIndex(this.lDistance, this.robotPosition, this.lookAheadPointIndex));
+
+        //System.out.println("[Look Ahead Point: " + this.lookAheadPoint.toString() + "]");
 
         this.curvature = Point.curvature(this.lDistance, robotPosition, heading, this.lookAheadPoint);
 
+        System.out.println("[Curvature: " + this.curvature + "]");
+
         this.closestPoint = genPath.get(genPath.closestPoint(robotPosition, 0));
+        
+        System.out.println("[Closest Point: " + this.closestPoint.toString() + "]");
 			
         this.targetVelocity = genPath.rateLimiter(this.closestPoint.getVel());
+        
+        System.out.println("[Target Velocity: " + this.targetVelocity + "]");
             
         this.targetLeft = (this.targetVelocity * (2 + (this.curvature * this.trackWidth))) / 2;
         this.targetRight = (this.targetVelocity * (2 - (this.curvature * this.trackWidth))) / 2;
+        
+        System.out.println("[Target Left Velocity: " + this.targetLeft + "]");
+        System.out.println("[Target Right Velocity: " + this.targetRight + "]");
 
-        Robot.m_drivesubsystem.PurePursuit(targetLeft, targetRight);
+        //Robot.m_drivesubsystem.PurePursuit(targetLeft, targetRight);
 			
 		/*
         double dist = robotPosition.distFrom(this.lookAheadPoint);
@@ -150,6 +161,12 @@ public class Controller {
             this.isFinished = true;
         }
         
+        System.out.println("[isFinished: " + this.isFinished + "]");
+        
         return this.isFinished;
     }
+	
+	public Path getPath() {
+		return this.genPath;
+	}
 }
