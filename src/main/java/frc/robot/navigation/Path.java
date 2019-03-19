@@ -332,8 +332,8 @@ public class Path extends ArrayList<Point>{
 	**/
 	
 	public static double lookAhead(Point E,  Point L, Point C, double r) {
-		Vector2d d = new Vector(L,E);
-		Vector2d f = new Vector(E,C);
+		Vector2d d = new Vector(E,L);
+		Vector2d f = new Vector(C,E);
 		
 		double a = d.dot(d);
 		double b = 2 * f.dot(d);
