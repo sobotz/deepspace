@@ -19,18 +19,41 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
  * An example subsystem.  You can replace me with your own Subsystem.
  */
 public class IntakeSubsystem extends Subsystem {
+  TalonSRX articulationTalon;
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
-  public WPI_TalonSRX articulationTalon, rollerTalon, dropTalon;
+  public TalonSRX rollerTalon;
+  TalonSRX dropTalon;
 
 
   public IntakeSubsystem() {
-    articulationTalon = new WPI_TalonSRX(RobotMap.articulationMotor);
-    rollerTalon = new WPI_TalonSRX(RobotMap.rollerMotor);
-    dropTalon = new WPI_TalonSRX(RobotMap.dropMotor);
+    articulationTalon = new TalonSRX(RobotMap.articulationMotor);
+  //  rollerTalon = new TalonSRX(RobotMap.rollerMotor);
+  //  dropTalon = new TalonSRX(RobotMap.dropMotor);
 
     articulationTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative,	0, 30);
-    dropTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative,	0, 30);
+  ///  dropTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative,	0, 30);
+
+  articulationTalon.configFactoryDefault();
+
+  articulationTalon.configPeakOutputReverse(-0.05);
+  articulationTalon.configPeakOutputForward(0.05);
+
+  }
+
+
+  public double toDegree(){
+    return (4096/360)*(articulationTalon.getSelectedSensorPosition()/4096);
+  }
+
+  public double degreeToTalonUnit(double degree){
+    return degree*4096*360;
+  } 
+
+  public void control(double input){
+
+    articulationTalon.set(ControlMode.PercentOutput, input);
+
   }
 
   @Override

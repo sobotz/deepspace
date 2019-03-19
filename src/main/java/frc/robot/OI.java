@@ -19,15 +19,15 @@ import frc.robot.commands.liftGotoCommand;
  * interface to the commands and command groups that allow control of the robot.
  */
 public class OI {
-  public HLVL1 = 15;
-  public CSC1 = 35;
-  public RSH2 = 43;
-  public RSH3 = 71;
-  public RSC1 = 23.5;
-  public RSC2 = 51.5;
-  public RSC3 = 79.5;
-  public FSC1 = 40;
-  public ZERO = 0;
+  public double HLVL1 = 15;
+  public double  CSC1 = 35;
+  public double RSH2 = 43;
+  public double RSH3 = 71;
+  public double RSC1 = 23.5;
+  public double RSC2 = 51.5;
+  public double RSC3 = 79.5;
+  public double FSC1 = 40;
+  public double ZERO = 0;
 
   public Joystick driverJoystick = new Joystick(0);
   public Joystick operatorJoystick = new Joystick(1);
