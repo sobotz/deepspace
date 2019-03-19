@@ -22,6 +22,7 @@ public class ArticulationCommand extends Command {
     requires(Robot.m_intake);
   }
 
+
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
@@ -30,7 +31,7 @@ public class ArticulationCommand extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-//    Robot.m_intake.articulationTalon.set(ControlMode.PercentOutput, Robot.m_oi.operatorJoystick.getRawAxis(2));
+Robot.m_intake.control(Robot.m_oi.operatorJoystick.getRawAxis(1));
   }
 
   // Make this return true when this Command no longer needs to run execute()

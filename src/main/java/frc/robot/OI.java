@@ -19,15 +19,15 @@ import frc.robot.commands.liftGotoCommand;
  * interface to the commands and command groups that allow control of the robot.
  */
 public class OI {
-  public double HLVL1 = 15;
-  public double  CSC1 = 35;
-  public double RSH2 = 43;
-  public double RSH3 = 71;
-  public double RSC1 = 23.5;
-  public double RSC2 = 51.5;
-  public double RSC3 = 79.5;
-  public double FSC1 = 40;
-  public double ZERO = 0;
+  public int HLVL1 = 15;
+  public int  CSC1 = 35;
+  public int RSH2 = 43;
+  public int RSH3 = 71;
+  public int RSC1 = 24;
+  public int RSC2 = 52;
+  public int RSC3 = 80;
+  public int FSC1 = 40;
+  public int ZERO = 0;
 
   public Joystick driverJoystick = new Joystick(0);
   public Joystick operatorJoystick = new Joystick(1);
@@ -47,7 +47,7 @@ public class OI {
     JoystickButton buttonbox6 = new JoystickButton(m_buttonbox, 6);
     JoystickButton buttonbox7 = new JoystickButton(m_buttonbox, 7);
     JoystickButton buttonbox8 = new JoystickButton(m_buttonbox, 8);
-    JoystickButton buttonbox9 = new JoystickButton(m_buttonbox, 8);
+    JoystickButton buttonbox9 = new JoystickButton(m_buttonbox, 9);
 
     bOperator.toggleWhenPressed(new liftGotoCommand(12));
     xOperator.toggleWhenPressed(new liftGotoCommand(24));

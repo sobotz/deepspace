@@ -9,6 +9,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
+import frc.robot.commands.ArticulationCommand;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -23,6 +24,7 @@ public class IntakeSubsystem extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
   public TalonSRX rollerTalon;
+  public TalonSRX rollerTalonSlave;
   TalonSRX dropTalon;
 
 
@@ -59,6 +61,7 @@ public class IntakeSubsystem extends Subsystem {
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
-    // setDefaultCommand(new IntakeOpenCommand());
+   
+    setDefaultCommand(new ArticulationCommand());
   }
 }
