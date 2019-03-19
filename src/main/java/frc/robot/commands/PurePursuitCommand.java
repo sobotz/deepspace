@@ -11,15 +11,14 @@ import frc.robot.*;
 import frc.robot.navigation.Controller;
 import frc.robot.navigation.Point;
 
-import java.util.HashMap;
-import edu.wpi.first.wpilibj.Timer;
-
 import edu.wpi.first.wpilibj.command.Command;
 
 public class PurePursuitCommand extends Command {
   Point[] purePursuitPath;
   Controller purePursuit;
   private boolean isFinished = false;
+  private double lastLeftPostition = 0;
+  private double lastRightPosition = 0;
 
   public PurePursuitCommand(Point[] path) {
     purePursuitPath = path;
@@ -35,7 +34,16 @@ public class PurePursuitCommand extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-  isFinished = purePursuit.controlLoop(Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontLeftTalon), Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontRightTalon), Robot.m_drivesubsystem.ahrs.getYaw());
+    double leftChange = 0;
+    double rightChange = 0;
+
+    leftChange = Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontLeftTalon) - lastLeftPostition;
+    rightChange = Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontRightTalon) - lastRightPosition;
+
+    isFinished = purePursuit.controlLoop(leftChange, rightChange, Robot.m_drivesubsystem.ahrs.getYaw());
+    
+    lastLeftPostition = Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontLeftTalon);
+    lastRightPosition = Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontRightTalon);
   }
 
   // Make this return true when this Command no longer needs to run execute()

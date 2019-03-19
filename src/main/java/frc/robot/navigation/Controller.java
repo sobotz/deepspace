@@ -1,6 +1,6 @@
 package frc.robot.navigation;
 
-//import frc.robot.Robot;
+import frc.robot.Robot;
 
 public class Controller {
     
@@ -71,7 +71,6 @@ public class Controller {
     //private double fbR;             //Right feedback term
     //private Double Left;
 	//private Double Right;
-    //private PIDController pid;
     
     public boolean isFinished = false;
     
@@ -94,33 +93,41 @@ public class Controller {
     
     
     
-	public boolean controlLoop(double lPosition, double rPosition, double heading) {
+	public boolean controlLoop(double leftChange, double rightChange, double heading) {
         
-        this.distance = (rPosition + lPosition) / 2;
+        this.distance = (rightChange + leftChange) / 2;
+
+        heading += 90;
+        if(heading > 360) {
+            heading -= 360;
+        }
+
         this.xLocation += this.distance * Math.cos(Math.toRadians(heading));
         this.yLocation += this.distance * Math.sin(Math.toRadians(heading));
         this.robotPosition = new Point(this.xLocation, this.yLocation);
 
         System.out.println("[Robot Position: " + this.robotPosition.toString() + "]");
             
-        int nextLookAheadIndex = genPath.findLookAheadIndex(this.lDistance, robotPosition, this.lookAheadPointIndex);
+        int nextLookAheadIndex = genPath.findLookAheadIndex(this.lDistance, this.robotPosition, this.lookAheadPointIndex);
         
         if(this.lookAheadPointIndex != nextLookAheadIndex) {
-        	System.err.println("Look Ahead Point changed: " + this.lookAheadPointIndex + " to " + nextLookAheadIndex);
+            System.err.println("Look Ahead Point changed: " + this.lookAheadPointIndex + " to " 
+                + nextLookAheadIndex);
         }
         
         this.lookAheadPointIndex = nextLookAheadIndex;
         this.lookAheadPoint = genPath.get(nextLookAheadIndex);
         
-        //this.lookAheadPoint = genPath.get(genPath.findLookAheadIndex(this.lDistance, this.robotPosition, this.lookAheadPointIndex));
+        //this.lookAheadPoint = genPath.get(genPath.findLookAheadIndex(this.lDistance, this.robotPosition, 
+        //  this.lookAheadPointIndex));
 
         //System.out.println("[Look Ahead Point: " + this.lookAheadPoint.toString() + "]");
 
-        this.curvature = Point.curvature(this.lDistance, robotPosition, heading, this.lookAheadPoint);
+        this.curvature = Point.curvature(this.lDistance, this.robotPosition, heading, this.lookAheadPoint);
 
         System.out.println("[Curvature: " + this.curvature + "]");
 
-        this.closestPoint = genPath.get(genPath.closestPoint(robotPosition, 0));
+        this.closestPoint = genPath.get(genPath.closestPoint(this.robotPosition, 0));
         
         System.out.println("[Closest Point: " + this.closestPoint.toString() + "]");
 			
@@ -134,12 +141,14 @@ public class Controller {
         System.out.println("[Target Left Velocity: " + this.targetLeft + "]");
         System.out.println("[Target Right Velocity: " + this.targetRight + "]");
 
-        //Robot.m_drivesubsystem.PurePursuit(targetLeft, targetRight);
+        Robot.m_drivesubsystem.PurePursuit(targetLeft, targetRight);
 			
 		/*
         double dist = robotPosition.distFrom(this.lookAheadPoint);
-        this.targetAccelerationLeft = ( ( (this.LeftFinal * this.LeftFinal) - (this.LeftOriginal * this.LeftOriginal) ) / (2 * dist) );
-        this.targetAccelerationRight = ( ( (this.RightFinal * this.RightFinal) - (this.RightOriginal * this.RightOriginal) ) / (2 * dist) );
+        this.targetAccelerationLeft = ( ( (this.LeftFinal * this.LeftFinal) - (this.LeftOriginal * 
+            this.LeftOriginal) ) / (2 * dist) );
+        this.targetAccelerationRight = ( ( (this.RightFinal * this.RightFinal) - (this.RightOriginal * 
+            this.RightOriginal) ) / (2 * dist) );
             
         this.ffL = this.kV * this.LeftFinal + this.kA * this.targetAccelerationLeft;
         this.ffR = this.kV * this.RightFinal + this.kA * this.targetAccelerationRight;

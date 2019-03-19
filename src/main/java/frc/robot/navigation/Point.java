@@ -65,7 +65,7 @@ public class Point {
 	}
 	
 	public double angleBetween(Point p) {
-		return Math.asin(y-p.getY()/x-p.getX());
+		return Math.toDegrees(Math.asin(y-p.getY()/x-p.getX()));
 	}
 
 	public double distFrom(Point p) {
@@ -89,13 +89,13 @@ public class Point {
 		double robotX = robotPosition.getX();
 		double robotY = robotPosition.getY();
 		
-		double a = -Math.tan(heading);
+		double a = -Math.tan(Math.toRadians(heading));
 		double b = 1;
-		double c = Math.tan(heading) * robotX - robotY;
+		double c = Math.tan(Math.toRadians(heading)) * robotX - robotY;
 		
 		//calculations
-		double side = Math.signum(Math.sin(heading) * (lookAheadPoint.getX() - robotX) 
-				- Math.cos(heading) * (lookAheadPoint.getY() - robotY));
+		double side = Math.signum(Math.sin(Math.toRadians(heading)) * (lookAheadPoint.getX() - robotX) 
+				- Math.cos(Math.toRadians(heading)) * (lookAheadPoint.getY() - robotY));
 
 		double x = Math.abs(a * lookAheadPoint.getX() + b * lookAheadPoint.getY() + c)
 				/ Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));

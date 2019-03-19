@@ -11,16 +11,16 @@ public class Location {
 	private double xLocation;
 	private double yLocation;
 	private double distance;
-	private Gyro gyro;
+	private Gyro heading;
 	
 	public Location(Encoder left, Encoder right, Gyro a) {
 		leftEncoder = left;
 		rightEncoder = right;
-		gyro = a;
+		heading = a;
 		
 		distance = Math.abs((6 * 3.14) * (rightEncoder.get() + leftEncoder.get() / 2) / 360);
-		xLocation = distance * Math.cos(gyro.getAngle());
-		yLocation = distance * Math.sin(gyro.getAngle());
+		xLocation = distance * Math.cos(Math.toRadians(heading.getAngle()));
+		yLocation = distance * Math.sin(Math.toRadians(heading.getAngle()));
 		currentPosition = new Point(xLocation, yLocation);
 	}
 
