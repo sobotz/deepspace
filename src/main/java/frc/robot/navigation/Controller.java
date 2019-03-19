@@ -137,9 +137,14 @@ public class Controller {
             
         this.targetLeft = (this.targetVelocity * (2 + (this.curvature * this.trackWidth))) / 2;
         this.targetRight = (this.targetVelocity * (2 - (this.curvature * this.trackWidth))) / 2;
+
+        double talonLeftTarget = Robot.m_drivesubsystem.velocityToTalonVelocity(targetLeft);
+        double talonRightTarget = Robot.m_drivesubsystem.velocityToTalonVelocity(targetRight);
         
         System.out.println("[Target Left Velocity: " + this.targetLeft + "]");
+        System.out.println("[Target Left Velocity(Talon): " + talonLeftTarget + "]");
         System.out.println("[Target Right Velocity: " + this.targetRight + "]");
+        System.out.println("[Target Right Velocity(Talon): " + talonRightTarget + "]");
 
         Robot.m_drivesubsystem.PurePursuit(targetLeft, targetRight);
 			
