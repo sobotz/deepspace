@@ -310,8 +310,12 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public void PurePursuit(double targetLeft, double targetRight) {
+        frontLeftTalon.selectProfileSlot(0, 0);
+        frontRightTalon.selectProfileSlot(0, 0);
         double targetLeftVelocity = velocityToTalonVelocity(targetLeft);
         double targetRightVelocity = velocityToTalonVelocity(targetRight);
+        SmartDashboard.putNumber("PURE PURSUIT VELOCITIES", targetLeftVelocity);
+        SmartDashboard.putNumber("PURE PURSUIT VELOCITIES RIGHT", targetRightVelocity);
         frontLeftTalon.set(ControlMode.Velocity, targetLeftVelocity);
         frontRightTalon.set(ControlMode.Velocity, targetRightVelocity);
     }

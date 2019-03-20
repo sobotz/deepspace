@@ -96,11 +96,12 @@ public class LiftSubsystem extends Subsystem {
 
   @Override
   public void periodic() {
+    /*
     SmartDashboard.putNumber("TALON VELOCITY", talonVelocityToNormal());
     SmartDashboard.putNumber("INCHES TO  ENCODER POSITION", liftTalon.getSelectedSensorPosition());
     SmartDashboard.putNumber("LIFT PID ERROR", liftTalon.getClosedLoopError());
     SmartDashboard.putNumber("INCHES", talonUnitsToInches());
-
+    */
     liftTalon.config_kF(0, liftPidController.getF());
     liftTalon.config_kP(0, liftPidController.getP());
     liftTalon.config_kI(0, liftPidController.getI());
