@@ -25,7 +25,7 @@ public class OI {
   public int RSH3 = 75;
   public int RSC1 = 27;
   public int RSC2 = 56;
-  public int RSC3 = 78;
+  public int RSC3 = 79;
   public int FSC1 = 44;
   public int ZERO = 0;
 
@@ -55,15 +55,15 @@ public class OI {
     aOperator.toggleWhenPressed(new liftGotoCommand(0));
     */
     
-    buttonbox1.whenPressed(new liftGotoCommand(HLVL1));
-    buttonbox2.whenPressed(new liftGotoCommand(CSC1));
-    buttonbox3.whenPressed(new liftGotoCommand(RSH2));
-    buttonbox4.whenPressed(new liftGotoCommand(RSH3));
-    buttonbox5.whenPressed(new liftGotoCommand(RSC1));
-    buttonbox6.whenPressed(new liftGotoCommand(RSC2));
-    buttonbox7.whenPressed(new liftGotoCommand(RSC3));
-    buttonbox8.whenPressed(new liftGotoCommand(FSC1));
-    buttonbox9.whenPressed(new liftGotoCommand(ZERO));
+    buttonbox1.toggleWhenPressed(new liftGotoCommand(HLVL1));
+    buttonbox2.toggleWhenPressed(new liftGotoCommand(CSC1));
+    buttonbox3.toggleWhenPressed(new liftGotoCommand(RSH2));
+    buttonbox4.toggleWhenPressed(new liftGotoCommand(RSH3));
+    buttonbox5.toggleWhenPressed(new liftGotoCommand(RSC1));
+    buttonbox6.toggleWhenPressed(new liftGotoCommand(RSC2));
+    buttonbox7.toggleWhenPressed(new liftGotoCommand(RSC3));
+    buttonbox8.toggleWhenPressed(new liftGotoCommand(FSC1));
+    buttonbox9.toggleWhenPressed(new liftGotoCommand(ZERO));
 
     JoystickButton gearShiftButton = new JoystickButton(driverJoystick, 1);
     gearShiftButton.toggleWhenPressed(new ShiftGearCommand());

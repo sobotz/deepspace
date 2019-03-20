@@ -97,10 +97,12 @@ public class Controller {
         
         this.distance = (rightChange + leftChange) / 2;
 
+        /*
         heading += 90;
         if(heading > 360) {
             heading -= 360;
         }
+        */
 
         this.xLocation += this.distance * Math.cos(Math.toRadians(heading));
         this.yLocation += this.distance * Math.sin(Math.toRadians(heading));

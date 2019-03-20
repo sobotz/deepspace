@@ -35,6 +35,8 @@ public class LiftSubsystem extends Subsystem {
   public TalonSRX liftTalonSlave;
   private PIDController liftPidController;
 
+  private double lastPosition = 0;
+
   private ArrayList<Integer> velocities = new ArrayList<Integer>();
   private Timer recordPeakVelocityTimer = new Timer();
   private boolean recordPeakVelocityStarted = false;
@@ -56,12 +58,12 @@ public class LiftSubsystem extends Subsystem {
     liftTalon.setNeutralMode(NeutralMode.Brake);
     liftTalonSlave.setNeutralMode(NeutralMode.Brake);
 
-   /* liftTalon.configForwardSoftLimitThreshold((int)inchesToTalonUnits(60));
+    liftTalon.configForwardSoftLimitThreshold((int)inchesToTalonUnits(80));
     liftTalon.configReverseSoftLimitThreshold(0);
 
     liftTalon.configForwardSoftLimitEnable(true);
     liftTalon.configReverseSoftLimitEnable(true);
-    */
+    
 
     liftTalon.config_kF(0, 0.05);
     liftTalon.config_kP(0, 0.02);
@@ -112,22 +114,24 @@ public class LiftSubsystem extends Subsystem {
     liftTalon.config_kI(0, liftPidController.getI());
     liftTalon.config_kD(0, liftPidController.getD());
 
-    if (liftTalon.getSensorCollection().isRevLimitSwitchClosed()) {
-      // reset();
-    }
+
   }
 
   public void control(boolean left,boolean right) {
 
-    double upSpeed = 0.4;
-    double downSpeed = -0.4;
+    double upSpeed = 0.3;
+    double downSpeed = -0.3;
 
     if(right){
+      lastPosition = liftTalon.getSelectedSensorPosition();
+
       liftTalon.set(ControlMode.PercentOutput, upSpeed);
     }else if(left){
+      lastPosition = liftTalon.getSelectedSensorPosition();
+
       liftTalon.set(ControlMode.PercentOutput, downSpeed);
     }else{
-      liftTalon.set(ControlMode.MotionMagic, liftTalon.getSelectedSensorPosition());
+      liftTalon.set(ControlMode.MotionMagic, lastPosition);
     }
     
     SmartDashboard.putNumber("TALON RAW VELOCITY", liftTalon.getSelectedSensorVelocity());
@@ -135,6 +139,8 @@ public class LiftSubsystem extends Subsystem {
 
   public void goTo(double position) {
     liftTalon.set(ControlMode.MotionMagic, inchesToTalonUnits(position));
+    lastPosition = liftTalon.getSelectedSensorPosition();
+
     SmartDashboard.putNumber("LIFT PID TARGET", liftTalon.getClosedLoopTarget());
   }
 

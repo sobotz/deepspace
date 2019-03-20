@@ -71,8 +71,11 @@ public class IntakeSubsystem extends Subsystem {
   dropTalon.configPeakOutputReverse(-0.3);
   dropTalon.configPeakOutputForward(0.3);
 
-  articulationTalon.setSensorPhase(true);
+  articulationTalon.setSensorPhase(false);
   articulationTalon.setNeutralMode(NeutralMode.Brake);
+
+  articulationTalon.configForwardSoftLimitThreshold(1000);
+
 
   intakePidController = new PIDController(0, 0, 0, new PIDSource() {
 
@@ -107,12 +110,12 @@ SmartDashboard.putData("INTAKE PID TUNER", intakePidController);
 
 
   public void control(double input,double input2,double input3,double input4){
-    ///articulationTalon.set(ControlMode.PercentOutput, input);
+   // articulationTalon.set(ControlMode.PercentOutput, input*-1);
     rollerTalon.set(ControlMode.PercentOutput, input2);
     rollerTalonSlave.set(ControlMode.PercentOutput,-input2);
     dropTalon.set(ControlMode.PercentOutput, input3-input4);
 
-    articulate(input);
+   articulate(input);
   }
 
   
@@ -135,6 +138,7 @@ SmartDashboard.putData("INTAKE PID TUNER", intakePidController);
   public void periodic() {
     SmartDashboard.putNumber("articulation VELOCITY", articulationTalon.getSelectedSensorVelocity());
     SmartDashboard.putNumber("articulation PID ERROR", articulationTalon.getClosedLoopError());
+    SmartDashboard.putNumber("articulation ENCODER POSITION ", articulationTalon.getSelectedSensorPosition());
 
 articulationTalon.config_kF(0, intakePidController.getF());
 articulationTalon.config_kP(0, intakePidController.getP());
