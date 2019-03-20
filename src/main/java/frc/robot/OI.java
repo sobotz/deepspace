@@ -25,7 +25,7 @@ public class OI {
   public int RSH3 = 75;
   public int RSC1 = 27;
   public int RSC2 = 56;
-  public int RSC3 = 84;
+  public int RSC3 = 78;
   public int FSC1 = 44;
   public int ZERO = 0;
 
