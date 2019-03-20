@@ -6,6 +6,27 @@ This year, we've switched to a command-based system, which means that we impleme
 
 For those looking in our code, the `autonomous` folder houses all of our autonomous paths for competition. The `navigation` folder contains the pure pursuit algorithm, and is implemented inside of the autonomous paths. The `subsystems` folder includes all of the components of the robot, and the `commands` folder implements the components instantiated in `subsystems`.
 
+## Pure Pursuit
+The pure pursuit algorithm enables us to drive in smooth curves during the autonomous period. Using calculus and a series of classes, we can map points in between points submitted to the function. 
+
+```
+this.distance = Math.abs((6*3.14)*(rPosition + lPosition/2)/360);
+this.xLocation += this.distance * Math.cos(heading);
+this.yLocation += this.distance * Math.sin(heading);
+robotPosition = new Point(this.xLocation, this.yLocation);
+```
+
+This section of the code calculates the current position of the robot using cosine, sine, and the distance travels by the encoders from the last point. Knowing the robot's location on the field allows us to calculate the next step and ensure that we can make it to the final point of the algorithm.
+
+```
+public double rateLimiter(double targetInput) {
+  double lastOutput = this.targetOutput;
+  return this.targetOutput += constrain((targetInput - lastOutput), -MAXCHANGE, MAXCHANGE);
+}
+```
+
+The rate limiter function limits the rate of acceleration of the robot to prevent it from crashing and to keep the motors from accelerating too fast. 
+
 ## Vision Processing
 Our vision processing utilizes a Limelight camera, which helps us identify retroreflective tape on the field, and also enables us to align the robot with the white tape lines in front of the elements.
 
