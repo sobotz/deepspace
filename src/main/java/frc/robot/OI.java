@@ -62,7 +62,8 @@ public class OI {
     buttonbox5.whenPressed(new liftGotoCommand(RSC1));
     buttonbox6.whenPressed(new liftGotoCommand(RSC2));
     buttonbox7.whenPressed(new liftGotoCommand(RSC3));
-    buttonbox8.whenPressed(new liftGotoCommand(ZERO));
+    buttonbox8.whenPressed(new liftGotoCommand(FSC1));
+    buttonbox9.whenPressed(new liftGotoCommand(ZERO));
 
     JoystickButton gearShiftButton = new JoystickButton(driverJoystick, 1);
     gearShiftButton.toggleWhenPressed(new ShiftGearCommand());
