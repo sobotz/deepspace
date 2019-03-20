@@ -7,6 +7,10 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PIDOutput;
+import edu.wpi.first.wpilibj.PIDSource;
+import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,6 +23,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.FollowerType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 /**
  * An example subsystem.  You can replace me with your own Subsystem.
@@ -35,6 +40,8 @@ public class IntakeSubsystem extends Subsystem {
   private Timer recordPeakVelocityTimer = new Timer();
   private boolean recordPeakVelocityStarted = false;
   private int peakVelocity = 0;
+
+  private PIDController intakePidController;
 
 
   public IntakeSubsystem() {
@@ -64,22 +71,48 @@ public class IntakeSubsystem extends Subsystem {
   dropTalon.configPeakOutputReverse(-0.3);
   dropTalon.configPeakOutputForward(0.3);
 
+  articulationTalon.setSensorPhase(true);
+  articulationTalon.setNeutralMode(NeutralMode.Brake);
+
+  intakePidController = new PIDController(0, 0, 0, new PIDSource() {
+
+    @Override
+    public void setPIDSourceType(PIDSourceType pidSource) {
+
+    }
+
+    @Override
+    public double pidGet() {
+      return 0;
+    }
+
+    @Override
+    public PIDSourceType getPIDSourceType() {
+      return null;
+    }
+  }, new PIDOutput() {
+
+    @Override
+    public void pidWrite(double output) {
+
+    }
+  });
 
 
 
-  articulationTalon.config_kF(0, liftPidController.getF());
-  articulationTalon.config_kP(0, liftPidController.getP());
-  articulationTalon.config_kI(0, liftPidController.getI());
-  articulationTalon.config_kD(0, liftPidController.getD());
+SmartDashboard.putData("INTAKE PID TUNER", intakePidController);
+ 
 
   }
 
 
   public void control(double input,double input2,double input3,double input4){
-    articulationTalon.set(ControlMode.PercentOutput, input);
+    ///articulationTalon.set(ControlMode.PercentOutput, input);
     rollerTalon.set(ControlMode.PercentOutput, input2);
     rollerTalonSlave.set(ControlMode.PercentOutput,-input2);
     dropTalon.set(ControlMode.PercentOutput, input3-input4);
+
+    articulate(input);
   }
 
   
@@ -100,7 +133,14 @@ public class IntakeSubsystem extends Subsystem {
 
   @Override
   public void periodic() {
-SmartDashboard.putNumber("articulation VELOCITY", articulationTalon.getSelectedSensorVelocity());
+    SmartDashboard.putNumber("articulation VELOCITY", articulationTalon.getSelectedSensorVelocity());
+    SmartDashboard.putNumber("articulation PID ERROR", articulationTalon.getClosedLoopError());
+
+articulationTalon.config_kF(0, intakePidController.getF());
+articulationTalon.config_kP(0, intakePidController.getP());
+articulationTalon.config_kI(0, intakePidController.getI());
+articulationTalon.config_kD(0, intakePidController.getD());
+
   }
 
 

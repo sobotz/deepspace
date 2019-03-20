@@ -63,6 +63,11 @@ public class LiftSubsystem extends Subsystem {
     liftTalon.configReverseSoftLimitEnable(true);
     */
 
+    liftTalon.config_kF(0, 0.05);
+    liftTalon.config_kP(0, 0.02);
+    liftTalon.config_kI(0, 0.0);
+    liftTalon.config_kD(0, 0.0);
+
     /// THIS IS A DUMMY Object !!! NEEDED only for testing !!!!!!!
     liftPidController = new PIDController(0, 0, 0, new PIDSource() {
 
@@ -112,20 +117,25 @@ public class LiftSubsystem extends Subsystem {
     }
   }
 
-  public void control(double input) {
-    if(Math.abs(input) < 0.01){
-      liftTalon.set(ControlMode.MotionMagic, liftTalon.getSelectedSensorPosition());
+  public void control(boolean left,boolean right) {
+
+    double upSpeed = 0.4;
+    double downSpeed = -0.4;
+
+    if(right){
+      liftTalon.set(ControlMode.PercentOutput, upSpeed);
+    }else if(left){
+      liftTalon.set(ControlMode.PercentOutput, downSpeed);
     }else{
-     input =  Math.pow(Math.abs(input), 2);
-      liftTalon.set(ControlMode.PercentOutput, input * -1);
+      liftTalon.set(ControlMode.MotionMagic, liftTalon.getSelectedSensorPosition());
     }
+    
     SmartDashboard.putNumber("TALON RAW VELOCITY", liftTalon.getSelectedSensorVelocity());
   }
 
   public void goTo(double position) {
     liftTalon.set(ControlMode.MotionMagic, inchesToTalonUnits(position));
     SmartDashboard.putNumber("LIFT PID TARGET", liftTalon.getClosedLoopTarget());
-    recordPeakVelocity();
   }
 
   public boolean onTarget(int margin) {

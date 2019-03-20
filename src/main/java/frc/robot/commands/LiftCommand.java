@@ -31,10 +31,7 @@ public class LiftCommand extends Command {
   // 1ft -> 45
   @Override
   protected void execute() {
-       /// Robot.m_lift.control(Robot.m_oi.operatorJoystick.getRawAxis(5));
-        if(Robot.m_oi.operatorJoystick.getRawButton(1)){
-          Robot.m_lift.reset();
-        }
+       Robot.m_lift.control(Robot.m_oi.operatorJoystick.getRawButton(5),Robot.m_oi.operatorJoystick.getRawButton(6));
   }
 
   // Make this return true when this Command no longer needs to run execute()

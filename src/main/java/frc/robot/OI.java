@@ -27,7 +27,7 @@ public class OI {
   public int RSC2 = 56;
   public int RSC3 = 84;
   public int FSC1 = 44;
-  public int ZERO = 4;
+  public int ZERO = 0;
 
   public Joystick driverJoystick = new Joystick(0);
   public Joystick operatorJoystick = new Joystick(1);
