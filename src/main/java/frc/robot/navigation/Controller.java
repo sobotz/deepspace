@@ -4,7 +4,6 @@ import frc.robot.Robot;
 
 public class Controller {
     
-    
     /*----------------------------------------------------------------------------*/
     /*                                                                       	  */
     /* DECLARATION OF THE PATH OBJECT      	                	             	  */
@@ -18,26 +17,22 @@ public class Controller {
     /* DECLARATION OF THE LOOK AHEAD VARAIBLES                 	             	  */
     /*                                                                       	  */
     /*----------------------------------------------------------------------------*/
-    
 
 	private int lookAheadPointIndex = 0;  		//index of the look ahead point
 	private Point lookAheadPoint = new Point(1,1);
-    private double lDistance = 6;               	//look ahead distance
+    private double lDistance = 18;               	//look ahead distance
     private Point robotPosition = new Point(0,0); 
     private Point closestPoint = null;  		//closest point
     
-
     /*----------------------------------------------------------------------------*/
     /*                                                                       	  */
     /* DECLARATION OF THE RATE LIMITER VARIABLES   	                          	  */
     /*                                                                       	  */
-    /*----------------------------------------------------------------------------*/
-    
+    /*----------------------------------------------------------------------------*/ 
 
     private double xLocation;
     private double yLocation;
     private double distance;
-    
     
     /*----------------------------------------------------------------------------*/
     /*                                                                         	  */
@@ -74,8 +69,6 @@ public class Controller {
     
     public boolean isFinished = false;
     
-    
-    
     public Controller(Point[] points, double weight_smooth, double tol) {
         
         double a = 1 - weight_smooth;
@@ -91,18 +84,14 @@ public class Controller {
         
     }
     
-    
-    
 	public boolean controlLoop(double leftChange, double rightChange, double heading) {
         
         this.distance = (rightChange + leftChange) / 2;
 
-        /*
         heading += 90;
         if(heading > 360) {
             heading -= 360;
         }
-        */
 
         System.out.println("[Heading: " + heading + "]");
 
