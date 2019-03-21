@@ -14,12 +14,14 @@ import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.ArticulationCommand;
 
 import java.util.ArrayList;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.FollowerType;
@@ -44,8 +46,12 @@ public class IntakeSubsystem extends Subsystem {
   private PIDController intakePidController;
 
 
-  private double wristMaxPosition = 1000;
-  private double wristPosition = 0;
+  private double wristMaxPosition = -2100;
+  private double armLastPosition = 0;
+
+  private double p_position = 0;
+
+  private double POSITION = 0.0;
 
 
   public IntakeSubsystem() {
@@ -66,8 +72,8 @@ public class IntakeSubsystem extends Subsystem {
   rollerTalonSlave.configFactoryDefault();
   wristTalon.configFactoryDefault();
 
-  articulationTalon.configPeakOutputReverse(-1);
-  articulationTalon.configPeakOutputForward(1);
+  articulationTalon.configPeakOutputReverse(-0.3);
+  articulationTalon.configPeakOutputForward(0.3);
 
   rollerTalon.configPeakOutputReverse(-0.4);
   rollerTalon.configPeakOutputForward(0.4);
@@ -78,11 +84,15 @@ public class IntakeSubsystem extends Subsystem {
   articulationTalon.setSensorPhase(false);
   articulationTalon.setNeutralMode(NeutralMode.Brake);
 
-  //articulationTalon.configForwardSoftLimitThreshold(1000);
+  articulationTalon.configReverseSoftLimitThreshold(-2200);
 
-  articulationTalon.configMotionCruiseVelocity(300, 30);
-  articulationTalon.configMotionAcceleration(300, 30);
+  articulationTalon.configReverseSoftLimitEnable(true);
 
+  articulationTalon.configMotionCruiseVelocity(1000, 30);
+  articulationTalon.configMotionAcceleration(1000, 30);
+  articulationTalon.configAllowableClosedloopError(0, 5);
+
+  articulationTalon.setInverted(true);
 
   intakePidController = new PIDController(0, 0, 0, new PIDSource() {
 
@@ -109,25 +119,52 @@ public class IntakeSubsystem extends Subsystem {
   });
 
   SmartDashboard.putData("INTAKE PID TUNER", intakePidController);
+  armLastPosition = articulationTalon.getSelectedSensorPosition();
+  POSITION = articulationTalon.getSelectedSensorPosition();
+  reset();
   }
 
 
   public void control(double input,double input2,double input3,double input4){
-   articulationTalon.set(ControlMode.PercentOutput, input*-1);
+  /// articulationTalon.set(ControlMode.PercentOutput, input*-1);
     rollerTalon.set(ControlMode.PercentOutput, input2);
     rollerTalonSlave.set(ControlMode.PercentOutput,-input2);
     wristTalon.set(ControlMode.PercentOutput, input3-input4);
 
-///  articulate(input);
+    articulateWrist(input);
   }
 
   
   public void articulateArms(double input){
-   articulationTalon.set(ControlMode.MotionMagic,1000);
+   articulationTalon.set(ControlMode.MotionMagic,input);
   }
 
-  public void articulateWrist(){
-    wristTalon.set(ControlMode.MotionMagic, demand);
+  public void articulateWrist(double input){
+
+    p_position = Math.abs(articulationTalon.getSelectedSensorPosition()/wristMaxPosition);
+    double r_position = p_position-1;
+
+      if(Robot.m_oi.operatorJoystick.getPOV() == 0){
+        armLastPosition = articulationTalon.getSelectedSensorPosition();
+        articulationTalon.set(ControlMode.MotionMagic,articulationTalon.getSelectedSensorPosition()+1500*Math.sqrt(p_position));
+      }else if(Robot.m_oi.operatorJoystick.getPOV() == 180){
+        articulationTalon.set(ControlMode.MotionMagic,articulationTalon.getSelectedSensorPosition()+1500*Math.sqrt(Math.abs(r_position))*-1);
+        armLastPosition = articulationTalon.getSelectedSensorPosition();
+      }else{
+        articulationTalon.set(ControlMode.MotionMagic,articulationTalon.getSelectedSensorPosition());
+      }
+    
+
+    SmartDashboard.putNumber("ARTICULATION F_POS", p_position);
+    SmartDashboard.putNumber("ARTICULATION R_POS", r_position);
+    SmartDashboard.putNumber("POS ", POSITION);
+
+  
+
+    SmartDashboard.putNumber("ARTICULATION POV", Robot.m_oi.operatorJoystick.getPOV());
+
+
+   /// wristMaxPosition  = wristMaxPosition-wristPosition;
   }
 
 
@@ -139,6 +176,10 @@ public class IntakeSubsystem extends Subsystem {
     }else{
       return false;
     }
+  }
+
+  public void reset(){
+    articulationTalon.setSelectedSensorPosition(0);
   }
 
   @Override
