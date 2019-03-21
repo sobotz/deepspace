@@ -18,8 +18,8 @@ public class Controller {
     /*                                                                       	  */
     /*----------------------------------------------------------------------------*/
 
-	private int lookAheadPointIndex = 0;  		//index of the look ahead point
-	private Point lookAheadPoint = new Point(1,1);
+	private int lookAheadPointIndex = 1;  		//index of the look ahead point
+	private Point lookAheadPoint = null;
     private double lDistance = 18;               	//look ahead distance
     private Point robotPosition = new Point(0,0); 
     private Point closestPoint = null;  		//closest point

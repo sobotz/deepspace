@@ -20,7 +20,7 @@ public class PathL2C4 extends CommandGroup {
   public PathL2C4(boolean type) {
     isPurePursuit = type;
     if (isPurePursuit) {
-      Point[] path = {new Point(1,13,0), new Point(1,157.25)};
+      Point[] path = {new Point(1,1,0), new Point(1,157.25)};
       addSequential(new PurePursuitCommand(path));
     } else {
       addSequential( new DriveToTargetCommand(156.25));

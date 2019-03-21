@@ -17,8 +17,8 @@ public class PurePursuitCommand extends Command {
   Point[] purePursuitPath;
   Controller purePursuit;
   private boolean isFinished = false;
-  private double lastLeftPostition = 0;
-  private double lastRightPosition = 0;
+  private double lastLeftEncoderTicks = 0;
+  private double lastRightEncoderTicks = 0;
 
   public PurePursuitCommand(Point[] path) {
     purePursuitPath = path;
@@ -29,21 +29,24 @@ public class PurePursuitCommand extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    Robot.m_drivesubsystem.ahrs.reset();
+    lastLeftEncoderTicks = Robot.m_drivesubsystem.frontLeftTalon.getSelectedSensorPosition();
+    lastRightEncoderTicks = Robot.m_drivesubsystem.frontRightTalon.getSelectedSensorPosition();
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    double leftChange = 0;
-    double rightChange = 0;
-
-    leftChange = Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontLeftTalon) - lastLeftPostition;
-    rightChange = Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontRightTalon) - lastRightPosition;
+    double newLeftEncoderTicks = Robot.m_drivesubsystem.frontLeftTalon.getSelectedSensorPosition();
+    double newRightEncoderTicks = Robot.m_drivesubsystem.frontRightTalon.getSelectedSensorPosition();
+    
+    double leftChange = Robot.m_drivesubsystem.talonUnitsToInches(newLeftEncoderTicks - lastLeftEncoderTicks);
+    double rightChange = Robot.m_drivesubsystem.talonUnitsToInches(newRightEncoderTicks - lastRightEncoderTicks);
 
     isFinished = purePursuit.controlLoop(leftChange, rightChange, Robot.m_drivesubsystem.ahrs.getYaw());
     
-    lastLeftPostition = Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontLeftTalon);
-    lastRightPosition = Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontRightTalon);
+    lastLeftEncoderTicks = newLeftEncoderTicks;
+    lastRightEncoderTicks = newRightEncoderTicks;
   }
 
   // Make this return true when this Command no longer needs to run execute()
