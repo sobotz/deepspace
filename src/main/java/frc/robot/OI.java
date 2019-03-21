@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.robot.autonomous.PathL2C4;
 import frc.robot.commands.AlignCommand;
+import frc.robot.commands.ArticulationCommand;
 import frc.robot.commands.ShiftGearCommand;
 import frc.robot.commands.liftGotoCommand;
 
@@ -49,12 +50,18 @@ public class OI {
     JoystickButton buttonbox8 = new JoystickButton(m_buttonbox, 8);
     JoystickButton buttonbox9 = new JoystickButton(m_buttonbox, 9);
 
-   /* bOperator.toggleWhenPressed(new liftGotoCommand(12));
-    xOperator.toggleWhenPressed(new liftGotoCommand(24));
+    
+    
+    aOperator.toggleWhenPressed(new ArticulationCommand(2000));
+    bOperator.toggleWhenPressed(new liftGotoCommand(1000));
+
+    /*
     yOperator.toggleWhenPressed(new liftGotoCommand(36));
     aOperator.toggleWhenPressed(new liftGotoCommand(0));
     */
     
+
+
     buttonbox1.toggleWhenPressed(new liftGotoCommand(HLVL1));
     buttonbox2.toggleWhenPressed(new liftGotoCommand(CSC1));
     buttonbox3.toggleWhenPressed(new liftGotoCommand(RSH2));

@@ -23,7 +23,7 @@ public class Controller {
 	private int lookAheadPointIndex = 0;  		//index of the look ahead point
 	private Point lookAheadPoint = new Point(1,1);
     private double lDistance = 6;               	//look ahead distance
-    private Point robotPosition = new Point(1,1); 
+    private Point robotPosition = new Point(0,0); 
     private Point closestPoint = null;  		//closest point
     
 
@@ -103,6 +103,8 @@ public class Controller {
             heading -= 360;
         }
         */
+
+        System.out.println("[Heading: " + heading + "]");
 
         this.xLocation += this.distance * Math.cos(Math.toRadians(heading));
         this.yLocation += this.distance * Math.sin(Math.toRadians(heading));

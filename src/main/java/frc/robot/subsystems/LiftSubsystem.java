@@ -119,8 +119,8 @@ public class LiftSubsystem extends Subsystem {
 
   public void control(boolean left,boolean right) {
 
-    double upSpeed = 0.3;
-    double downSpeed = -0.3;
+    double upSpeed = 0.2;
+    double downSpeed = -0.2;
 
     if(right){
       lastPosition = liftTalon.getSelectedSensorPosition();

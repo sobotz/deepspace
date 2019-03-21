@@ -39,9 +39,8 @@ public class PurePursuitCommand extends Command {
 
     leftChange = Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontLeftTalon) - lastLeftPostition;
     rightChange = Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontRightTalon) - lastRightPosition;
-    /*Robot.m_drivesubsystem.ahrs.getYaw()*/
 
-    isFinished = purePursuit.controlLoop(leftChange, rightChange, 90);
+    isFinished = purePursuit.controlLoop(leftChange, rightChange, Robot.m_drivesubsystem.ahrs.getYaw());
     
     lastLeftPostition = Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontLeftTalon);
     lastRightPosition = Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontRightTalon);

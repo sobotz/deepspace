@@ -34,7 +34,7 @@ public class IntakeSubsystem extends Subsystem {
   // here. Call these from Commands.
   public TalonSRX rollerTalon;
   public TalonSRX rollerTalonSlave;
-  TalonSRX dropTalon;
+  TalonSRX wristTalon;
 
   private ArrayList<Integer> velocities = new ArrayList<Integer>();
   private Timer recordPeakVelocityTimer = new Timer();
@@ -42,6 +42,10 @@ public class IntakeSubsystem extends Subsystem {
   private int peakVelocity = 0;
 
   private PIDController intakePidController;
+
+
+  private double wristMaxPosition = 1000;
+  private double wristPosition = 0;
 
 
   public IntakeSubsystem() {
@@ -52,7 +56,7 @@ public class IntakeSubsystem extends Subsystem {
     rollerTalonSlave = new TalonSRX(RobotMap.rollerMotorSlave);
 
 
-    dropTalon = new TalonSRX(RobotMap.dropMotor);
+    wristTalon = new TalonSRX(RobotMap.wristTalon);
 
     articulationTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative,	0, 30);
   ///  dropTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative,	0, 30);
@@ -60,21 +64,24 @@ public class IntakeSubsystem extends Subsystem {
   articulationTalon.configFactoryDefault();
   rollerTalon.configFactoryDefault();
   rollerTalonSlave.configFactoryDefault();
-  dropTalon.configFactoryDefault();
+  wristTalon.configFactoryDefault();
 
-  articulationTalon.configPeakOutputReverse(-0.3);
-  articulationTalon.configPeakOutputForward(0.3);
+  articulationTalon.configPeakOutputReverse(-1);
+  articulationTalon.configPeakOutputForward(1);
 
   rollerTalon.configPeakOutputReverse(-0.4);
   rollerTalon.configPeakOutputForward(0.4);
 
-  dropTalon.configPeakOutputReverse(-0.3);
-  dropTalon.configPeakOutputForward(0.3);
+  wristTalon.configPeakOutputReverse(-0.3);
+  wristTalon.configPeakOutputForward(0.3);
 
   articulationTalon.setSensorPhase(false);
   articulationTalon.setNeutralMode(NeutralMode.Brake);
 
-  articulationTalon.configForwardSoftLimitThreshold(1000);
+  //articulationTalon.configForwardSoftLimitThreshold(1000);
+
+  articulationTalon.configMotionCruiseVelocity(300, 30);
+  articulationTalon.configMotionAcceleration(300, 30);
 
 
   intakePidController = new PIDController(0, 0, 0, new PIDSource() {
@@ -101,29 +108,29 @@ public class IntakeSubsystem extends Subsystem {
     }
   });
 
-
-
-SmartDashboard.putData("INTAKE PID TUNER", intakePidController);
- 
-
+  SmartDashboard.putData("INTAKE PID TUNER", intakePidController);
   }
 
 
   public void control(double input,double input2,double input3,double input4){
-   // articulationTalon.set(ControlMode.PercentOutput, input*-1);
+   articulationTalon.set(ControlMode.PercentOutput, input*-1);
     rollerTalon.set(ControlMode.PercentOutput, input2);
     rollerTalonSlave.set(ControlMode.PercentOutput,-input2);
-    dropTalon.set(ControlMode.PercentOutput, input3-input4);
+    wristTalon.set(ControlMode.PercentOutput, input3-input4);
 
-   articulate(input);
+///  articulate(input);
   }
 
   
-  public void articulate(double input){
-    input =  Math.sin(input);
-    double peakVelocity = 600;
-    articulationTalon.set(ControlMode.Velocity, input*peakVelocity);
+  public void articulateArms(double input){
+   articulationTalon.set(ControlMode.MotionMagic,1000);
   }
+
+  public void articulateWrist(){
+    wristTalon.set(ControlMode.MotionMagic, demand);
+  }
+
+
 
 
   public boolean isZero(double input){

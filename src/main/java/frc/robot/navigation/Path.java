@@ -14,8 +14,8 @@ public class Path extends ArrayList<Point>{
 	@author ncabrera528@gmail.com(Nicholas Cabrera)
 	**/
 	private double maxVelocity;
-	private final double DEFAULTMAX = 10;
-	private final double DEFAULTACCELERATION = .5;
+	private final double DEFAULTMAX = 15;
+	private final double DEFAULTACCELERATION = 7;
 	private final double MAXCHANGE = DEFAULTACCELERATION * 0.02;
 	private double CURVE_SENSITIVITY_CONSTANT = .1;
 	private double fIndex = 0;
