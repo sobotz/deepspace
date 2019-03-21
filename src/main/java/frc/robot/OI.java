@@ -53,7 +53,7 @@ public class OI {
     
     
     aOperator.toggleWhenPressed(new ArticulationCommand(2000));
-    bOperator.toggleWhenPressed(new liftGotoCommand(1000));
+    bOperator.toggleWhenPressed(new ArticulationCommand(1000));
 
     /*
     yOperator.toggleWhenPressed(new liftGotoCommand(36));
