@@ -53,9 +53,9 @@ public class OI {
 
     
     
-    aOperator.toggleWhenPressed(new ArticulationCommand(2000));
+    /*aOperator.toggleWhenPressed(new ArticulationCommand(2000));
     bOperator.toggleWhenPressed(new ArticulationCommand(1000));
-
+*/
     /*
     yOperator.toggleWhenPressed(new liftGotoCommand(36));
     aOperator.toggleWhenPressed(new liftGotoCommand(0));
@@ -76,8 +76,7 @@ public class OI {
     JoystickButton gearShiftButton = new JoystickButton(driverJoystick, 1);
     gearShiftButton.toggleWhenPressed(new ShiftGearCommand());
 
-    JoystickButton deliverHatchButton = new JoystickButton(operatorJoystick, 5);
-    deliverHatchButton.toggleWhenPressed(new DeliverHatchCommand());
+    aOperator.toggleWhenPressed(new DeliverHatchCommand());
 
   }
 

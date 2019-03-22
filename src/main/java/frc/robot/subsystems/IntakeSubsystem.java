@@ -162,23 +162,23 @@ public class IntakeSubsystem extends Subsystem {
     rollerTalonSlave.set(ControlMode.PercentOutput,-rollerInput);
     wristTalon.set(ControlMode.PercentOutput, wristUp-wristDown);
 
-    articulateArms();
+    articulateArms(input);
 
     //articulateWrist(wristUp, wristDown);
   }
 
   
-  public void articulateArms(double input){
+  /*public void articulateArms(double input){
    articulationTalon.set(ControlMode.MotionMagic,input);
-  }
+  }*/
 
-  public void articulateArms(){
-      if(Robot.m_oi.operatorJoystick.getPOV() == 0){
+  public void articulateArms(double input){
+      if(input < 0.01){
         if(currentArmPosition <= 0){
           currentArmPosition += iPosition;
         }
         articulationTalon.set(ControlMode.MotionMagic,currentArmPosition);
-      }else if(Robot.m_oi.operatorJoystick.getPOV() == 180){
+      }else if(input > 0.01){
         if(currentArmPosition >= armsMaxPosition){
           currentArmPosition -= iPosition;
         }
