@@ -47,7 +47,9 @@ public class DriveSubsystem extends Subsystem {
     SpeedControllerGroup m_left, m_right;
     public DifferentialDrive m_drive;
     private DoubleSolenoid gearShifter;
+    private DoubleSolenoid hatchDelivery;
     private boolean gearShifterState = false;
+    private boolean hatchDeliveryState = false;
 
     public final AHRS ahrs = new AHRS(SPI.Port.kMXP);;
 
@@ -78,6 +80,7 @@ public class DriveSubsystem extends Subsystem {
 
     public DriveSubsystem() {
         gearShifter = new DoubleSolenoid(0, 1);
+        hatchDelivery = new DoubleSolenoid(2, 3);
         rotateToTargetInput = new RotateToTargetInput();
 
         rotateToTargetPID = new PIDController(rkP, rkI, rkD, rotateToTargetInput, new RotateToTargetOutput());
@@ -114,10 +117,8 @@ public class DriveSubsystem extends Subsystem {
         frontRightTalon.configPeakOutputReverse(-0.5);
         frontRightTalon.configPeakOutputForward(0.5);
 
-        frontLeftTalon.selectProfileSlot(0, 0);
-        frontRightTalon.selectProfileSlot(0, 0);
         talonsPIDTuner = new PIDController(0, 0, 0, new DriveToTargetInput(), new DriveToTargetOutput());
-        SmartDashboard.putData("Talon PID", talonsPIDTuner);
+        ///SmartDashboard.putData("Talon PID", talonsPIDTuner);
 
         m_left = new SpeedControllerGroup(frontLeftTalon, backLeftTalon);
         m_right = new SpeedControllerGroup(frontRightTalon, backRightTalon);
@@ -126,6 +127,19 @@ public class DriveSubsystem extends Subsystem {
         m_drive.setRightSideInverted(false);
 
         reset();
+
+
+        frontLeftTalon.config_kF(0, 0.02);
+        frontLeftTalon.config_kP(0, 0.05);
+        frontLeftTalon.config_kI(0, 0);
+        frontLeftTalon.config_kD(0, 0);
+
+
+        frontRightTalon.config_kF(0, 0.02);
+        frontRightTalon.config_kP(0, 0.05);
+        frontRightTalon.config_kI(0, 0);
+        frontRightTalon.config_kD(0, 0);
+
 
     }
 
@@ -139,25 +153,34 @@ public class DriveSubsystem extends Subsystem {
     @Override
     public void periodic() {
         seekTarget();
-        dashboard();
-        setTalonPIDGains(talonsPIDTuner.getF(), talonsPIDTuner.getP(), talonsPIDTuner.getI(), talonsPIDTuner.getD());
+        //dashboard();
+        ///setTalonPIDGains(talonsPIDTuner.getF(), talonsPIDTuner.getP(), talonsPIDTuner.getI(), talonsPIDTuner.getD());
 
     }
 
     public void manualDrive(double speed, double rotation) {
         double Mspeed = ((Robot.m_oi.driverJoystick.getRawAxis(3) - 1) / 2) * (-1);
         m_drive.setMaxOutput(Mspeed);
-        m_drive.arcadeDrive(speed * -1, rotation*-1);
+        m_drive.arcadeDrive(speed * -1, rotation);
     }
 
     public void shiftGear() {
-
         if (gearShifterState) {
-     gearShifter.set(DoubleSolenoid.Value.kForward);
+            gearShifter.set(DoubleSolenoid.Value.kForward);
             gearShifterState = false;
         } else {
             gearShifter.set(DoubleSolenoid.Value.kReverse);
             gearShifterState = true;
+        }
+    }
+
+    public void deliverHatch() {
+        if (hatchDeliveryState) {
+            hatchDelivery.set(DoubleSolenoid.Value.kForward);
+            hatchDeliveryState = false;
+        } else {
+            hatchDelivery.set(DoubleSolenoid.Value.kReverse);
+            hatchDeliveryState = true;
         }
     }
 
@@ -291,8 +314,7 @@ public class DriveSubsystem extends Subsystem {
         if (!driveToTargetPID.isEnabled()) {
             distanceCascadePID(0, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION,errorMargin);
         }
-        frontLeftTalon.selectProfileSlot(1, 0);
-        frontRightTalon.selectProfileSlot(1, 0);
+     
         backLeftTalon.follow(frontLeftTalon);
         backRightTalon.follow(frontRightTalon);
         double rightOutput = (driveToTargetOutput+rotateToTargetOutput);

@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.robot.autonomous.PathL2C4;
 import frc.robot.commands.AlignCommand;
 import frc.robot.commands.ArticulationCommand;
+import frc.robot.commands.DeliverHatchCommand;
 import frc.robot.commands.ShiftGearCommand;
 import frc.robot.commands.liftGotoCommand;
 
@@ -63,9 +64,9 @@ public class OI {
 
 
     buttonbox1.toggleWhenPressed(new liftGotoCommand(HLVL1));
-    buttonbox2.toggleWhenPressed(new liftGotoCommand(CSC1));
-    buttonbox3.toggleWhenPressed(new liftGotoCommand(RSH2));
-    buttonbox4.toggleWhenPressed(new liftGotoCommand(RSH3));
+    buttonbox2.toggleWhenPressed(new liftGotoCommand(RSH2));
+    buttonbox3.toggleWhenPressed(new liftGotoCommand(RSH3));
+    buttonbox4.toggleWhenPressed(new liftGotoCommand(CSC1));
     buttonbox5.toggleWhenPressed(new liftGotoCommand(RSC1));
     buttonbox6.toggleWhenPressed(new liftGotoCommand(RSC2));
     buttonbox7.toggleWhenPressed(new liftGotoCommand(RSC3));
@@ -74,6 +75,9 @@ public class OI {
 
     JoystickButton gearShiftButton = new JoystickButton(driverJoystick, 1);
     gearShiftButton.toggleWhenPressed(new ShiftGearCommand());
+
+    JoystickButton deliverHatchButton = new JoystickButton(driverJoystick, 2);
+    deliverHatchButton.toggleWhenPressed(new DeliverHatchCommand());
 
   }
 

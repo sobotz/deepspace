@@ -46,12 +46,22 @@ public class IntakeSubsystem extends Subsystem {
   private PIDController intakePidController;
 
 
-  private double wristMaxPosition = -2100;
+  private double armsMaxPosition = -2200;
   private double armLastPosition = 0;
 
   private double p_position = 0;
 
   private double POSITION = 0.0;
+
+  private double iPosition = 80;
+  private double currentArmPosition = 0;
+
+
+  private double wristMaxPosition = 2000;
+  private double wristLastPosition = 0;
+
+  private double currentWristPosition  = 0;
+  private double wristIPosition  = 50;
 
 
   public IntakeSubsystem() {
@@ -85,7 +95,6 @@ public class IntakeSubsystem extends Subsystem {
   articulationTalon.setNeutralMode(NeutralMode.Brake);
 
   articulationTalon.configReverseSoftLimitThreshold(-2200);
-
   articulationTalon.configReverseSoftLimitEnable(true);
 
   articulationTalon.configMotionCruiseVelocity(1000, 30);
@@ -93,6 +102,28 @@ public class IntakeSubsystem extends Subsystem {
   articulationTalon.configAllowableClosedloopError(0, 5);
 
   articulationTalon.setInverted(true);
+
+  articulationTalon.config_kF(0, 2);
+  articulationTalon.config_kP(0, 3);
+  articulationTalon.config_kI(0, 0);
+  articulationTalon.config_kD(0, 0);
+
+  wristTalon.setSensorPhase(false);
+  wristTalon.setNeutralMode(NeutralMode.Brake);
+
+  wristTalon.configReverseSoftLimitThreshold(-2200);
+  wristTalon.configReverseSoftLimitEnable(true);
+
+  wristTalon.configMotionCruiseVelocity(1000, 30);
+  wristTalon.configMotionAcceleration(1000, 30);
+  wristTalon.configAllowableClosedloopError(0, 5);
+
+  wristTalon.setInverted(true);
+
+  wristTalon.config_kF(0, 1);
+  wristTalon.config_kP(0, 1.5);
+  wristTalon.config_kI(0, 0);
+  wristTalon.config_kD(0, 0);
 
   intakePidController = new PIDController(0, 0, 0, new PIDSource() {
 
@@ -118,20 +149,22 @@ public class IntakeSubsystem extends Subsystem {
     }
   });
 
-  SmartDashboard.putData("INTAKE PID TUNER", intakePidController);
+ // SmartDashboard.putData("INTAKE PID TUNER", intakePidController);
   armLastPosition = articulationTalon.getSelectedSensorPosition();
   POSITION = articulationTalon.getSelectedSensorPosition();
   reset();
   }
 
 
-  public void control(double input,double input2,double input3,double input4){
+  public void control(double input,double rollerInput,double wristUp,double wristDown){
   /// articulationTalon.set(ControlMode.PercentOutput, input*-1);
-    rollerTalon.set(ControlMode.PercentOutput, input2);
-    rollerTalonSlave.set(ControlMode.PercentOutput,-input2);
-    wristTalon.set(ControlMode.PercentOutput, input3-input4);
+    rollerTalon.set(ControlMode.PercentOutput, rollerInput);
+    rollerTalonSlave.set(ControlMode.PercentOutput,-rollerInput);
+    wristTalon.set(ControlMode.PercentOutput, wristUp-wristDown);
 
-    articulateWrist(input);
+    articulateArms();
+
+    //articulateWrist(wristUp, wristDown);
   }
 
   
@@ -139,34 +172,39 @@ public class IntakeSubsystem extends Subsystem {
    articulationTalon.set(ControlMode.MotionMagic,input);
   }
 
-  public void articulateWrist(double input){
-
-    p_position = Math.abs(articulationTalon.getSelectedSensorPosition()/wristMaxPosition);
-    double r_position = p_position-1;
-
+  public void articulateArms(){
       if(Robot.m_oi.operatorJoystick.getPOV() == 0){
-        armLastPosition = articulationTalon.getSelectedSensorPosition();
-        articulationTalon.set(ControlMode.MotionMagic,articulationTalon.getSelectedSensorPosition()+1500*Math.sqrt(p_position));
+        if(currentArmPosition <= 0){
+          currentArmPosition += iPosition;
+        }
+        articulationTalon.set(ControlMode.MotionMagic,currentArmPosition);
       }else if(Robot.m_oi.operatorJoystick.getPOV() == 180){
-        articulationTalon.set(ControlMode.MotionMagic,articulationTalon.getSelectedSensorPosition()+1500*Math.sqrt(Math.abs(r_position))*-1);
-        armLastPosition = articulationTalon.getSelectedSensorPosition();
+        if(currentArmPosition >= armsMaxPosition){
+          currentArmPosition -= iPosition;
+        }
+        articulationTalon.set(ControlMode.MotionMagic,currentArmPosition);
       }else{
-        articulationTalon.set(ControlMode.MotionMagic,articulationTalon.getSelectedSensorPosition());
+        articulationTalon.set(ControlMode.MotionMagic,currentArmPosition);
       }
-    
 
-    SmartDashboard.putNumber("ARTICULATION F_POS", p_position);
-    SmartDashboard.putNumber("ARTICULATION R_POS", r_position);
-    SmartDashboard.putNumber("POS ", POSITION);
-
-  
-
-    SmartDashboard.putNumber("ARTICULATION POV", Robot.m_oi.operatorJoystick.getPOV());
-
-
-   /// wristMaxPosition  = wristMaxPosition-wristPosition;
+    //SmartDashboard.putNumber("ARTICULATION POV", Robot.m_oi.operatorJoystick.getPOV());
   }
 
+  public void articulateWrist(double up,double down){
+    if(up > 0.01){
+      if(currentWristPosition <= 0){
+        currentWristPosition += wristIPosition;
+      }
+      wristTalon.set(ControlMode.MotionMagic,currentWristPosition);
+    }else if(down > 0.01){
+      if(currentWristPosition >= wristMaxPosition){
+        currentWristPosition -= wristIPosition;
+      }
+      wristTalon.set(ControlMode.MotionMagic,currentWristPosition);
+    }else{
+      wristTalon.set(ControlMode.MotionMagic,currentWristPosition);
+    }
+  }
 
 
 
@@ -180,19 +218,17 @@ public class IntakeSubsystem extends Subsystem {
 
   public void reset(){
     articulationTalon.setSelectedSensorPosition(0);
+    wristTalon.setSelectedSensorPosition(0);
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("articulation VELOCITY", articulationTalon.getSelectedSensorVelocity());
-    SmartDashboard.putNumber("articulation PID ERROR", articulationTalon.getClosedLoopError());
-    SmartDashboard.putNumber("articulation ENCODER POSITION ", articulationTalon.getSelectedSensorPosition());
-
-articulationTalon.config_kF(0, intakePidController.getF());
-articulationTalon.config_kP(0, intakePidController.getP());
-articulationTalon.config_kI(0, intakePidController.getI());
-articulationTalon.config_kD(0, intakePidController.getD());
-
+   // SmartDashboard.putNumber("articulation VELOCITY", articulationTalon.getSelectedSensorVelocity());
+    //SmartDashboard.putNumber("articulation PID ERROR", articulationTalon.getClosedLoopError());
+  
+  
+    SmartDashboard.putNumber("Articulation  POSITION ", articulationTalon.getSelectedSensorPosition());
+    SmartDashboard.putNumber("WRIST POSITION", wristTalon.getSelectedSensorPosition());
   }
 
 

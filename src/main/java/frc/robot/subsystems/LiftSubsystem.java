@@ -59,10 +59,8 @@ public class LiftSubsystem extends Subsystem {
     liftTalonSlave.setNeutralMode(NeutralMode.Brake);
 
     liftTalon.configForwardSoftLimitThreshold((int)inchesToTalonUnits(80));
-    liftTalon.configReverseSoftLimitThreshold(0);
 
     liftTalon.configForwardSoftLimitEnable(true);
-    liftTalon.configReverseSoftLimitEnable(true);
     
 
     liftTalon.config_kF(0, 0.05);
@@ -94,7 +92,7 @@ public class LiftSubsystem extends Subsystem {
 
       }
     });
-    SmartDashboard.putData("LIFT PID", liftPidController);
+   // SmartDashboard.putData("LIFT PID", liftPidController);
     liftTalon.configMotionCruiseVelocity((int) velocityToTalonVelocity(36), 30);
     liftTalon.configMotionAcceleration((int) velocityToTalonVelocity(36), 30);
 
@@ -109,12 +107,12 @@ public class LiftSubsystem extends Subsystem {
     SmartDashboard.putNumber("LIFT PID ERROR", liftTalon.getClosedLoopError());
     SmartDashboard.putNumber("INCHES", talonUnitsToInches());
     */
-    liftTalon.config_kF(0, liftPidController.getF());
+   /* liftTalon.config_kF(0, liftPidController.getF());
     liftTalon.config_kP(0, liftPidController.getP());
     liftTalon.config_kI(0, liftPidController.getI());
     liftTalon.config_kD(0, liftPidController.getD());
 
-
+*/
   }
 
   public void control(boolean left,boolean right) {
@@ -134,14 +132,14 @@ public class LiftSubsystem extends Subsystem {
       liftTalon.set(ControlMode.MotionMagic, lastPosition);
     }
     
-    SmartDashboard.putNumber("TALON RAW VELOCITY", liftTalon.getSelectedSensorVelocity());
+    ///SmartDashboard.putNumber("TALON RAW VELOCITY", liftTalon.getSelectedSensorVelocity());
   }
 
   public void goTo(double position) {
     liftTalon.set(ControlMode.MotionMagic, inchesToTalonUnits(position));
     lastPosition = liftTalon.getSelectedSensorPosition();
 
-    SmartDashboard.putNumber("LIFT PID TARGET", liftTalon.getClosedLoopTarget());
+    //SmartDashboard.putNumber("LIFT PID TARGET", liftTalon.getClosedLoopTarget());
   }
 
   public boolean onTarget(int margin) {
@@ -196,7 +194,7 @@ public class LiftSubsystem extends Subsystem {
           peakVelocity = liftTalon.getSelectedSensorVelocity()/4096;
         }
       } else {
-        SmartDashboard.putNumber("PEAK VELOCITY", peakVelocity);
+       /// SmartDashboard.putNumber("PEAK VELOCITY", peakVelocity);
         recordPeakVelocityStarted = false;
       }
     }
