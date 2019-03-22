@@ -9,7 +9,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import frc.robot.autonomous.PathL2C4;
+import frc.robot.autonomous.*;
 import frc.robot.commands.AlignCommand;
 import frc.robot.commands.ArticulationCommand;
 import frc.robot.commands.DeliverHatchCommand;

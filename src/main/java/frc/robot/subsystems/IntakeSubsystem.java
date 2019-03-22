@@ -160,9 +160,13 @@ public class IntakeSubsystem extends Subsystem {
   /// articulationTalon.set(ControlMode.PercentOutput, input*-1);
     rollerTalon.set(ControlMode.PercentOutput, rollerInput);
     rollerTalonSlave.set(ControlMode.PercentOutput,-rollerInput);
-    wristTalon.set(ControlMode.PercentOutput, wristUp-wristDown);
+    //wristTalon.set(ControlMode.PercentOutput, wristUp-wristDown);
 
     articulateArms(input);
+
+    SmartDashboard.putNumber("Articulation INput ", input);
+    SmartDashboard.putNumber("wristUp", wristUp);
+    SmartDashboard.putNumber("wristDown", wristDown);
 
     //articulateWrist(wristUp, wristDown);
   }
