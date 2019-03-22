@@ -76,7 +76,7 @@ public class OI {
     JoystickButton gearShiftButton = new JoystickButton(driverJoystick, 1);
     gearShiftButton.toggleWhenPressed(new ShiftGearCommand());
 
-    JoystickButton deliverHatchButton = new JoystickButton(driverJoystick, 2);
+    JoystickButton deliverHatchButton = new JoystickButton(operatorJoystick, 5);
     deliverHatchButton.toggleWhenPressed(new DeliverHatchCommand());
 
   }
