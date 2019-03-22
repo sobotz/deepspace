@@ -111,14 +111,13 @@ public class IntakeSubsystem extends Subsystem {
   wristTalon.setSensorPhase(false);
   wristTalon.setNeutralMode(NeutralMode.Brake);
 
-  wristTalon.configReverseSoftLimitThreshold(-2200);
+  wristTalon.configReverseSoftLimitThreshold(-190000);
   wristTalon.configReverseSoftLimitEnable(true);
 
   wristTalon.configMotionCruiseVelocity(1000, 30);
   wristTalon.configMotionAcceleration(1000, 30);
   wristTalon.configAllowableClosedloopError(0, 5);
 
-  wristTalon.setInverted(true);
 
   wristTalon.config_kF(0, 1);
   wristTalon.config_kP(0, 1.5);
@@ -160,7 +159,7 @@ public class IntakeSubsystem extends Subsystem {
   /// articulationTalon.set(ControlMode.PercentOutput, input*-1);
     rollerTalon.set(ControlMode.PercentOutput, rollerInput);
     rollerTalonSlave.set(ControlMode.PercentOutput,-rollerInput);
-    //wristTalon.set(ControlMode.PercentOutput, wristUp-wristDown);
+    wristTalon.set(ControlMode.PercentOutput, wristUp-wristDown);
 
     articulateArms(input);
 
