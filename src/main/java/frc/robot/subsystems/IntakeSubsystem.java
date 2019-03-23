@@ -99,7 +99,7 @@ public class IntakeSubsystem extends Subsystem {
 
   articulationTalon.configMotionCruiseVelocity(1000, 30);
   articulationTalon.configMotionAcceleration(1000, 30);
-  articulationTalon.configAllowableClosedloopError(0, 5);
+  articulationTalon.configAllowableClosedloopError(0, 100);
 
   articulationTalon.setInverted(true);
 
@@ -114,9 +114,12 @@ public class IntakeSubsystem extends Subsystem {
   wristTalon.configReverseSoftLimitThreshold(-190000);
   wristTalon.configReverseSoftLimitEnable(true);
 
+  /*wristTalon.configForwardSoftLimitThreshold(10000);
+  wristTalon.configForwardSoftLimitEnable(true);
+    */
   wristTalon.configMotionCruiseVelocity(1000, 30);
   wristTalon.configMotionAcceleration(1000, 30);
-  wristTalon.configAllowableClosedloopError(0, 5);
+  wristTalon.configAllowableClosedloopError(0, 5000);
 
 
   wristTalon.config_kF(0, 1);
@@ -190,18 +193,38 @@ public class IntakeSubsystem extends Subsystem {
         articulationTalon.set(ControlMode.MotionMagic,currentArmPosition);
       }
 
+      /*
+      if(Math.abs(input) > 0.01){
+        if(input < 0){
+          if(currentArmPosition <= 0){
+            currentArmPosition += iPosition;
+          }
+          articulationTalon.set(ControlMode.MotionMagic,currentArmPosition);
+        }
+        else if(input > 0){
+          if(currentArmPosition >= armsMaxPosition){
+            currentArmPosition -= iPosition;
+          }
+          articulationTalon.set(ControlMode.MotionMagic,currentArmPosition);
+        }
+        
+      }else{
+        articulationTalon.set(ControlMode.MotionMagic,currentArmPosition);
+      }
+      */
+
     //SmartDashboard.putNumber("ARTICULATION POV", Robot.m_oi.operatorJoystick.getPOV());
   }
 
   public void articulateWrist(double up,double down){
     if(up > 0.01){
       if(currentWristPosition <= 0){
-        currentWristPosition += wristIPosition;
+        currentWristPosition -= wristIPosition;
       }
       wristTalon.set(ControlMode.MotionMagic,currentWristPosition);
     }else if(down > 0.01){
       if(currentWristPosition >= wristMaxPosition){
-        currentWristPosition -= wristIPosition;
+        currentWristPosition += wristIPosition;
       }
       wristTalon.set(ControlMode.MotionMagic,currentWristPosition);
     }else{
