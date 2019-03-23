@@ -130,13 +130,13 @@ public class DriveSubsystem extends Subsystem {
 
 
         frontLeftTalon.config_kF(0, 0.02);
-        frontLeftTalon.config_kP(0, 0.05);
+        frontLeftTalon.config_kP(0, 0.5);
         frontLeftTalon.config_kI(0, 0);
         frontLeftTalon.config_kD(0, 0);
 
 
         frontRightTalon.config_kF(0, 0.02);
-        frontRightTalon.config_kP(0, 0.05);
+        frontRightTalon.config_kP(0, 0.5);
         frontRightTalon.config_kI(0, 0);
         frontRightTalon.config_kD(0, 0);
 

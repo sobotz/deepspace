@@ -138,7 +138,6 @@ public class LiftSubsystem extends Subsystem {
   public void goTo(double position) {
     liftTalon.set(ControlMode.MotionMagic, inchesToTalonUnits(position));
     lastPosition = liftTalon.getSelectedSensorPosition();
-
     //SmartDashboard.putNumber("LIFT PID TARGET", liftTalon.getClosedLoopTarget());
   }
 

@@ -61,7 +61,7 @@ public class IntakeSubsystem extends Subsystem {
   private double wristLastPosition = 0;
 
   private double currentWristPosition  = 0;
-  private double wristIPosition  = 50;
+  private double wristIPosition  = 5000;
 
 
   public IntakeSubsystem() {
@@ -103,8 +103,8 @@ public class IntakeSubsystem extends Subsystem {
 
   articulationTalon.setInverted(true);
 
-  articulationTalon.config_kF(0, 2);
-  articulationTalon.config_kP(0, 3);
+  articulationTalon.config_kF(0, 1);
+  articulationTalon.config_kP(0, 1.5);
   articulationTalon.config_kI(0, 0);
   articulationTalon.config_kD(0, 0);
 
@@ -114,16 +114,16 @@ public class IntakeSubsystem extends Subsystem {
   wristTalon.configReverseSoftLimitThreshold(-190000);
   wristTalon.configReverseSoftLimitEnable(true);
 
-  /*wristTalon.configForwardSoftLimitThreshold(10000);
-  wristTalon.configForwardSoftLimitEnable(true);
-    */
+  //wristTalon.configForwardSoftLimitThreshold(10000);
+  //wristTalon.configForwardSoftLimitEnable(true);
+  
   wristTalon.configMotionCruiseVelocity(1000, 30);
   wristTalon.configMotionAcceleration(1000, 30);
   wristTalon.configAllowableClosedloopError(0, 5000);
 
 
-  wristTalon.config_kF(0, 1);
-  wristTalon.config_kP(0, 1.5);
+  wristTalon.config_kF(0, 0.1);
+  wristTalon.config_kP(0, 0.05);
   wristTalon.config_kI(0, 0);
   wristTalon.config_kD(0, 0);
 
@@ -160,9 +160,9 @@ public class IntakeSubsystem extends Subsystem {
 
   public void control(double input,double rollerInput,double wristUp,double wristDown){
   /// articulationTalon.set(ControlMode.PercentOutput, input*-1);
-    rollerTalon.set(ControlMode.PercentOutput, rollerInput);
-    rollerTalonSlave.set(ControlMode.PercentOutput,-rollerInput);
-    wristTalon.set(ControlMode.PercentOutput, wristUp-wristDown);
+    rollerTalon.set(ControlMode.PercentOutput, rollerInput*-1);
+    rollerTalonSlave.set(ControlMode.PercentOutput,rollerInput);
+   wristTalon.set(ControlMode.PercentOutput, wristUp-wristDown);
 
     articulateArms(input);
 
@@ -170,7 +170,7 @@ public class IntakeSubsystem extends Subsystem {
     SmartDashboard.putNumber("wristUp", wristUp);
     SmartDashboard.putNumber("wristDown", wristDown);
 
-    //articulateWrist(wristUp, wristDown);
+   /// articulateWrist(wristUp, wristDown);
   }
 
   
@@ -179,6 +179,8 @@ public class IntakeSubsystem extends Subsystem {
   }*/
 
   public void articulateArms(double input){
+
+    /*
       if(input < 0.01){
         if(currentArmPosition <= 0){
           currentArmPosition += iPosition;
@@ -192,8 +194,9 @@ public class IntakeSubsystem extends Subsystem {
       }else{
         articulationTalon.set(ControlMode.MotionMagic,currentArmPosition);
       }
+      */
 
-      /*
+      
       if(Math.abs(input) > 0.01){
         if(input < 0){
           if(currentArmPosition <= 0){
@@ -211,7 +214,7 @@ public class IntakeSubsystem extends Subsystem {
       }else{
         articulationTalon.set(ControlMode.MotionMagic,currentArmPosition);
       }
-      */
+      
 
     //SmartDashboard.putNumber("ARTICULATION POV", Robot.m_oi.operatorJoystick.getPOV());
   }
@@ -219,17 +222,19 @@ public class IntakeSubsystem extends Subsystem {
   public void articulateWrist(double up,double down){
     if(up > 0.01){
       if(currentWristPosition <= 0){
-        currentWristPosition -= wristIPosition;
+        currentWristPosition += wristIPosition;
       }
       wristTalon.set(ControlMode.MotionMagic,currentWristPosition);
     }else if(down > 0.01){
       if(currentWristPosition >= wristMaxPosition){
-        currentWristPosition += wristIPosition;
+        currentWristPosition -= wristIPosition;
       }
       wristTalon.set(ControlMode.MotionMagic,currentWristPosition);
     }else{
       wristTalon.set(ControlMode.MotionMagic,currentWristPosition);
     }
+
+    SmartDashboard.putNumber("currentWristPosition", currentWristPosition);
   }
 
 
