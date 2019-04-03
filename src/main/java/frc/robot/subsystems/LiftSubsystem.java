@@ -58,7 +58,7 @@ public class LiftSubsystem extends Subsystem {
     liftTalon.setNeutralMode(NeutralMode.Brake);
     liftTalonSlave.setNeutralMode(NeutralMode.Brake);
 
-    liftTalon.configForwardSoftLimitThreshold((int)inchesToTalonUnits(80));
+    liftTalon.configForwardSoftLimitThreshold((int)inchesToTalonUnits(78));
 
     liftTalon.configForwardSoftLimitEnable(true);
     
