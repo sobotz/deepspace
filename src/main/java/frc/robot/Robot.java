@@ -7,8 +7,16 @@
 
 package frc.robot;
 
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
+
+import edu.wpi.cscore.CvSink;
+import edu.wpi.cscore.CvSource;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
+
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -27,10 +35,10 @@ import frc.robot.subsystems.*;
 public class Robot extends TimedRobot {
   // public static ExampleSubsystem m_subsystem = new ExampleSubsystem();
   public static OI m_oi;
+  public static PowerDistributionPanel m_pdp;
   public static DriveSubsystem m_drivesubsystem;
   public static IntakeSubsystem m_intake;
   public static LiftSubsystem m_lift;
-  public static PowerDistributionPanel m_pdp;
 
 
   Command m_autonomousCommand;
@@ -46,6 +54,7 @@ public class Robot extends TimedRobot {
     m_intake = new IntakeSubsystem();
     m_lift = new LiftSubsystem();
     m_oi = new OI();
+    m_pdp = new PowerDistributionPanel();
     // starting from L1
     m_chooser.addDefault("Path L1R1L (Pure Pursuit)", new PathL1R1L(true));
     m_chooser.addObject("Path L1R1L (Regular)", new PathL1R1L(false));
@@ -69,7 +78,14 @@ public class Robot extends TimedRobot {
     // m_chooser.setDefaultOption("Default Auto", new ExampleCommand());
     // chooser.addOption("My Auto", new MyAutoCommand());
     SmartDashboard.putData("Auto mode", m_chooser);
-  }
+
+   /* new Thread(() -> {
+      UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+      camera.setResolution(160, 120);
+  }).start();
+  */
+}
+  
 
   /**
    * This function is called every robot packet, no matter the mode. Use
@@ -81,6 +97,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    System.out.println("Back right motor current: " + m_pdp.getCurrent(0));
+    System.out.println("Back left motor current: " + m_pdp.getCurrent(15));
+    System.out.println("Front right motor current: " + m_pdp.getCurrent(1));
+    System.out.println("Front left motor current: " + m_pdp.getCurrent(14));
+    System.out.println("");
   }
 
   /**
@@ -152,11 +173,6 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     Scheduler.getInstance().run();
-    double back_right_motor_current = m_pdp.getCurrent(0);
-    double back_left_motor_current = m_pdp.getCurrent(15);
-
-    double front_right_motor_current = m_pdp.getCurrent(1);
-    double front_left_motor_current = m_pdp.getCurrent(14);
   }
 
   /**
