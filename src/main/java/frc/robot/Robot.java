@@ -44,7 +44,6 @@ public class Robot extends TimedRobot {
 
   Command m_autonomousCommand;
   SendableChooser<Command> m_chooser = new SendableChooser<>();
-  SendableChooser<Command> m_logging = new SendableChooser<>();
 
   /**
    * This function is run when the robot is first started up and should be
@@ -82,7 +81,6 @@ public class Robot extends TimedRobot {
     // chooser.addOption("My Auto", new MyAutoCommand());
     SmartDashboard.putData("Auto mode", m_chooser);
 
-    log = SmartDashboard.getBoolean("Logging", false);
 
    /* new Thread(() -> {
       UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
@@ -102,7 +100,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    if(log) {
       System.out.println("Back right motor current: " + m_pdp.getCurrent(0));
       System.out.println("Back left motor current: " + m_pdp.getCurrent(15));
       System.out.println("Front right motor current: " + m_pdp.getCurrent(1));
@@ -110,7 +107,6 @@ public class Robot extends TimedRobot {
       System.out.println("PDP Voltage: " + m_pdp.getVoltage());
       System.out.println("PDP Temperature: " + m_pdp.getTemperature());
       System.out.println("");
-    }
   }
 
   /**
