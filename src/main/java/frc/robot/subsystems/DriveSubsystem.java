@@ -9,6 +9,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
@@ -49,6 +50,7 @@ public class DriveSubsystem extends Subsystem {
     private DoubleSolenoid gearShifter;
     private DoubleSolenoid hatchDelivery;
     private boolean gearShifterState = false;
+    private DigitalInput hatchSwitch;
     private boolean hatchDeliveryState = false;
 
     public final AHRS ahrs = new AHRS(SPI.Port.kMXP);;
@@ -81,6 +83,7 @@ public class DriveSubsystem extends Subsystem {
     public DriveSubsystem() {
         gearShifter = new DoubleSolenoid(0, 1);
         hatchDelivery = new DoubleSolenoid(2, 3);
+        hatchSwitch = new DigitalInput(0);
         rotateToTargetInput = new RotateToTargetInput();
 
         rotateToTargetPID = new PIDController(rkP, rkI, rkD, rotateToTargetInput, new RotateToTargetOutput());
@@ -175,7 +178,10 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public void deliverHatch() {
-        if (hatchDeliveryState) {
+        if(hatchSwitch.get()) {
+            hatchDelivery.set(DoubleSolenoid.Value.kForward);
+            hatchDeliveryState = false;
+        } else if (hatchDeliveryState) {
             hatchDelivery.set(DoubleSolenoid.Value.kForward);
             hatchDeliveryState = false;
         } else {
