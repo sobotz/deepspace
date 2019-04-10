@@ -101,6 +101,8 @@ public class Robot extends TimedRobot {
     System.out.println("Back left motor current: " + m_pdp.getCurrent(15));
     System.out.println("Front right motor current: " + m_pdp.getCurrent(1));
     System.out.println("Front left motor current: " + m_pdp.getCurrent(14));
+    System.out.println("PDP Voltage: " + m_pdp.getVoltage());
+    System.out.println("PDP Temperature: " + m_pdp.getTemperature());
     System.out.println("");
   }
 
