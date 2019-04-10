@@ -39,10 +39,12 @@ public class Robot extends TimedRobot {
   public static DriveSubsystem m_drivesubsystem;
   public static IntakeSubsystem m_intake;
   public static LiftSubsystem m_lift;
+  private boolean log;
 
 
   Command m_autonomousCommand;
   SendableChooser<Command> m_chooser = new SendableChooser<>();
+  SendableChooser<Command> m_logging = new SendableChooser<>();
 
   /**
    * This function is run when the robot is first started up and should be
@@ -74,10 +76,13 @@ public class Robot extends TimedRobot {
     m_chooser.addObject("Path L3R1R (Regular)", new PathL3R1R(false));
     m_chooser.addObject("Path L3C6 (Pure Pursuit)", new PathL3C6(true));
     m_chooser.addObject("Path L3C6 (Regular)", new PathL3C6(false));
+
     
     // m_chooser.setDefaultOption("Default Auto", new ExampleCommand());
     // chooser.addOption("My Auto", new MyAutoCommand());
     SmartDashboard.putData("Auto mode", m_chooser);
+
+    log = SmartDashboard.getBoolean("Logging", false);
 
    /* new Thread(() -> {
       UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
@@ -97,13 +102,15 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    System.out.println("Back right motor current: " + m_pdp.getCurrent(0));
-    System.out.println("Back left motor current: " + m_pdp.getCurrent(15));
-    System.out.println("Front right motor current: " + m_pdp.getCurrent(1));
-    System.out.println("Front left motor current: " + m_pdp.getCurrent(14));
-    System.out.println("PDP Voltage: " + m_pdp.getVoltage());
-    System.out.println("PDP Temperature: " + m_pdp.getTemperature());
-    System.out.println("");
+    if(log) {
+      System.out.println("Back right motor current: " + m_pdp.getCurrent(0));
+      System.out.println("Back left motor current: " + m_pdp.getCurrent(15));
+      System.out.println("Front right motor current: " + m_pdp.getCurrent(1));
+      System.out.println("Front left motor current: " + m_pdp.getCurrent(14));
+      System.out.println("PDP Voltage: " + m_pdp.getVoltage());
+      System.out.println("PDP Temperature: " + m_pdp.getTemperature());
+      System.out.println("");
+    }
   }
 
   /**
