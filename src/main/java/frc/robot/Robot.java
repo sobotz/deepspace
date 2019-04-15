@@ -40,6 +40,8 @@ public class Robot extends TimedRobot {
   public static IntakeSubsystem m_intake;
   public static LiftSubsystem m_lift;
   private boolean log;
+  private int time = 0;
+  private int milliseconds = 0;
 
 
   Command m_autonomousCommand;
@@ -100,6 +102,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    if (time%10 == 0) {
+      milliseconds = milliseconds + 15;
+      System.out.println("Time Stamp: " + milliseconds);
       System.out.println("Back right motor current: " + m_pdp.getCurrent(0));
       System.out.println("Back left motor current: " + m_pdp.getCurrent(15));
       System.out.println("Front right motor current: " + m_pdp.getCurrent(1));
@@ -107,6 +112,8 @@ public class Robot extends TimedRobot {
       System.out.println("PDP Voltage: " + m_pdp.getVoltage());
       System.out.println("PDP Temperature: " + m_pdp.getTemperature());
       System.out.println("");
+    }
+    time++;
   }
 
   /**
