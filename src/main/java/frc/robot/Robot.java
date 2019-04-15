@@ -102,16 +102,21 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    if (time%10 == 0) {
+    if (time%100 == 0) {
       milliseconds = milliseconds + 15;
       System.out.println("Time Stamp: " + milliseconds);
-      System.out.println("Back right motor current: " + m_pdp.getCurrent(0));
-      System.out.println("Back left motor current: " + m_pdp.getCurrent(15));
-      System.out.println("Front right motor current: " + m_pdp.getCurrent(1));
-      System.out.println("Front left motor current: " + m_pdp.getCurrent(14));
+      System.out.println("Motor (Drive, Back Right): " + m_pdp.getCurrent(0));
+      System.out.println("Motor (Drive, Back Left): " + m_pdp.getCurrent(15));
+      System.out.println("Motor (Drive, Front Right): " + m_pdp.getCurrent(1));
+      System.out.println("Motor (Drive, Front Left): " + m_pdp.getCurrent(14));
+      System.out.println("Motor (Intake, Articulation): " + m_pdp.getCurrent(13));
+      System.out.println("Motor (Intake, Roller): " + m_pdp.getCurrent(12));
+      System.out.println("Motor (Intake, Roller Slave): " + m_pdp.getCurrent(9));
+      System.out.println("Motor (Intake, Wrist)" + m_pdp.getCurrent(7));
+      System.out.println("Motor (Lift, Lift)" + m_pdp.getCurrent(4));
+      System.out.println("Motor (Lift, Lift Slave)" + m_pdp.getCurrent(5));
       System.out.println("PDP Voltage: " + m_pdp.getVoltage());
-      System.out.println("PDP Temperature: " + m_pdp.getTemperature());
-      System.out.println("");
+      System.out.println("PDP Temperature: " + ((m_pdp.getTemperature()*9/5)+32));
     }
     time++;
   }
