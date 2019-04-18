@@ -1,12 +1,8 @@
 package frc.robot.navigation;
-import java.util.HashMap;
 
-import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
 public class Controller {
-    
     
     /*----------------------------------------------------------------------------*/
     /*                                                                       	  */
@@ -21,26 +17,22 @@ public class Controller {
     /* DECLARATION OF THE LOOK AHEAD VARAIBLES                 	             	  */
     /*                                                                       	  */
     /*----------------------------------------------------------------------------*/
-    
 
-	private int lookAheadPointIndex;  		//index of the look ahead point
-	private Point lookAheadPoint;
-    private double lDistance = 6;               	//look ahead distance
-    private Point robotPosition = new Point(1,1); 
+	private int lookAheadPointIndex = 1;  		//index of the look ahead point
+	private Point lookAheadPoint = null;
+    private double lDistance = 18;               	//look ahead distance
+    private Point robotPosition = new Point(0,0); 
     private Point closestPoint = null;  		//closest point
     
-
     /*----------------------------------------------------------------------------*/
     /*                                                                       	  */
     /* DECLARATION OF THE RATE LIMITER VARIABLES   	                          	  */
     /*                                                                       	  */
-    /*----------------------------------------------------------------------------*/
-    
+    /*----------------------------------------------------------------------------*/ 
 
     private double xLocation;
     private double yLocation;
     private double distance;
-    
     
     /*----------------------------------------------------------------------------*/
     /*                                                                         	  */
@@ -74,11 +66,8 @@ public class Controller {
     //private double fbR;             //Right feedback term
     //private Double Left;
 	//private Double Right;
-    //private PIDController pid;
     
     public boolean isFinished = false;
-    
-    
     
     public Controller(Point[] points, double weight_smooth, double tol) {
         
@@ -90,66 +79,107 @@ public class Controller {
 
         this.genPath = this.genPath.smoother(a, weight_smooth, tol);
 
+        
+        for(Point x: genPath) {
+            System.out.println(x.toString());
+        }
+
 		genPath.calculatePointMetrix();
 		genPath.adjustTargetVelocityForDeceleration();
-		
-		this.lookAheadPointIndex = 0;
-		this.lookAheadPoint = new Point(genPath.get(lookAheadPointIndex).getX(), genPath.get(lookAheadPointIndex).getY());
-        
-        for(Point x : genPath) {
-            System.out.println(x);
-        }
-        
         
     }
     
-    
-    
-	public boolean controlLoop(double lPosition, double rPosition, double heading) {
+	public boolean controlLoop(double leftChange, double rightChange, double heading) {
         
-        this.distance = Math.abs((6*3.14)*(rPosition + lPosition/2)/360);
-        this.xLocation += this.distance * Math.cos(heading);
-        this.yLocation += this.distance * Math.sin(heading);
-        robotPosition = new Point(this.xLocation, this.yLocation);
-            
-        this.lookAheadPoint = genPath.get(genPath.findLookAheadIndex(this.lDistance, this.robotPosition, this.lookAheadPointIndex));
+        this.distance = (rightChange + leftChange) / 2;
 
-        this.curvature = Point.curvature(this.lDistance, robotPosition, heading, this.lookAheadPoint);
-
-        this.closestPoint = genPath.get(genPath.closestPoint(robotPosition, 0));
-			
-        this.targetVelocity = genPath.rateLimiter(this.closestPoint.getVel());
-            
-        this.targetLeft = (this.targetVelocity * (2 + (this.curvature * this.trackWidth))) / 2;
-        this.targetRight = (this.targetVelocity * (2 - (this.curvature * this.trackWidth))) / 2;
-
-        Robot.m_drivesubsystem.PurePursuit(targetLeft, targetRight);
-			
-		/*
-        double dist = robotPosition.distFrom(this.lookAheadPoint);
-        this.targetAccelerationLeft = ( ( (this.LeftFinal * this.LeftFinal) - (this.LeftOriginal * this.LeftOriginal) ) / (2 * dist) );
-        this.targetAccelerationRight = ( ( (this.RightFinal * this.RightFinal) - (this.RightOriginal * this.RightOriginal) ) / (2 * dist) );
-            
-        this.ffL = this.kV * this.LeftFinal + this.kA * this.targetAccelerationLeft;
-        this.ffR = this.kV * this.RightFinal + this.kA * this.targetAccelerationRight;
-        this.fbL = this.kP * (this.LeftFinal - lSpeed);
-        this.fbR = this.kP * (this.RightFinal - rSpeed);
-            
-        this.Left = (this.ffL + this.fbL);
-        this.Right = (this.ffR + this.fbR);
-        this.LeftOriginal = this.RightFinal;
-        this.RightOriginal = this.RightFinal;
-            
-        this.wV.put("Left", Left);
-        this.wV.put("Right", Right);
-            
-		return this.wV;
-        */
-        
-        if(genPath.indexOf(closestPoint) == (genPath.size() - 1)) {
-            this.isFinished = true;
+        heading += 270;
+        if(heading > 360) {
+            heading -= 360;
         }
+
+        System.out.println("[Heading: " + heading + "]");
+
+        this.xLocation += this.distance * Math.cos(Math.toRadians(heading));
+        this.yLocation += this.distance * Math.sin(Math.toRadians(heading));
+        this.robotPosition = new Point(this.xLocation, this.yLocation);
+
+        System.out.println("[Robot Position: " + this.robotPosition.toString() + "]");
+            
+        while(robotPosition.distFrom(genPath.get(genPath.size() - 1)) > 6) {
+
+            int nextLookAheadIndex = genPath.findLookAheadIndex(this.lDistance, this.robotPosition, this.lookAheadPointIndex);
+            
+            if(this.lookAheadPointIndex != nextLookAheadIndex) {
+                System.err.println("Look Ahead Point changed: " + this.lookAheadPointIndex + " to " 
+                    + nextLookAheadIndex);
+            }
+            
+            this.lookAheadPointIndex = nextLookAheadIndex;
+            this.lookAheadPoint = genPath.get(nextLookAheadIndex);
+            
+            //this.lookAheadPoint = genPath.get(genPath.findLookAheadIndex(this.lDistance, this.robotPosition, 
+            //  this.lookAheadPointIndex));
+
+            //System.out.println("[Look Ahead Point: " + this.lookAheadPoint.toString() + "]");
+
+            this.curvature = Point.curvature(this.lDistance, this.robotPosition, heading, this.lookAheadPoint);
+
+            System.out.println("[Curvature: " + this.curvature + "]");
+
+            this.closestPoint = genPath.get(genPath.closestPoint(this.robotPosition, 0));
+            
+            System.out.println("[Closest Point: " + this.closestPoint.toString() + "]");
+                
+            this.targetVelocity = genPath.rateLimiter(this.closestPoint.getVel());
+            
+            System.out.println("[Target Velocity: " + this.targetVelocity + "]");
+                
+            this.targetLeft = (this.targetVelocity * (2 + (this.curvature * this.trackWidth))) / 2;
+            this.targetRight = (this.targetVelocity * (2 - (this.curvature * this.trackWidth))) / 2;
+
+            double talonLeftTarget = Robot.m_drivesubsystem.velocityToTalonVelocity(targetLeft);
+            double talonRightTarget = Robot.m_drivesubsystem.velocityToTalonVelocity(targetRight);
+            
+            System.out.println("[Target Left Velocity: " + this.targetLeft + "]");
+            System.out.println("[Target Left Velocity(Talon): " + talonLeftTarget + "]");
+            System.out.println("[Target Right Velocity: " + this.targetRight + "]");
+            System.out.println("[Target Right Velocity(Talon): " + talonRightTarget + "]");
+
+            Robot.m_drivesubsystem.PurePursuit(targetLeft, targetRight);
+                
+            /*
+            double dist = robotPosition.distFrom(this.lookAheadPoint);
+            this.targetAccelerationLeft = ( ( (this.LeftFinal * this.LeftFinal) - (this.LeftOriginal * 
+                this.LeftOriginal) ) / (2 * dist) );
+            this.targetAccelerationRight = ( ( (this.RightFinal * this.RightFinal) - (this.RightOriginal * 
+                this.RightOriginal) ) / (2 * dist) );
+                
+            this.ffL = this.kV * this.LeftFinal + this.kA * this.targetAccelerationLeft;
+            this.ffR = this.kV * this.RightFinal + this.kA * this.targetAccelerationRight;
+            this.fbL = this.kP * (this.LeftFinal - lSpeed);
+            this.fbR = this.kP * (this.RightFinal - rSpeed);
+                
+            this.Left = (this.ffL + this.fbL);
+            this.Right = (this.ffR + this.fbR);
+            this.LeftOriginal = this.RightFinal;
+            this.RightOriginal = this.RightFinal;
+                
+            this.wV.put("Left", Left);
+            this.wV.put("Right", Right);
+                
+            return this.wV;
+            */
+        }
+
+        this.isFinished = true;
+        
+        System.out.println("[isFinished: " + this.isFinished + "]");
         
         return this.isFinished;
     }
+	
+	public Path getPath() {
+		return this.genPath;
+	}
 }

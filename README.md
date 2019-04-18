@@ -6,32 +6,11 @@ This year, we've switched to a command-based system, which means that we impleme
 
 For those looking in our code, the `autonomous` folder houses all of our autonomous paths for competition. The `navigation` folder contains the pure pursuit algorithm, and is implemented inside of the autonomous paths. The `subsystems` folder includes all of the components of the robot, and the `commands` folder implements the components instantiated in `subsystems`.
 
-## Pure Pursuit
-The pure pursuit algorithm enables us to drive in smooth curves during the autonomous period. Using calculus and a series of classes, we can map points in between points submitted to the function. 
-
-```
-this.distance = Math.abs((6*3.14)*(rPosition + lPosition/2)/360);
-this.xLocation += this.distance * Math.cos(heading);
-this.yLocation += this.distance * Math.sin(heading);
-robotPosition = new Point(this.xLocation, this.yLocation);
-```
-
-This section of the code calculates the current position of the robot using cosine, sine, and the distance travels by the encoders from the last point. Knowing the robot's location on the field allows us to calculate the next step and ensure that we can make it to the final point of the algorithm.
-
-```
-public double rateLimiter(double targetInput) {
-  double lastOutput = this.targetOutput;
-  return this.targetOutput += constrain((targetInput - lastOutput), -MAXCHANGE, MAXCHANGE);
-}
-```
-
-The rate limiter function limits the rate of acceleration of the robot to prevent it from crashing and to keep the motors from accelerating too fast. 
-
 ## Vision Processing
 Our vision processing utilizes a Limelight camera, which helps us identify retroreflective tape on the field, and also enables us to align the robot with the white tape lines in front of the elements.
 
 ```
-public boolean hasTarget() {
+public  boolean hasTarget() {
   if (table.getEntry("tv").getDouble(0) > 0.0) {
     return true;
   } else {
@@ -73,13 +52,4 @@ public PathL2C4(boolean type) {
 
 Our simplest path, L2C4, travels straight from the middle section of Level 1 of the HAB to the 4th bay on the cargo ship. A boolean is passed through the function to determine whether to run pure pursuit or the regular autonomous. If pure pursuit is selected, the code runs the points inputted and travels between them. If regular is selected, the robot uses its encoders to drive 165 inches forwards.
 
-```
-protected void execute() {
-  Robot.m_drivesubsystem.manualDrive(Robot.m_oi.driverJoystick.getRawAxis(1), Robot.m_oi.driverJoystick.getRawAxis(0));
-}
-```
-
-This snippet is what runs our drivetrain during matches. Using input from a joystick, the `manualDrive` method sets the speed of each speed controller set. Differing speeds in each set of wheels allows us to drive like a tank, and turn by running one set of wheels faster than the other.
-
 ## Resources
-We used [this](https://www.ri.cmu.edu/pub_files/pub3/coulter_r_craig_1992_1/coulter_r_craig_1992_1.pdf) paper to help us write our pure pursuit algorithm.

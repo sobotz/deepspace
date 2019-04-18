@@ -10,7 +10,7 @@ public class VisionSubsystem {
 
     private double cameraHeight = 46;
     private double targetHeight =  0.0;
-    private double cameraAngle = 73.5;
+    private double cameraAngle = 73.5;          
 
     public enum ledMode{
         DEFAULT,BLINK,ON,OFF

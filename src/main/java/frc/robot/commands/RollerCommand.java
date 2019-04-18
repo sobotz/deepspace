@@ -30,6 +30,7 @@ public class RollerCommand extends Command {
   @Override
   protected void execute() {
     Robot.m_intake.rollerTalon.set(ControlMode.PercentOutput, Robot.m_oi.operatorJoystick.getRawAxis(1));
+    Robot.m_intake.rollerTalonSlave.set(ControlMode.PercentOutput, Robot.m_oi.operatorJoystick.getRawAxis(1));
   }
 
   // Make this return true when this Command no longer needs to run execute()

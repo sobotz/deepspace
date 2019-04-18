@@ -7,12 +7,11 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class DriveCommand extends Command {
-  public DriveCommand() {
+public class DeliverHatchCommand extends Command {
+  public DeliverHatchCommand() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
     requires(Robot.m_drivesubsystem);
@@ -21,38 +20,30 @@ public class DriveCommand extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-  //  Robot.m_drivesubsystem.m_drive.setSafetyEnabled(true);
-
-    Robot.m_drivesubsystem.manualDrive2(Robot.m_oi.driverJoystick.getRawAxis(1), Robot.m_oi.driverJoystick.getRawAxis(0));
-
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Robot.m_drivesubsystem.manualDrive2(Robot.m_oi.driverJoystick.getRawAxis(1), Robot.m_oi.driverJoystick.getRawAxis(0));
+    System.out.println(toString());
+
+    Robot.m_drivesubsystem.deliverHatch();
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    return true;
   }
 
   // Called once after isFinished returns true
   @Override
-  protected void end() { 
-    /*Robot.m_drivesubsystem.m_drive.stopMotor();
-    Robot.m_drivesubsystem.m_drive.feedWatchdog();
-    Robot.m_drivesubsystem.m_drive.feed();
-    Robot.m_drivesubsystem.m_drive.setSafetyEnabled(false);
-    */
+  protected void end() {
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-  
   }
 }

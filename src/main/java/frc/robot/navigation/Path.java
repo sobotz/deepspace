@@ -1,5 +1,8 @@
 package frc.robot.navigation;
 import java.util.ArrayList;
+/**
+ * @author ncabrera528@gmail.com(Nicholas Cabrera)
+ */
 
 import edu.wpi.first.wpilibj.drive.Vector2d;
 
@@ -8,12 +11,13 @@ public class Path extends ArrayList<Point>{
 
 	/**
 	The constructors for the Path class.
+	@author ncabrera528@gmail.com(Nicholas Cabrera)
 	**/
 	private double maxVelocity;
-	private final double DEFAULTMAX = 0.5;
-	private final double DEFAULTACCELERATION = 0.1;
+	private final double DEFAULTMAX = 15;
+	private final double DEFAULTACCELERATION = 7;
 	private final double MAXCHANGE = DEFAULTACCELERATION * 0.02;
-	private double k = 1;
+	private double CURVE_SENSITIVITY_CONSTANT = .1;
 	private double fIndex = 0;
 	private double targetOutput = 0;
 	
@@ -50,6 +54,8 @@ public class Path extends ArrayList<Point>{
 	/**
 	This code will help with going from path to matrix, and back, as the code for 
 	smoothing the path needs a matrix instead of the current ArrayList of Points
+	
+	@author ncabrera528@gmail.com(Nicholas Cabrera)
 	**/
 
 	/**
@@ -84,6 +90,8 @@ public class Path extends ArrayList<Point>{
 	/**
 	The generatePath method uses the numPointForArray method to determine the amount
 	of points should go into a line segment based on the distance between each point
+	
+	@author ncabrera528@gmail.com(Nicholas Cabrera)
 	**/
 	
 	public int[] numPointForArray(double dist) {
@@ -105,6 +113,8 @@ public class Path extends ArrayList<Point>{
 	The function of the double for loop is this, the first for loop will loop through 
 	each line segment, and the second for loop is used to inject the points onto the 
 	path.
+
+	@author ncabrera528@gmail.com(Nicholas Cabrera)
 	**/
 	
 	public ArrayList<Point> generatePath(int[] numPoints){
@@ -169,6 +179,8 @@ public class Path extends ArrayList<Point>{
 	/**
 	The modified smoother class is an instance class that was created specifically so that instead of having
 	to transition all the Path objects to double[][] in the main method, we could call this method to do it for us.
+	
+	@author Peter Wu
 	**/
 
 	public Path smoother(double a, double b, double tolerance){
@@ -187,6 +199,7 @@ public class Path extends ArrayList<Point>{
 	radius is infinite, so therefore the path is a straight. Also, if x1 is equal 
 	to x2, then you get a divide by zero error. To fix this, add a small value to x1,
 	such as 0.001, and the issue will be fixed with minimal error.
+	@author ncabrera528@gmail.com(Nicholas Cabrera)
 	**/
 	
 	public static double curvatureOfArc(Point P, Point Q, Point R){
@@ -216,17 +229,21 @@ public class Path extends ArrayList<Point>{
 
 		double curvature = 1 / r;
 
-		if(Double.isNaN(curvature)) {		//if line is straight, then curvature is 0
-			return 0;
+		if(Double.isNaN(curvature)) {		//if line is straight, then curve is flat
+			return 0.000001;
 		}
 
 		return curvature;
 	}
 
+	/**
+	 * @author ncabrera528@gmail.com(Nicholas Cabrera)
+	**/
+
 	public void adjustTargetVelocityForDeceleration() {
 
 		/*
-			Note, you are iterating backwards so previous would technically have a greater index
+		Note, you are iterating backwards so previous would technically have a greater index
 		*/
 
 		Point current = null;
@@ -239,8 +256,8 @@ public class Path extends ArrayList<Point>{
 			if(i == size() - 1) {
 				get(i).setVel(0);
 			} else {
-				current = new Point(get(i).getX(), get(i).getY());
-				previous = new Point(get(i + 1).getX(), get(i + 1).getY());
+				current = get(i);
+				previous = get(i + 1);
 				distance = previous.getDist_Along_Path() - current.getDist_Along_Path();
 
 				oldVelocity = current.getVel();
@@ -253,34 +270,38 @@ public class Path extends ArrayList<Point>{
 
 	}
 
-	public void calculatePointMetrix(){		//Set distance at point, curvature, and target velocities
+	/**
+	 * @author ncabrera528@gmail.com(Nicholas Cabrera)
+	**/
+	
+	public void calculatePointMetrix(){		//Set distance at point and curvature
 		Point previous = null;
 		Point current = null;
 		Point next = null;
 
 		for(int i = 0; i < size(); i ++) {
 
-			current = new Point(get(i).getX(), get(i).getY());
+			previous = current;
+			current = get(i);
 
 			if (i == 0){
 				current.setDist_Along_Path(0);
 				current.setCurvature(0);
 			} else {
-				previous = new Point(get(i - 1).getX(), get(i - 1).getY());
+
 				current.setDist_Along_Path((previous.getDist_Along_Path() + current.distFrom(previous)));
 	
-				if(i < size()) {
-					if(i == size() - 1) {
-						current.setCurvature(0);
-					}
-					else {
-						next = new Point(get(i + 1).getX(), get(i + 1).getY());
-						current.setCurvature(curvatureOfArc(previous, current, next));
-					}
+				if(i == size() - 1) {
+					current.setCurvature(0);
+				}
+				else {
+					next = get(i + 1);
+					double curvature = curvatureOfArc(previous, current, next);
+					current.setCurvature(curvature);
 				}
 			}
 
-			current.setVel(Math.min(this.maxVelocity, (k / current.getCurvature())));
+			current.setVel(Math.min(this.maxVelocity, (this.CURVE_SENSITIVITY_CONSTANT / current.getCurvature())));
 
 		}
 
@@ -291,6 +312,7 @@ public class Path extends ArrayList<Point>{
 	/**
 	The constrain method takes a value as well as a minimum and a maximum and 
 	constrains the value to be within the range.
+	@author ncabrera528@gmail.com(Nicholas Cabrera)
 	**/
 	
 	public static double constrain(double num, double min, double max) {
@@ -307,7 +329,14 @@ public class Path extends ArrayList<Point>{
     public double rateLimiter(double targetInput) {
 		double lastOutput = this.targetOutput;
 		return this.targetOutput += constrain((targetInput - lastOutput), -MAXCHANGE, MAXCHANGE);
-    }
+	}
+	
+	/**
+	 * @author ncabrera528@gmail.com(Nicholas Cabrera)
+	 * @param robotPosition
+	 * @param previousIndex
+	 * @return closestPoint
+	 */
 	
 	public int closestPoint(Point robotPosition, int previousIndex) {
 		
@@ -331,9 +360,18 @@ public class Path extends ArrayList<Point>{
 	passes the x(AKA the roots) values on to the lookAheadPoint class.
 	**/
 	
+	/**
+	 * @author ncabrera528@gmail.com(Nicholas Cabrera)
+	 * @param E
+	 * @param L
+	 * @param C
+	 * @param r
+	 * @return 
+	 */
+	
 	public static double lookAhead(Point E,  Point L, Point C, double r) {
-		Vector2d d = new Vector(L,E);
-		Vector2d f = new Vector(E,C);
+		Vector2d d = new Vector(E,L);
+		Vector2d f = new Vector(C,E);
 		
 		double a = d.dot(d);
 		double b = 2 * f.dot(d);
@@ -362,6 +400,14 @@ public class Path extends ArrayList<Point>{
 		return -1;
 	}
 
+	/**
+	 * @author Nicholas Cabrera
+	 * @param lookAheadDistance
+	 * @param robotPosition
+	 * @param lastLookAheadPointIndex
+	 * @return
+	 */
+
 	public int findLookAheadIndex(double lookAheadDistance, Point robotPosition, int lastLookAheadPointIndex) {
 
 		double fractional = 0;
@@ -370,8 +416,8 @@ public class Path extends ArrayList<Point>{
 		int i = 0;
 
 		for(i = lastLookAheadPointIndex; i < size() - 1; i++) {
-			current = new Point(get(i).getX(), get(i).getY());
-			next = new Point(get(i + 1).getX(), get(i + 1).getY());;
+			current = get(i);
+			next = get(i + 1);
 	
 			fractional = lookAhead(current, next, robotPosition, lookAheadDistance);
 

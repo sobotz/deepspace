@@ -31,7 +31,7 @@ public class DropCommand extends Command {
   @Override
   protected void execute() {
     if (Robot.m_oi.operatorJoystick.getRawButton(10) == true) {
-        Robot.m_intake.dropTalon.set(ControlMode.PercentOutput, 1);
+    //    Robot.m_intake.dropTalon.set(ControlMode.PercentOutput, 1);
     }
   }
 

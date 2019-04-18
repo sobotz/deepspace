@@ -9,6 +9,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
@@ -22,10 +23,12 @@ import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.DriveCommand;
 import frc.robot.navigation.*;
+import frc.robot.subsystems.VisionSubsystem.camMode;
 
 import java.util.HashMap;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -35,6 +38,14 @@ import com.kauailabs.navx.frc.AHRS;
 public class DriveSubsystem extends Subsystem {
 
     public WPI_TalonSRX frontLeftTalon, backLeftTalon, frontRightTalon, backRightTalon;
+
+    public TalonSRX legsTalon;
+
+    private int legsMaxPosition = 1000;
+    private int legsIPosition = 50;
+
+    private int legsPosition = 0;
+
 
     private double talonPIDkF = 0.0;
     private double talonPIDkP = 0.0;
@@ -47,7 +58,10 @@ public class DriveSubsystem extends Subsystem {
     SpeedControllerGroup m_left, m_right;
     public DifferentialDrive m_drive;
     private DoubleSolenoid gearShifter;
+    private DoubleSolenoid hatchDelivery;
     private boolean gearShifterState = false;
+    private boolean hatchDeliveryState = false;
+    private DigitalInput hatchSwitch;
 
     public final AHRS ahrs = new AHRS(SPI.Port.kMXP);;
 
@@ -78,6 +92,8 @@ public class DriveSubsystem extends Subsystem {
 
     public DriveSubsystem() {
         gearShifter = new DoubleSolenoid(0, 1);
+        hatchDelivery = new DoubleSolenoid(2, 3);
+        hatchSwitch = new DigitalInput(0);
         rotateToTargetInput = new RotateToTargetInput();
 
         rotateToTargetPID = new PIDController(rkP, rkI, rkD, rotateToTargetInput, new RotateToTargetOutput());
@@ -109,24 +125,50 @@ public class DriveSubsystem extends Subsystem {
         frontRightTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 30);
         frontRightTalon.setSensorPhase(true);
 
-        frontLeftTalon.configPeakOutputReverse(-0.5);
-        frontLeftTalon.configPeakOutputForward(0.5);
-        frontRightTalon.configPeakOutputReverse(-0.5);
-        frontRightTalon.configPeakOutputForward(0.5);
+        frontLeftTalon.configPeakOutputReverse(-1);
+        frontLeftTalon.configPeakOutputForward(1);
+        frontRightTalon.configPeakOutputReverse(-1);
+        frontRightTalon.configPeakOutputForward(1);
 
-        frontLeftTalon.selectProfileSlot(0, 0);
-        frontRightTalon.selectProfileSlot(0, 0);
+
+
+
         talonsPIDTuner = new PIDController(0, 0, 0, new DriveToTargetInput(), new DriveToTargetOutput());
-        SmartDashboard.putData("Talon PID", talonsPIDTuner);
+        ///SmartDashboard.putData("Talon PID", talonsPIDTuner);
 
         m_left = new SpeedControllerGroup(frontLeftTalon, backLeftTalon);
         m_right = new SpeedControllerGroup(frontRightTalon, backRightTalon);
 
-        m_drive = new DifferentialDrive(m_left, m_right);
-        m_drive.setRightSideInverted(false);
+      //  m_drive = new DifferentialDrive(m_left, m_right);
+       // m_drive.setRightSideInverted(false);
 
         reset();
 
+
+        frontLeftTalon.config_kF(0, 0.02);
+        frontLeftTalon.config_kP(0, 0.5);
+        frontLeftTalon.config_kI(0, 0);
+        frontLeftTalon.config_kD(0, 0);
+
+
+        frontRightTalon.config_kF(0, 0.02);
+        frontRightTalon.config_kP(0, 0.5);
+        frontRightTalon.config_kI(0, 0);
+        frontRightTalon.config_kD(0, 0);
+
+
+        legsTalon = new TalonSRX(RobotMap.legsMotor);
+
+        legsTalon.configFactoryDefault();
+    
+        legsTalon.config_kF(0, 0.02);
+        legsTalon.config_kP(0, 0.5);
+        legsTalon.config_kI(0, 0);
+        legsTalon.config_kD(0, 0);
+
+        legsTalon.setSelectedSensorPosition(0);
+
+        legsPosition = legsTalon.getSelectedSensorPosition();
     }
 
     @Override
@@ -139,25 +181,107 @@ public class DriveSubsystem extends Subsystem {
     @Override
     public void periodic() {
         seekTarget();
-        dashboard();
-        setTalonPIDGains(talonsPIDTuner.getF(), talonsPIDTuner.getP(), talonsPIDTuner.getI(), talonsPIDTuner.getD());
+
+        //dashboard();
+        ///setTalonPIDGains(talonsPIDTuner.getF(), talonsPIDTuner.getP(), talonsPIDTuner.getI(), talonsPIDTuner.getD());
 
     }
 
-    public void manualDrive(double speed, double rotation) {
+  /*public void manualDrive(double speed, double rotation) {
+        if(!Robot.m_oi.driverJoystick.getRawButton(7) && !Robot.m_oi.driverJoystick.getRawButton(8)){
         double Mspeed = ((Robot.m_oi.driverJoystick.getRawAxis(3) - 1) / 2) * (-1);
         m_drive.setMaxOutput(Mspeed);
-        m_drive.arcadeDrive(speed * -1, rotation*-1);
+        m_drive.arcadeDrive(speed * -1, rotation);
+        }
+
+        if(Robot.m_oi.driverJoystick.getRawButton(7)){
+            m_drive.tankDrive(1, 1);
+
+        }
+
+        if(Robot.m_oi.driverJoystick.getRawButton(8)){
+            m_drive.tankDrive(-1, -1);
+
+        }
+
+    }
+*/
+
+public void legsControl(int input){
+  
+  if(input == 0){
+        legsTalon.set(ControlMode.PercentOutput, -0.2);
+        legsPosition += legsIPosition;
+    }else if(input == 180){
+
+        legsTalon.set(ControlMode.PercentOutput, 0.2);
+        legsPosition -= legsIPosition;
+    }else{
+        legsTalon.set(ControlMode.PercentOutput, 0);
+    }
+    
+}
+
+
+    public void manualDrive2(double speed, double rotation) {
+        boolean test = false;
+        SmartDashboard.putBoolean("TEST",Robot.m_oi.driverJoystick.getRawButton(7) );
+        if(!Robot.m_oi.driverJoystick.getRawButton(7) & !Robot.m_oi.driverJoystick.getRawButton(8)){
+            test = true;
+            frontLeftTalon.set(ControlMode.PercentOutput, -speed, DemandType.ArbitraryFeedForward, rotation);
+            frontRightTalon.set(ControlMode.PercentOutput, -speed, DemandType.ArbitraryFeedForward, -rotation);
+
+            backLeftTalon.follow(frontLeftTalon);
+            backRightTalon.follow(frontRightTalon);
+
+        }
+
+   // legsControl(Robot.m_oi.operatorJoystick.getPOV());
+        
+
+        if(Robot.m_oi.driverJoystick.getRawButton(7)){
+            frontLeftTalon.set(ControlMode.PercentOutput, -1);
+            frontRightTalon.set(ControlMode.PercentOutput, -1);
+            backLeftTalon.follow(frontLeftTalon);
+            backRightTalon.follow(frontRightTalon);
+            test  = true;
+        }
+
+        SmartDashboard.putBoolean("TEST2", test);
+
+
+        if(Robot.m_oi.driverJoystick.getRawButton(8)){
+
+            frontLeftTalon.set(ControlMode.PercentOutput, 1);
+            frontRightTalon.set(ControlMode.PercentOutput, 1);
+
+            backLeftTalon.follow(frontLeftTalon);
+            backRightTalon.follow(frontRightTalon);
+
+        }
+
     }
 
     public void shiftGear() {
-
         if (gearShifterState) {
-     gearShifter.set(DoubleSolenoid.Value.kForward);
+            gearShifter.set(DoubleSolenoid.Value.kForward);
             gearShifterState = false;
         } else {
             gearShifter.set(DoubleSolenoid.Value.kReverse);
             gearShifterState = true;
+        }
+    }
+
+    public void deliverHatch() {
+        if(hatchSwitch.get()) {
+            hatchDelivery.set(DoubleSolenoid.Value.kForward);
+            hatchDeliveryState = false;
+        } else if (hatchDeliveryState) {
+            hatchDelivery.set(DoubleSolenoid.Value.kForward);
+            hatchDeliveryState = false;
+        } else {
+            hatchDelivery.set(DoubleSolenoid.Value.kReverse);
+            hatchDeliveryState = true;
         }
     }
 
@@ -291,8 +415,7 @@ public class DriveSubsystem extends Subsystem {
         if (!driveToTargetPID.isEnabled()) {
             distanceCascadePID(0, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION,errorMargin);
         }
-        frontLeftTalon.selectProfileSlot(1, 0);
-        frontRightTalon.selectProfileSlot(1, 0);
+     
         backLeftTalon.follow(frontLeftTalon);
         backRightTalon.follow(frontRightTalon);
         double rightOutput = (driveToTargetOutput+rotateToTargetOutput);
@@ -310,8 +433,12 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public void PurePursuit(double targetLeft, double targetRight) {
+        frontLeftTalon.selectProfileSlot(0, 0);
+        frontRightTalon.selectProfileSlot(0, 0);
         double targetLeftVelocity = velocityToTalonVelocity(targetLeft);
         double targetRightVelocity = velocityToTalonVelocity(targetRight);
+        SmartDashboard.putNumber("PURE PURSUIT VELOCITIES LEFT", targetLeftVelocity);
+        SmartDashboard.putNumber("PURE PURSUIT VELOCITIES RIGHT", targetRightVelocity);
         frontLeftTalon.set(ControlMode.Velocity, targetLeftVelocity);
         frontRightTalon.set(ControlMode.Velocity, targetRightVelocity);
     }

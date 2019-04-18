@@ -11,15 +11,14 @@ import frc.robot.*;
 import frc.robot.navigation.Controller;
 import frc.robot.navigation.Point;
 
-import java.util.HashMap;
-import edu.wpi.first.wpilibj.Timer;
-
 import edu.wpi.first.wpilibj.command.Command;
 
 public class PurePursuitCommand extends Command {
   Point[] purePursuitPath;
   Controller purePursuit;
   private boolean isFinished = false;
+  private double lastLeftEncoderTicks = 0;
+  private double lastRightEncoderTicks = 0;
 
   public PurePursuitCommand(Point[] path) {
     purePursuitPath = path;
@@ -28,29 +27,51 @@ public class PurePursuitCommand extends Command {
   }
 
   // Called just before this Command runs the first time
+  
   @Override
   protected void initialize() {
+    Robot.m_drivesubsystem.frontLeftTalon.setSelectedSensorPosition(0);
+    Robot.m_drivesubsystem.frontRightTalon.setSelectedSensorPosition(0);
+    Robot.m_drivesubsystem.ahrs.reset();
+    lastLeftEncoderTicks = Robot.m_drivesubsystem.frontLeftTalon.getSelectedSensorPosition();
+    lastRightEncoderTicks = Robot.m_drivesubsystem.frontRightTalon.getSelectedSensorPosition();
   }
 
   // Called repeatedly when this Command is scheduled to run
+
   @Override
   protected void execute() {
-  isFinished = purePursuit.controlLoop(Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontLeftTalon), Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontRightTalon), Robot.m_drivesubsystem.ahrs.getYaw());
+    double newLeftEncoderTicks = Robot.m_drivesubsystem.frontLeftTalon.getSelectedSensorPosition();
+    double newRightEncoderTicks = Robot.m_drivesubsystem.frontRightTalon.getSelectedSensorPosition();
+    
+    double leftChange = Robot.m_drivesubsystem.talonUnitsToInches(newLeftEncoderTicks - lastLeftEncoderTicks);
+    double rightChange = Robot.m_drivesubsystem.talonUnitsToInches(newRightEncoderTicks - lastRightEncoderTicks);
+    
+    isFinished = purePursuit.controlLoop(leftChange, rightChange, Robot.m_drivesubsystem.ahrs.getYaw());
+    
+    lastLeftEncoderTicks = newLeftEncoderTicks;
+    lastRightEncoderTicks = newRightEncoderTicks;
   }
 
   // Make this return true when this Command no longer needs to run execute()
+
   @Override
   protected boolean isFinished() {
     return isFinished;
   }
 
   // Called once after isFinished returns true
+  
   @Override
   protected void end() {
+    Robot.m_drivesubsystem.reset();
+    isFinished = false;
   }
+
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
+
   @Override
   protected void interrupted() {
   }

@@ -30,6 +30,10 @@ public class liftGotoCommand extends Command {
   @Override
   protected void execute() {
     Robot.m_lift.goTo(position);
+
+    if(Robot.m_oi.operatorJoystick.getRawButton(5) || Robot.m_oi.operatorJoystick.getRawButton(6)){
+      this.cancel();
+    }
   }
 
   // Make this return true when this Command no longer needs to run execute()

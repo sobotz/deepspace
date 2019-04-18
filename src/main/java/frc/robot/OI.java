@@ -9,8 +9,10 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import frc.robot.autonomous.PathL2C4;
+import frc.robot.autonomous.*;
 import frc.robot.commands.AlignCommand;
+import frc.robot.commands.ArticulationCommand;
+import frc.robot.commands.DeliverHatchCommand;
 import frc.robot.commands.ShiftGearCommand;
 import frc.robot.commands.liftGotoCommand;
 
@@ -19,27 +21,64 @@ import frc.robot.commands.liftGotoCommand;
  * interface to the commands and command groups that allow control of the robot.
  */
 public class OI {
-
+  public int HLVL1 = 21;
+  public int CSC1 = 43;
+  public int RSH2 = 56;
+  public int RSH3 = 75; // changed from 77
+  public int RSC1 = 31;
+  public int RSC2 = 60;
+  public int RSC3 = 77; // changed from 77
+  public int FSH1 = 17; // changed from 48 (being used for pneumatics)
+  public int ZERO = 0;
 
   public Joystick driverJoystick = new Joystick(0);
   public Joystick operatorJoystick = new Joystick(1);
   public Joystick m_buttonbox = new Joystick(2);
 
-  public OI(){
+  public OI() {
     JoystickButton aOperator = new JoystickButton(operatorJoystick, 1);
-   
     JoystickButton bOperator = new JoystickButton(operatorJoystick, 2);
     JoystickButton xOperator = new JoystickButton(operatorJoystick, 3);
     JoystickButton yOperator = new JoystickButton(operatorJoystick, 4);
+    JoystickButton startOperator = new JoystickButton(operatorJoystick, 8);
+    JoystickButton backOperator = new JoystickButton(operatorJoystick, 7);
+    JoystickButton buttonbox1 = new JoystickButton(m_buttonbox, 1);
+    JoystickButton buttonbox2 = new JoystickButton(m_buttonbox, 2);
+    JoystickButton buttonbox3 = new JoystickButton(m_buttonbox, 3);
+    JoystickButton buttonbox4 = new JoystickButton(m_buttonbox, 4);
+    JoystickButton buttonbox5 = new JoystickButton(m_buttonbox, 5);
+    JoystickButton buttonbox6 = new JoystickButton(m_buttonbox, 6);
+    JoystickButton buttonbox7 = new JoystickButton(m_buttonbox, 7);
+    JoystickButton buttonbox8 = new JoystickButton(m_buttonbox, 8);
+    JoystickButton buttonbox9 = new JoystickButton(m_buttonbox, 9);
 
-    bOperator.toggleWhenPressed(new liftGotoCommand(12));
-    xOperator.toggleWhenPressed(new liftGotoCommand(24));
+    
+    
+    /*aOperator.toggleWhenPressed(new ArticulationCommand(2000));
+    bOperator.toggleWhenPressed(new ArticulationCommand(1000));
+*/
+    /*
     yOperator.toggleWhenPressed(new liftGotoCommand(36));
     aOperator.toggleWhenPressed(new liftGotoCommand(0));
+    */
+    
+    buttonbox1.whenPressed(new liftGotoCommand(HLVL1));
+    buttonbox2.whenPressed(new liftGotoCommand(RSH2));
+    buttonbox3.whenPressed(new liftGotoCommand(RSH3));
+    buttonbox4.whenPressed(new liftGotoCommand(CSC1));
+    buttonbox5.whenPressed(new liftGotoCommand(RSC1));
+    buttonbox6.whenPressed(new liftGotoCommand(RSC2));
+    buttonbox7.whenPressed(new liftGotoCommand(RSC3));
+    buttonbox8.whenPressed(new liftGotoCommand(FSH1));
+    buttonbox9.whenPressed(new liftGotoCommand(ZERO));
 
     JoystickButton gearShiftButton = new JoystickButton(driverJoystick, 1);
     gearShiftButton.toggleWhenPressed(new ShiftGearCommand());
+    startOperator.whenPressed(new liftGotoCommand(HLVL1));
+    backOperator.whenPressed(new liftGotoCommand(ZERO));
+    
 
+    aOperator.toggleWhenPressed(new DeliverHatchCommand());
   }
 
 
