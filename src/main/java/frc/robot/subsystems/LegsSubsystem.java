@@ -7,6 +7,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -24,20 +25,35 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 public class LegsSubsystem extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
-  WPI_TalonSRX frontLeftTalon, frontRightTalon, backTalon;
+
+  DoubleSolenoid frontLeftLegs = new DoubleSolenoid(4,5);
+  DoubleSolenoid backLeg= new DoubleSolenoid(6,7);
 
   public LegsSubsystem() {
-    frontLeftTalon = new WPI_TalonSRX(RobotMap.frontLeftMotor);
-    frontRightTalon = new WPI_TalonSRX(RobotMap.frontRightMotor);
-    backTalon = new WPI_TalonSRX(RobotMap.backRightMotor);
-
-    frontLeftTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 30);
+  
   }
+
+
+public void shift(int action){
+  switch(action){
+    case 8:
+    frontLeftLegs.set(DoubleSolenoid.Value.kReverse);
+    break;
+    case 7:
+    frontLeftLegs.set(DoubleSolenoid.Value.kForward);
+    break;
+    case 9:
+    backLeg.set(DoubleSolenoid.Value.kForward);
+    break;
+    case 10:
+    backLeg.set(DoubleSolenoid.Value.kReverse);
+    break;
+  }
+}
   
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
     // setDefaultCommand(new MySpecialCommand());
-    setDefaultCommand(new DriveCommand());
   }
 }

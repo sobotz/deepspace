@@ -225,8 +225,8 @@ public void legsControl(int input){
 
     public void manualDrive2(double speed, double rotation) {
         boolean test = false;
-        SmartDashboard.putBoolean("TEST",Robot.m_oi.driverJoystick.getRawButton(7) );
-        if(!Robot.m_oi.driverJoystick.getRawButton(7) & !Robot.m_oi.driverJoystick.getRawButton(8)){
+        SmartDashboard.putBoolean("TEST",Robot.m_oi.driverJoystick.getRawButton(11) );
+        if(!Robot.m_oi.driverJoystick.getRawButton(11) & !Robot.m_oi.driverJoystick.getRawButton(12)){
             test = true;
             frontLeftTalon.set(ControlMode.PercentOutput, -speed, DemandType.ArbitraryFeedForward, rotation);
             frontRightTalon.set(ControlMode.PercentOutput, -speed, DemandType.ArbitraryFeedForward, -rotation);
@@ -239,7 +239,7 @@ public void legsControl(int input){
    // legsControl(Robot.m_oi.operatorJoystick.getPOV());
         
 
-        if(Robot.m_oi.driverJoystick.getRawButton(7)){
+        if(Robot.m_oi.driverJoystick.getRawButton(11)){
             frontLeftTalon.set(ControlMode.PercentOutput, -1);
             frontRightTalon.set(ControlMode.PercentOutput, -1);
             backLeftTalon.follow(frontLeftTalon);
@@ -250,7 +250,7 @@ public void legsControl(int input){
         SmartDashboard.putBoolean("TEST2", test);
 
 
-        if(Robot.m_oi.driverJoystick.getRawButton(8)){
+        if(Robot.m_oi.driverJoystick.getRawButton(12)){
 
             frontLeftTalon.set(ControlMode.PercentOutput, 1);
             frontRightTalon.set(ControlMode.PercentOutput, 1);

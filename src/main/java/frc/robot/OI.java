@@ -13,6 +13,7 @@ import frc.robot.autonomous.*;
 import frc.robot.commands.AlignCommand;
 import frc.robot.commands.ArticulationCommand;
 import frc.robot.commands.DeliverHatchCommand;
+import frc.robot.commands.LegsCommand;
 import frc.robot.commands.ShiftGearCommand;
 import frc.robot.commands.liftGotoCommand;
 
@@ -76,6 +77,20 @@ public class OI {
     gearShiftButton.toggleWhenPressed(new ShiftGearCommand());
     startOperator.whenPressed(new liftGotoCommand(HLVL1));
     backOperator.whenPressed(new liftGotoCommand(ZERO));
+
+
+    JoystickButton expandsFrontlegs = new JoystickButton(driverJoystick, 7);
+    expandsFrontlegs.whenPressed(new LegsCommand(7));
+
+    JoystickButton retractsFrontlegs = new JoystickButton(driverJoystick, 8);
+    retractsFrontlegs.whenPressed(new LegsCommand(8));
+
+    JoystickButton retractsBackLeg = new JoystickButton(driverJoystick, 9);
+    retractsBackLeg.whenPressed(new LegsCommand(9));
+
+    JoystickButton expandsBackLeg = new JoystickButton(driverJoystick, 10);
+    expandsBackLeg.whenPressed(new LegsCommand(10));
+
     
 
     aOperator.toggleWhenPressed(new DeliverHatchCommand());

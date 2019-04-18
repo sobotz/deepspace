@@ -39,6 +39,7 @@ public class Robot extends TimedRobot {
   public static DriveSubsystem m_drivesubsystem;
   public static IntakeSubsystem m_intake;
   public static LiftSubsystem m_lift;
+  public static LegsSubsystem m_legssubsystem;
 
 
   Command m_autonomousCommand;
@@ -53,6 +54,7 @@ public class Robot extends TimedRobot {
     m_drivesubsystem = new DriveSubsystem();
     m_intake = new IntakeSubsystem();
     m_lift = new LiftSubsystem();
+    m_legssubsystem = new LegsSubsystem();
     m_oi = new OI();
     m_pdp = new PowerDistributionPanel();
     // starting from L1
