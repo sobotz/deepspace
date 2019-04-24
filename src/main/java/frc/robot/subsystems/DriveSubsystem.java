@@ -272,7 +272,7 @@ public void legsControl(int input){
         }
     }
 
-    public void deliverHatch() {
+   /* public void deliverHatch() {
         if(hatchSwitch.get()) {
             hatchDelivery.set(DoubleSolenoid.Value.kForward);
             hatchDeliveryState = false;
@@ -284,7 +284,17 @@ public void legsControl(int input){
             hatchDeliveryState = true;
         }
     }
+*/
 
+public void deliverHatch() {
+ if (hatchDeliveryState) {
+        hatchDelivery.set(DoubleSolenoid.Value.kForward);
+        hatchDeliveryState = false;
+    } else {
+        hatchDelivery.set(DoubleSolenoid.Value.kReverse);
+        hatchDeliveryState = true;
+    }
+}
     private void seekTarget() {
         if (vision.hasTarget()) {
             visionState = VisionState.HASTARGET;
