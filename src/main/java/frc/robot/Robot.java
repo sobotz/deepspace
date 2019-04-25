@@ -58,7 +58,7 @@ public class Robot extends TimedRobot {
     m_oi = new OI();
     m_pdp = new PowerDistributionPanel();
     // starting from L1
-    m_chooser.addDefault("Path L1R1L (Pure Pursuit)", new PathL1R1L(true));
+ /*   m_chooser.addDefault("Path L1R1L (Pure Pursuit)", new PathL1R1L(true));
     m_chooser.addObject("Path L1R1L (Regular)", new PathL1R1L(false));
     m_chooser.addObject("Path L1C3 (Pure Pursuit)", new PathL1C3(true));
     m_chooser.addObject("Path L1C3 (Regular)", new PathL1C3(false));
@@ -76,7 +76,7 @@ public class Robot extends TimedRobot {
     m_chooser.addObject("Path L3R1R (Regular)", new PathL3R1R(false));
     m_chooser.addObject("Path L3C6 (Pure Pursuit)", new PathL3C6(true));
     m_chooser.addObject("Path L3C6 (Regular)", new PathL3C6(false));
-    
+    */
     // m_chooser.setDefaultOption("Default Auto", new ExampleCommand());
     // chooser.addOption("My Auto", new MyAutoCommand());
     SmartDashboard.putData("Auto mode", m_chooser);
@@ -99,6 +99,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    /*
     System.out.println("Motor: Drive, BR: " + m_pdp.getCurrent(0) + " amps");
     System.out.println("Motor: Drive, BL: " + m_pdp.getCurrent(15) + " amps");
     System.out.println("Motor: Drive, FR: " + m_pdp.getCurrent(1) + " amps");
@@ -112,6 +113,7 @@ public class Robot extends TimedRobot {
     System.out.println("Voltage: " + m_pdp.getVoltage());
     System.out.println("Temperature: " + ((m_pdp.getTemperature()*9/5)+32));
     System.out.println("");
+    */
   }
 
   /**

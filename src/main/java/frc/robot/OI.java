@@ -22,15 +22,15 @@ import frc.robot.commands.liftGotoCommand;
  * interface to the commands and command groups that allow control of the robot.
  */
 public class OI {
-  public int HLVL1 = 20;
-  public int CSC1 = 43;
-  public int RSH2 = 56;
+  public int HLVL1 = 18; // NOT IN USE
+  public int CSC1 = 38; // good
+  public int RSH2 = 40; // good
   public int RSH3 = 65; // changed from 75
-  public int RSC1 = 31;
+  public int RSC1 = 25;
   public int RSC2 = 60;
   public int RSC3 = 67; // changed from 77
-  public int FSH1 = 20; // changed from 48 (being used for pneumatics)
-  public int ZERO = 0;
+  public int FSH1 = 18; // good (pneu)
+  public int ZERO = 0; // good
 
   public Joystick driverJoystick = new Joystick(0);
   public Joystick operatorJoystick = new Joystick(1);

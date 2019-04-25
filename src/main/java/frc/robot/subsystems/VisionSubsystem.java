@@ -37,6 +37,7 @@ public class VisionSubsystem {
         NI = NetworkTableInstance.getDefault();
         table = NI.getTable("limelight");
         setTargetHeight(TargetHeight.HATCH_PANEL);
+        setCamDMode(camMode.DRIVERCAMERA);
     }
 
     
