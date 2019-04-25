@@ -25,11 +25,11 @@ public class OI {
   public int HLVL1 = 18; // NOT IN USE
   public int CSC1 = 38; // good
   public int RSH2 = 40; // good
-  public int RSH3 = 65; // changed from 75
-  public int RSC1 = 25;
-  public int RSC2 = 60;
-  public int RSC3 = 67; // changed from 77
-  public int FSH1 = 18; // good (pneu)
+  public int RSH3 = 65; // good
+  public int RSC1 = 27;
+  public int RSC2 = 50; // good
+  public int RSC3 = 67; // good
+  public int FSH1 = 19; // good (pneu)
   public int ZERO = 0; // good
 
   public Joystick driverJoystick = new Joystick(0);

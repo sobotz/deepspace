@@ -56,9 +56,9 @@ public class Robot extends TimedRobot {
     m_lift = new LiftSubsystem();
     m_legssubsystem = new LegsSubsystem();
     m_oi = new OI();
-    m_pdp = new PowerDistributionPanel();
+ //   m_pdp = new PowerDistributionPanel();
     // starting from L1
- /*   m_chooser.addDefault("Path L1R1L (Pure Pursuit)", new PathL1R1L(true));
+  m_chooser.addDefault("Path L1R1L (Pure Pursuit)", new PathL1R1L(true));
     m_chooser.addObject("Path L1R1L (Regular)", new PathL1R1L(false));
     m_chooser.addObject("Path L1C3 (Pure Pursuit)", new PathL1C3(true));
     m_chooser.addObject("Path L1C3 (Regular)", new PathL1C3(false));
@@ -76,7 +76,7 @@ public class Robot extends TimedRobot {
     m_chooser.addObject("Path L3R1R (Regular)", new PathL3R1R(false));
     m_chooser.addObject("Path L3C6 (Pure Pursuit)", new PathL3C6(true));
     m_chooser.addObject("Path L3C6 (Regular)", new PathL3C6(false));
-    */
+    
     // m_chooser.setDefaultOption("Default Auto", new ExampleCommand());
     // chooser.addOption("My Auto", new MyAutoCommand());
     SmartDashboard.putData("Auto mode", m_chooser);
