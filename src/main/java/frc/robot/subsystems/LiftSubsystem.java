@@ -26,32 +26,37 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 /**
- * An example subsystem. You can replace me with your own Subsystem.
+ * The Lift subsystem controls all operations of the lift.
  */
 public class LiftSubsystem extends Subsystem {
-  // Put methods for controlling this subsystem
-  // here. Call these from Commands.
+  // Instantiating the motors used to control the lift.
   public TalonSRX liftTalon;
   public TalonSRX liftTalonSlave;
   private PIDController liftPidController;
 
   public LiftSubsystem() {
-
+    // Setting up the motors
     liftTalon = new TalonSRX(RobotMap.liftMotor);
     liftTalonSlave = new TalonSRX(RobotMap.liftMotorSlave);
     liftTalon.configFactoryDefault();
     liftTalonSlave.configFactoryDefault();
+    
+    // Adding encoder
     liftTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 30);
     liftTalon.setInverted(true);
+    
+    // Setting max speeds
     liftTalon.configPeakOutputReverse(-0.65);
     liftTalon.configPeakOutputForward(0.65);
+    
+    // Making slave follow master
     liftTalonSlave.follow(liftTalon);
     liftTalonSlave.setInverted(true);
 
     liftTalon.setNeutralMode(NeutralMode.Brake);
     liftTalonSlave.setNeutralMode(NeutralMode.Brake);
 
-    /// THIS IS A DUMMY Object !!! NEEDED only for testing !!!!!!!
+    // Setting dummy PID lift controller
     liftPidController = new PIDController(0, 0, 0, new PIDSource() {
 
       @Override
@@ -84,12 +89,12 @@ public class LiftSubsystem extends Subsystem {
 
   @Override
   public void periodic() {
+    // Updating the Smart Dashboard with lift values for testing purposes
     SmartDashboard.putNumber("TALON VELOCITY", talonVelocityToNormal());
     SmartDashboard.putNumber("INCHES TO  ENCODER POSITION", liftTalon.getSelectedSensorPosition());
     SmartDashboard.putNumber("LIFT PID ERROR", liftTalon.getClosedLoopError());
     SmartDashboard.putNumber("INCHES", talonUnitsToInches());
-    
-
+   
     liftTalon.config_kF(0, liftPidController.getF());
     liftTalon.config_kP(0, liftPidController.getP());
     liftTalon.config_kI(0, liftPidController.getI());
@@ -139,8 +144,6 @@ public class LiftSubsystem extends Subsystem {
   public void reset() {
     liftTalon.setSelectedSensorPosition(0);
   }
-
-
 
   // velocity is in/s
 
