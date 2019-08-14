@@ -23,6 +23,7 @@ import frc.robot.subsystems.*;
  * project.
  */
 public class Robot extends TimedRobot {
+  // Subsystems are defined to control different parts of the robot.
   // public static ExampleSubsystem m_subsystem = new ExampleSubsystem();
   public static OI m_oi;
   public static DriveSubsystem m_drivesubsystem;
@@ -39,16 +40,19 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    // Instantiate different subsystems.
     m_drivesubsystem = new DriveSubsystem();
     m_intake = new IntakeSubsystem();
     m_lift = new LiftSubsystem();
     m_oi = new OI();
-    // starting from L1
+    
+    // Autonomous paths starting from HAB L1
     m_chooser.addDefault("Path L1R1L (Pure Pursuit)", new PathL1R1L(true));
     m_chooser.addObject("Path L1R1L (Regular)", new PathL1R1L(false));
     m_chooser.addObject("Path L1C3 (Pure Pursuit)", new PathL1C3(true));
     m_chooser.addObject("Path L1C3 (Regular)", new PathL1C3(false));
-    // starting from L2
+    
+    // Autonomous paths starting from HAB L2
     m_chooser.addObject("Path L2C3 (Pure Pursuit)", new PathL2C3(true));
     m_chooser.addObject("Path L2C3 (Regular)", new PathL2C3(false));
     m_chooser.addObject("Path L2C4 (Pure Pursuit)", new PathL2C4(true));
@@ -57,7 +61,8 @@ public class Robot extends TimedRobot {
     m_chooser.addObject("Path L2C5 (Regular)", new PathL2C5(false));
     m_chooser.addObject("Path L2C6 (Pure Pursuit)", new PathL2C6(true));
     m_chooser.addObject("Path L2C6 (Regular)", new PathL2C6(false));
-    // starting from L3
+    
+    // Autonomous paths starting from HAB L3
     m_chooser.addObject("Path L3R1R (Pure Pursuit)", new PathL3R1R(true));
     m_chooser.addObject("Path L3R1R (Regular)", new PathL3R1R(false));
     m_chooser.addObject("Path L3C6 (Pure Pursuit)", new PathL3C6(true));
@@ -65,6 +70,8 @@ public class Robot extends TimedRobot {
     
     // m_chooser.setDefaultOption("Default Auto", new ExampleCommand());
     // chooser.addOption("My Auto", new MyAutoCommand());
+    
+    // Add a selector on the Smart Dashboard to choose an autonomous path
     SmartDashboard.putData("Auto mode", m_chooser);
   }
 
@@ -107,6 +114,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    // Get selected path from Smart Dashboard
     m_autonomousCommand = m_chooser.getSelected();
 
     /*
@@ -116,7 +124,7 @@ public class Robot extends TimedRobot {
      * autonomousCommand = new ExampleCommand(); break; }
      */
 
-    // schedule the autonomous command (example)
+    // If the command from the Smart Dashboard is there, run it
     if (m_autonomousCommand != null) {
       m_autonomousCommand.start();
     }
