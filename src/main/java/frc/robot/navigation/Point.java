@@ -77,30 +77,22 @@ public class Point {
 	}
 
 	public static double curvature(double lookAheadDistance, Point robotPosition, double heading, Point lookAheadPoint) {
-		
-		//variable instantiation
 		double robotX = robotPosition.getX();
 		double robotY = robotPosition.getY();
 		
 		double a = -Math.tan(heading);
 		double b = 1;
 		double c = Math.tan(heading) * robotX - robotY;
-		
-		//calculations
 		double side = Math.signum(Math.sin(heading) * (lookAheadPoint.getX() - robotX) 
 				- Math.cos(heading) * (lookAheadPoint.getY() - robotY));
-
 		double x = Math.abs(a * lookAheadPoint.getX() + b * lookAheadPoint.getY() + c)
 				/ Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
-
 		double curvature = (2 * x) / (Math.pow(lookAheadDistance, 2));
-
 		double sCurvature = side * curvature;
 
-		if(Double.isNaN(sCurvature) ){
+		if (Double.isNaN(sCurvature) ){
 			return 0.001;
 		}
-
 		return sCurvature;
 	}
 }
