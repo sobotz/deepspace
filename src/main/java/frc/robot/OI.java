@@ -19,24 +19,26 @@ import frc.robot.commands.liftGotoCommand;
  * interface to the commands and command groups that allow control of the robot.
  */
 public class OI {
-
-
+  // Create joystick instances
   public Joystick driverJoystick = new Joystick(0);
   public Joystick operatorJoystick = new Joystick(1);
   public Joystick m_buttonbox = new Joystick(2);
 
   public OI(){
+    
+    // Create buttons on the operator's GamePad
     JoystickButton aOperator = new JoystickButton(operatorJoystick, 1);
-   
     JoystickButton bOperator = new JoystickButton(operatorJoystick, 2);
     JoystickButton xOperator = new JoystickButton(operatorJoystick, 3);
     JoystickButton yOperator = new JoystickButton(operatorJoystick, 4);
 
+    // Add commands to the buttons on the operator's GamePad
     bOperator.toggleWhenPressed(new liftGotoCommand(12));
     xOperator.toggleWhenPressed(new liftGotoCommand(24));
     yOperator.toggleWhenPressed(new liftGotoCommand(36));
     aOperator.toggleWhenPressed(new liftGotoCommand(0));
 
+    // Add gear shifting to the trigger on the driver's joystick
     JoystickButton gearShiftButton = new JoystickButton(driverJoystick, 1);
     gearShiftButton.toggleWhenPressed(new ShiftGearCommand());
 
