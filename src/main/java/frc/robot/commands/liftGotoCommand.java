@@ -12,18 +12,18 @@ import frc.robot.Robot;
 
 public class liftGotoCommand extends Command {
   int position;
+  
   public liftGotoCommand(int p) {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-     position = p;
-
-
+    position = p;
     requires(Robot.m_lift);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    // Do nothing
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -41,11 +41,13 @@ public class liftGotoCommand extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    // Do nothing
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    // Do nothing
   }
 }
