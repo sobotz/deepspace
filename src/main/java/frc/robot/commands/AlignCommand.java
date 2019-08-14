@@ -16,7 +16,6 @@ public class AlignCommand extends Command {
   public AlignCommand() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-
     requires(Robot.m_drivesubsystem);
   }
 
