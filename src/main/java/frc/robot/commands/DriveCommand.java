@@ -22,9 +22,7 @@ public class DriveCommand extends Command {
   @Override
   protected void initialize() {
     Robot.m_drivesubsystem.m_drive.setSafetyEnabled(true);
-
     Robot.m_drivesubsystem.manualDrive(Robot.m_oi.driverJoystick.getRawAxis(1), Robot.m_oi.driverJoystick.getRawAxis(0));
-
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -53,10 +51,8 @@ public class DriveCommand extends Command {
   @Override
   protected void interrupted() {
     Robot.m_drivesubsystem.m_drive.stopMotor();
-
     Robot.m_drivesubsystem.m_drive.feedWatchdog();
     Robot.m_drivesubsystem.m_drive.feed();
     Robot.m_drivesubsystem.m_drive.setSafetyEnabled(false);
-
   }
 }
