@@ -23,6 +23,7 @@ public class AlignCommand extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    // Do nothing
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -41,7 +42,6 @@ public class AlignCommand extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-
     Robot.m_drivesubsystem.reset();
   }
 
