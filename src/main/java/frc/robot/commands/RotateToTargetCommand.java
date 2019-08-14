@@ -13,6 +13,7 @@ import frc.robot.Robot;
 public class RotateToTargetCommand extends Command {
   double angle;
   boolean isFinished;
+  
   public RotateToTargetCommand(double myAngle) {
     angle = myAngle;
     // Use requires() here to declare subsystem dependencies
@@ -28,6 +29,7 @@ public class RotateToTargetCommand extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    // Do nothing
   }
 
   // Make this return true when this Command no longer needs to run execute()
