@@ -7,23 +7,22 @@
 
 package frc.robot.autonomous;
 
-import frc.robot.Robot;
 import frc.robot.commands.DriveToTargetCommand;
 import frc.robot.commands.PurePursuitCommand;
-import frc.robot.commands.RotateToTargetCommand;
 import frc.robot.navigation.*;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class PathL2C5 extends CommandGroup {
   boolean isPurePursuit;
+
   public PathL2C5(boolean type) {
     isPurePursuit = type;
     if (isPurePursuit) {
-      Point[] path = {new Point(1,1,0), new Point(1, 157.25)};
+      Point[] path = { new Point(1, 1, 0), new Point(1, 157.25) };
       addSequential(new PurePursuitCommand(path));
     } else {
-      addSequential( new DriveToTargetCommand(156.25));
+      addSequential(new DriveToTargetCommand(156.25));
     }
     // Add Commands here:
     // e.g. addSequential(new Command1());

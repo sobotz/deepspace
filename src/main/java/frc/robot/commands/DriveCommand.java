@@ -7,7 +7,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
@@ -22,13 +21,15 @@ public class DriveCommand extends Command {
   @Override
   protected void initialize() {
     Robot.m_drivesubsystem.m_drive.setSafetyEnabled(true);
-    Robot.m_drivesubsystem.manualDrive(Robot.m_oi.driverJoystick.getRawAxis(1), Robot.m_oi.driverJoystick.getRawAxis(0));
+    Robot.m_drivesubsystem.manualDrive(Robot.m_oi.m_driverjoystick.getRawAxis(1),
+        Robot.m_oi.m_driverjoystick.getRawAxis(0));
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Robot.m_drivesubsystem.manualDrive(Robot.m_oi.driverJoystick.getRawAxis(1), Robot.m_oi.driverJoystick.getRawAxis(0));
+    Robot.m_drivesubsystem.manualDrive(Robot.m_oi.m_driverjoystick.getRawAxis(1),
+        Robot.m_oi.m_driverjoystick.getRawAxis(0));
   }
 
   // Make this return true when this Command no longer needs to run execute()
@@ -39,7 +40,7 @@ public class DriveCommand extends Command {
 
   // Called once after isFinished returns true
   @Override
-  protected void end() { 
+  protected void end() {
     Robot.m_drivesubsystem.m_drive.stopMotor();
     Robot.m_drivesubsystem.m_drive.feedWatchdog();
     Robot.m_drivesubsystem.m_drive.feed();

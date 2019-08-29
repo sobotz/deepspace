@@ -46,7 +46,7 @@ This snippet alerts returns `true` if the camera was able to identify a vision t
 public double getTargetDistance() {
   double d = 0.0;
   if (hasTarget())
-    d = Math.tan(Math.toRadians((cameraAngle+ty())))*(cameraHeight-targetHeight);
+    d = Math.tan(Math.toRadians((_cameraAngle+ty())))*(_cameraHeight-_targetHeight);
   else
     d = 0.0;
   SmartDashboard.putNumber("Target Distance", d);
@@ -75,7 +75,7 @@ Our simplest path, L2C4, travels straight from the middle section of Level 1 of 
 
 ```
 protected void execute() {
-  Robot.m_drivesubsystem.manualDrive(Robot.m_oi.driverJoystick.getRawAxis(1), Robot.m_oi.driverJoystick.getRawAxis(0));
+  Robot.m_drivesubsystem.manualDrive(Robot.m_oi.m_driverjoystick.getRawAxis(1), Robot.m_oi.m_driverjoystick.getRawAxis(0));
 }
 ```
 

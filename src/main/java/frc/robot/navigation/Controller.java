@@ -1,4 +1,5 @@
 package frc.robot.navigation;
+
 import java.util.HashMap;
 
 import edu.wpi.first.wpilibj.PIDController;
@@ -7,19 +8,19 @@ import frc.robot.Robot;
 
 public class Controller {
     private Path genPath;
-    private int lookAheadPointIndex; //index of the look ahead point
+    private int lookAheadPointIndex; // index of the look ahead point
     private Point lookAheadPoint;
-    private double lDistance = 6; //look ahead distance
+    private double lDistance = 6; // look ahead distance
     private Point robotPosition = new Point(1, 1);
-    private Point closestPoint = null; //closest point
+    private Point closestPoint = null; // closest point
     private double xLocation;
     private double yLocation;
     private double distance;
-    private double targetVelocity; //target robot velocity
+    private double targetVelocity; // target robot velocity
     private double targetLeft;
     private double targetRight;
-    private double curvature; //curvature of arc
-    private double trackWidth = 26.296875; //track width
+    private double curvature; // curvature of arc
+    private double trackWidth = 26.296875; // track width
     public boolean isFinished = false;
 
     public Controller(Point[] points, double weight_smooth, double tol) {
@@ -30,9 +31,10 @@ public class Controller {
         genPath.calculatePointMetrix();
         genPath.adjustTargetVelocityForDeceleration();
         this.lookAheadPointIndex = 0;
-        this.lookAheadPoint = new Point(genPath.get(lookAheadPointIndex).getX(), genPath.get(lookAheadPointIndex).getY());
+        this.lookAheadPoint = new Point(genPath.get(lookAheadPointIndex).getX(),
+                genPath.get(lookAheadPointIndex).getY());
 
-        for (Point x: genPath) {
+        for (Point x : genPath) {
             System.out.println(x);
         }
     }
@@ -42,7 +44,8 @@ public class Controller {
         this.xLocation += this.distance * Math.cos(heading);
         this.yLocation += this.distance * Math.sin(heading);
         robotPosition = new Point(this.xLocation, this.yLocation);
-        this.lookAheadPoint = genPath.get(genPath.findLookAheadIndex(this.lDistance, this.robotPosition, this.lookAheadPointIndex));
+        this.lookAheadPoint = genPath
+                .get(genPath.findLookAheadIndex(this.lDistance, this.robotPosition, this.lookAheadPointIndex));
         this.curvature = Point.curvature(this.lDistance, robotPosition, heading, this.lookAheadPoint);
         this.closestPoint = genPath.get(genPath.closestPoint(robotPosition, 0));
         this.targetVelocity = genPath.rateLimiter(this.closestPoint.getVel());

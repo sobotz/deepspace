@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
 /**
- * An example command.  You can replace me with your own command.
+ * An example command. You can replace me with your own command.
  */
 public class RollerCommand extends Command {
   public RollerCommand() {
@@ -30,7 +30,7 @@ public class RollerCommand extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Robot.m_intake.rollerTalon.set(ControlMode.PercentOutput, Robot.m_oi.operatorJoystick.getRawAxis(1));
+    Robot.m_intake.rollerTalon.set(ControlMode.PercentOutput, Robot.m_oi.m_operatorjoystick.getRawAxis(1));
   }
 
   // Make this return true when this Command no longer needs to run execute()

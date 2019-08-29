@@ -11,9 +11,6 @@ import frc.robot.*;
 import frc.robot.navigation.Controller;
 import frc.robot.navigation.Point;
 
-import java.util.HashMap;
-import edu.wpi.first.wpilibj.Timer;
-
 import edu.wpi.first.wpilibj.command.Command;
 
 public class PurePursuitCommand extends Command {
@@ -36,7 +33,10 @@ public class PurePursuitCommand extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-  isFinished = purePursuit.controlLoop(Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontLeftTalon), Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontRightTalon), Robot.m_drivesubsystem.ahrs.getYaw());
+    isFinished = purePursuit.controlLoop(
+        Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontLeftTalon),
+        Robot.m_drivesubsystem.talonUnitsToInches(Robot.m_drivesubsystem.frontRightTalon),
+        Robot.m_drivesubsystem.ahrs.getYaw());
   }
 
   // Make this return true when this Command no longer needs to run execute()

@@ -7,13 +7,11 @@
 
 package frc.robot.commands;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
 /**
- * An example command.  You can replace me with your own command.
+ * An example command. You can replace me with your own command.
  */
 public class LiftCommand extends Command {
   public LiftCommand() {
@@ -32,10 +30,10 @@ public class LiftCommand extends Command {
   // 1ft -> 45
   @Override
   protected void execute() {
-        Robot.m_lift.control(Robot.m_oi.operatorJoystick.getRawAxis(5));
-        if(Robot.m_oi.operatorJoystick.getRawButton(1)){
-          Robot.m_lift.reset();
-        }
+    Robot.m_lift.control(Robot.m_oi.m_operatorjoystick.getRawAxis(5));
+    if (Robot.m_oi.m_operatorjoystick.getRawButton(1)) {
+      Robot.m_lift.reset();
+    }
   }
 
   // Make this return true when this Command no longer needs to run execute()

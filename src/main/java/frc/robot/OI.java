@@ -9,8 +9,6 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import frc.robot.autonomous.PathL2C4;
-import frc.robot.commands.AlignCommand;
 import frc.robot.commands.ShiftGearCommand;
 import frc.robot.commands.liftGotoCommand;
 
@@ -20,17 +18,17 @@ import frc.robot.commands.liftGotoCommand;
  */
 public class OI {
   // Create joystick instances
-  public Joystick driverJoystick = new Joystick(0);
-  public Joystick operatorJoystick = new Joystick(1);
+  public Joystick m_driverjoystick = new Joystick(0);
+  public Joystick m_operatorjoystick = new Joystick(1);
   public Joystick m_buttonbox = new Joystick(2);
 
-  public OI(){
-    
+  public OI() {
+
     // Create buttons on the operator's GamePad
-    JoystickButton aOperator = new JoystickButton(operatorJoystick, 1);
-    JoystickButton bOperator = new JoystickButton(operatorJoystick, 2);
-    JoystickButton xOperator = new JoystickButton(operatorJoystick, 3);
-    JoystickButton yOperator = new JoystickButton(operatorJoystick, 4);
+    JoystickButton aOperator = new JoystickButton(m_operatorjoystick, 1);
+    JoystickButton bOperator = new JoystickButton(m_operatorjoystick, 2);
+    JoystickButton xOperator = new JoystickButton(m_operatorjoystick, 3);
+    JoystickButton yOperator = new JoystickButton(m_operatorjoystick, 4);
 
     // Add commands to the buttons on the operator's GamePad
     bOperator.toggleWhenPressed(new liftGotoCommand(12));
@@ -39,11 +37,9 @@ public class OI {
     aOperator.toggleWhenPressed(new liftGotoCommand(0));
 
     // Add gear shifting to the trigger on the driver's joystick
-    JoystickButton gearShiftButton = new JoystickButton(driverJoystick, 1);
+    JoystickButton gearShiftButton = new JoystickButton(m_driverjoystick, 1);
     gearShiftButton.toggleWhenPressed(new ShiftGearCommand());
 
   }
-
-
 
 }

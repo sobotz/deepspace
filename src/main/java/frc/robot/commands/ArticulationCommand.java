@@ -9,12 +9,11 @@ package frc.robot.commands;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
 /**
- * An example command.  You can replace me with your own command.
+ * An example command. You can replace me with your own command.
  */
 public class ArticulationCommand extends Command {
   public ArticulationCommand() {
@@ -31,7 +30,7 @@ public class ArticulationCommand extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Robot.m_intake.articulationTalon.set(ControlMode.PercentOutput, Robot.m_oi.operatorJoystick.getRawAxis(2));
+    Robot.m_intake.articulationTalon.set(ControlMode.PercentOutput, Robot.m_oi.m_operatorjoystick.getRawAxis(2));
   }
 
   // Make this return true when this Command no longer needs to run execute()

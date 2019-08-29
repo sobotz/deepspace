@@ -12,7 +12,7 @@ import frc.robot.Robot;
 
 public class liftGotoCommand extends Command {
   int position;
-  
+
   public liftGotoCommand(int p) {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);

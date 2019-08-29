@@ -21,13 +21,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.DriveCommand;
-import frc.robot.navigation.*;
-
-import java.util.HashMap;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
@@ -63,7 +59,6 @@ public class DriveSubsystem extends Subsystem {
     private double dkP = 0.05, dkI, dkD = 0.0;
     private double driveToTargetOutput = 0.0;
     private DriveToTargetInput driveToTargetInput;
-
 
     private int PRIMARY_PID = 0;
     private int Talon_PID_TIMEOUT = 30;
@@ -101,7 +96,6 @@ public class DriveSubsystem extends Subsystem {
         backLeftTalon.configFactoryDefault();
         frontRightTalon.configFactoryDefault();
         backRightTalon.configFactoryDefault();
-
 
         frontLeftTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 30);
         frontLeftTalon.setSensorPhase(true);
@@ -145,15 +139,15 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public void manualDrive(double speed, double rotation) {
-        double Mspeed = ((Robot.m_oi.driverJoystick.getRawAxis(3) - 1) / 2) * (-1);
+        double Mspeed = ((Robot.m_oi.m_driverjoystick.getRawAxis(3) - 1) / 2) * (-1);
         m_drive.setMaxOutput(Mspeed);
-        m_drive.arcadeDrive(speed * -1, rotation*-1);
+        m_drive.arcadeDrive(speed * -1, rotation * -1);
     }
 
     public void shiftGear() {
 
         if (gearShifterState) {
-     gearShifter.set(DoubleSolenoid.Value.kForward);
+            gearShifter.set(DoubleSolenoid.Value.kForward);
             gearShifterState = false;
         } else {
             gearShifter.set(DoubleSolenoid.Value.kReverse);
@@ -192,7 +186,7 @@ public class DriveSubsystem extends Subsystem {
 
     public boolean distanceCascadePID(double setPoint, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE type, double minOutput,
             double maxOutput, int errorMargin) {
-        
+
         rotateToTargetInput.setType(type);
         driveToTargetPID.setAbsoluteTolerance(errorMargin);
         driveToTargetPID.setSetpoint(setPoint);
@@ -213,9 +207,9 @@ public class DriveSubsystem extends Subsystem {
 
     public boolean rotateToTarget(int errorMargin) {
         if (!rotateToTargetPID.isEnabled()) {
-            rotationCascadePID(0, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION,errorMargin);
+            rotationCascadePID(0, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION, errorMargin);
         }
-       
+
         backLeftTalon.follow(frontLeftTalon);
         backRightTalon.follow(frontRightTalon);
 
@@ -232,7 +226,7 @@ public class DriveSubsystem extends Subsystem {
 
     public boolean rotateToTarget(double angle, int errorMargin) {
         if (!rotateToTargetPID.isEnabled()) {
-            rotationCascadePID(angle, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION,errorMargin);
+            rotationCascadePID(angle, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION, errorMargin);
         }
 
         backLeftTalon.follow(frontLeftTalon);
@@ -251,13 +245,13 @@ public class DriveSubsystem extends Subsystem {
 
     public boolean driveToTarget(int errorMargin) {
         if (!driveToTargetPID.isEnabled()) {
-           distanceCascadePID(0,DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION,errorMargin);
+            distanceCascadePID(0, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION, errorMargin);
         }
-       
+
         backLeftTalon.follow(frontLeftTalon);
         backRightTalon.follow(frontRightTalon);
-        double rightOutput = (driveToTargetOutput+rotateToTargetOutput);
-        double leftOutput = (driveToTargetOutput-rotateToTargetOutput);
+        double rightOutput = (driveToTargetOutput + rotateToTargetOutput);
+        double leftOutput = (driveToTargetOutput - rotateToTargetOutput);
         double rightTalonTargetVelocity = velocityToTalonVelocity(rightOutput * 12);
         double leftTalonTargetVelocity = velocityToTalonVelocity(leftOutput * 12);
         SmartDashboard.putNumber("rightTalonTargetVelocity", rightTalonTargetVelocity);
@@ -285,18 +279,18 @@ public class DriveSubsystem extends Subsystem {
 
     public boolean driveRotateToTarget(int errorMargin) {
         if (!rotateToTargetPID.isEnabled()) {
-            rotationCascadePID(0, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION,errorMargin);
+            rotationCascadePID(0, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION, errorMargin);
         }
 
         if (!driveToTargetPID.isEnabled()) {
-            distanceCascadePID(0, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION,errorMargin);
+            distanceCascadePID(0, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION, errorMargin);
         }
         frontLeftTalon.selectProfileSlot(1, 0);
         frontRightTalon.selectProfileSlot(1, 0);
         backLeftTalon.follow(frontLeftTalon);
         backRightTalon.follow(frontRightTalon);
-        double rightOutput = (driveToTargetOutput+rotateToTargetOutput);
-        double leftOutput = (driveToTargetOutput-rotateToTargetOutput);
+        double rightOutput = (driveToTargetOutput + rotateToTargetOutput);
+        double leftOutput = (driveToTargetOutput - rotateToTargetOutput);
         double rightTalonTargetVelocity = velocityToTalonVelocity(rightOutput * 12);
         double leftTalonTargetVelocity = velocityToTalonVelocity(leftOutput * 12);
         SmartDashboard.putNumber("rightTalonTargetVelocity", rightTalonTargetVelocity);
@@ -305,7 +299,7 @@ public class DriveSubsystem extends Subsystem {
         frontRightTalon.set(ControlMode.Velocity, rightTalonTargetVelocity);
         onTarget(frontLeftTalon, errorMargin);
         onTarget(frontRightTalon, errorMargin);
-        
+
         return driveToTargetPID.onTarget();
     }
 
@@ -321,7 +315,7 @@ public class DriveSubsystem extends Subsystem {
         SmartDashboard.putNumber("R ENCODER position", frontRightTalon.getSelectedSensorPosition(0));
         SmartDashboard.putBoolean("HAS TARGET", vision.hasTarget());
         SmartDashboard.putNumber("YAW", ahrs.getYaw());
-        SmartDashboard.putNumber("TARGET DISTANCE", Robot.m_oi.driverJoystick.getRawAxis(3));
+        SmartDashboard.putNumber("TARGET DISTANCE", Robot.m_oi.m_driverjoystick.getRawAxis(3));
         SmartDashboard.putNumber("Talons left to inches", talonUnitsToInches(frontLeftTalon));
         SmartDashboard.putNumber("Talons right to inches", talonUnitsToInches(frontRightTalon));
         SmartDashboard.putBoolean("Talons left onTarget", onTarget(frontLeftTalon, 2));
@@ -366,7 +360,7 @@ public class DriveSubsystem extends Subsystem {
         public double pidGet() {
 
             if (type == DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION) {
-                input = vision.tx()*-1;
+                input = vision.tx() * -1;
             } else {
                 input = ahrs.getYaw();
             }
@@ -487,12 +481,11 @@ public class DriveSubsystem extends Subsystem {
         frontLeftTalon.config_kI(0, talonsPIDTuner.getI());
         frontLeftTalon.config_kD(0, talonsPIDTuner.getD());
 
-
         frontRightTalon.config_kF(0, talonsPIDTuner.getF());
         frontRightTalon.config_kP(0, talonsPIDTuner.getP());
         frontRightTalon.config_kI(0, talonsPIDTuner.getI());
         frontRightTalon.config_kD(0, talonsPIDTuner.getD());
-        
+
     }
 
 }
