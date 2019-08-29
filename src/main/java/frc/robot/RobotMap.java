@@ -20,7 +20,7 @@ public class RobotMap {
   public static int backRightMotor = 0;
   public static int articulationMotor = 13;
   public static int rollerMotor = 12;
-  public static int rollerMotorSlave  = 9;
+  public static int rollerMotorSlave = 9;
   public static int wristTalon = 7;
   public static int liftMotor = 4;
   public static int liftMotorSlave = 5;

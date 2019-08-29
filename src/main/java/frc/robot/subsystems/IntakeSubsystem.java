@@ -28,7 +28,7 @@ import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 /**
- * An example subsystem.  You can replace me with your own Subsystem.
+ * An example subsystem. You can replace me with your own Subsystem.
  */
 public class IntakeSubsystem extends Subsystem {
   TalonSRX articulationTalon;
@@ -45,7 +45,6 @@ public class IntakeSubsystem extends Subsystem {
 
   private PIDController intakePidController;
 
-
   private double armsMaxPosition = -2200;
   private double armLastPosition = 0;
 
@@ -56,212 +55,201 @@ public class IntakeSubsystem extends Subsystem {
   private double iPosition = 100;
   private double currentArmPosition = 0;
 
-
   private double wristMaxPosition = 2000;
   private double wristLastPosition = 0;
 
-  private double currentWristPosition  = 0;
-  private double wristIPosition  = 5000;
-
+  private double currentWristPosition = 0;
+  private double wristIPosition = 5000;
 
   public IntakeSubsystem() {
     articulationTalon = new TalonSRX(RobotMap.articulationMotor);
-    //dropTalon = new TalonSRX(RobotMap.dropMotor);
+    // dropTalon = new TalonSRX(RobotMap.dropMotor);
 
     rollerTalon = new TalonSRX(RobotMap.rollerMotor);
     rollerTalonSlave = new TalonSRX(RobotMap.rollerMotorSlave);
 
-
     wristTalon = new TalonSRX(RobotMap.wristTalon);
 
-    articulationTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative,	0, 30);
-  ///  dropTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative,	0, 30);
+    articulationTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 30);
+    /// dropTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative,
+    /// 0, 30);
 
-  articulationTalon.configFactoryDefault();
-  rollerTalon.configFactoryDefault();
-  rollerTalonSlave.configFactoryDefault();
-  wristTalon.configFactoryDefault();
+    articulationTalon.configFactoryDefault();
+    rollerTalon.configFactoryDefault();
+    rollerTalonSlave.configFactoryDefault();
+    wristTalon.configFactoryDefault();
 
-  articulationTalon.configPeakOutputReverse(-0.3);
-  articulationTalon.configPeakOutputForward(0.3);
+    articulationTalon.configPeakOutputReverse(-0.3);
+    articulationTalon.configPeakOutputForward(0.3);
 
-  rollerTalon.configPeakOutputReverse(-0.4);
-  rollerTalon.configPeakOutputForward(0.4);
+    rollerTalon.configPeakOutputReverse(-0.4);
+    rollerTalon.configPeakOutputForward(0.4);
 
-  wristTalon.configPeakOutputReverse(-0.3);
-  wristTalon.configPeakOutputForward(0.3);
+    wristTalon.configPeakOutputReverse(-0.3);
+    wristTalon.configPeakOutputForward(0.3);
 
-  articulationTalon.setSensorPhase(false);
-  articulationTalon.setNeutralMode(NeutralMode.Brake);
+    articulationTalon.setSensorPhase(false);
+    articulationTalon.setNeutralMode(NeutralMode.Brake);
 
-  articulationTalon.configReverseSoftLimitThreshold(-2200);
-  articulationTalon.configReverseSoftLimitEnable(true);
+    articulationTalon.configReverseSoftLimitThreshold(-2200);
+    articulationTalon.configReverseSoftLimitEnable(true);
 
-  articulationTalon.configMotionCruiseVelocity(1000, 30);
-  articulationTalon.configMotionAcceleration(1000, 30);
-  articulationTalon.configAllowableClosedloopError(0, 100);
+    articulationTalon.configMotionCruiseVelocity(1000, 30);
+    articulationTalon.configMotionAcceleration(1000, 30);
+    articulationTalon.configAllowableClosedloopError(0, 100);
 
-  articulationTalon.setInverted(true);
+    articulationTalon.setInverted(true);
 
-  articulationTalon.config_kF(0, 1);
-  articulationTalon.config_kP(0, 1.5);
-  articulationTalon.config_kI(0, 0);
-  articulationTalon.config_kD(0, 0);
+    articulationTalon.config_kF(0, 1);
+    articulationTalon.config_kP(0, 1.5);
+    articulationTalon.config_kI(0, 0);
+    articulationTalon.config_kD(0, 0);
 
-  wristTalon.setSensorPhase(false);
-  wristTalon.setNeutralMode(NeutralMode.Brake);
+    wristTalon.setSensorPhase(false);
+    wristTalon.setNeutralMode(NeutralMode.Brake);
 
-  wristTalon.configReverseSoftLimitThreshold(-190000);
-  wristTalon.configReverseSoftLimitEnable(true);
+    wristTalon.configReverseSoftLimitThreshold(-190000);
+    wristTalon.configReverseSoftLimitEnable(true);
 
-  //wristTalon.configForwardSoftLimitThreshold(10000);
-  //wristTalon.configForwardSoftLimitEnable(true);
-  
-  wristTalon.configMotionCruiseVelocity(1000, 30);
-  wristTalon.configMotionAcceleration(1000, 30);
-  wristTalon.configAllowableClosedloopError(0, 5000);
+    // wristTalon.configForwardSoftLimitThreshold(10000);
+    // wristTalon.configForwardSoftLimitEnable(true);
 
+    wristTalon.configMotionCruiseVelocity(1000, 30);
+    wristTalon.configMotionAcceleration(1000, 30);
+    wristTalon.configAllowableClosedloopError(0, 5000);
 
-  wristTalon.config_kF(0, 0.1);
-  wristTalon.config_kP(0, 0.05);
-  wristTalon.config_kI(0, 0);
-  wristTalon.config_kD(0, 0);
+    wristTalon.config_kF(0, 0.1);
+    wristTalon.config_kP(0, 0.05);
+    wristTalon.config_kI(0, 0);
+    wristTalon.config_kD(0, 0);
 
-  intakePidController = new PIDController(0, 0, 0, new PIDSource() {
+    intakePidController = new PIDController(0, 0, 0, new PIDSource() {
 
-    @Override
-    public void setPIDSourceType(PIDSourceType pidSource) {
+      @Override
+      public void setPIDSourceType(PIDSourceType pidSource) {
 
-    }
+      }
 
-    @Override
-    public double pidGet() {
-      return 0;
-    }
+      @Override
+      public double pidGet() {
+        return 0;
+      }
 
-    @Override
-    public PIDSourceType getPIDSourceType() {
-      return null;
-    }
-  }, new PIDOutput() {
+      @Override
+      public PIDSourceType getPIDSourceType() {
+        return null;
+      }
+    }, new PIDOutput() {
 
-    @Override
-    public void pidWrite(double output) {
+      @Override
+      public void pidWrite(double output) {
 
-    }
-  });
+      }
+    });
 
- // SmartDashboard.putData("INTAKE PID TUNER", intakePidController);
-  armLastPosition = articulationTalon.getSelectedSensorPosition();
-  POSITION = articulationTalon.getSelectedSensorPosition();
-  reset();
+    // SmartDashboard.putData("INTAKE PID TUNER", intakePidController);
+    armLastPosition = articulationTalon.getSelectedSensorPosition();
+    POSITION = articulationTalon.getSelectedSensorPosition();
+    reset();
   }
 
-
-  public void control(double input,double rollerInput,double wristUp,double wristDown){
-  /// articulationTalon.set(ControlMode.PercentOutput, input*-1);
-    rollerTalon.set(ControlMode.PercentOutput, rollerInput*-1);
-    rollerTalonSlave.set(ControlMode.PercentOutput,rollerInput);
-   wristTalon.set(ControlMode.PercentOutput, wristUp-wristDown);
+  public void control(double input, double rollerInput, double wristUp, double wristDown) {
+    /// articulationTalon.set(ControlMode.PercentOutput, input*-1);
+    rollerTalon.set(ControlMode.PercentOutput, rollerInput * -1);
+    rollerTalonSlave.set(ControlMode.PercentOutput, rollerInput);
+    wristTalon.set(ControlMode.PercentOutput, wristUp - wristDown);
 
     articulateArms(input);
 
-   /// articulateWrist(wristUp, wristDown);
+    /// articulateWrist(wristUp, wristDown);
   }
 
-  
-  /*public void articulateArms(double input){
-   articulationTalon.set(ControlMode.MotionMagic,input);
-  }*/
+  /*
+   * public void articulateArms(double input){
+   * articulationTalon.set(ControlMode.MotionMagic,input); }
+   */
 
-  public void articulateArms(double input){
+  public void articulateArms(double input) {
 
     /*
-      if(input < 0.01){
-        if(currentArmPosition <= 0){
+     * if(input < 0.01){ if(currentArmPosition <= 0){ currentArmPosition +=
+     * iPosition; }
+     * articulationTalon.set(ControlMode.MotionMagic,currentArmPosition); }else
+     * if(input > 0.01){ if(currentArmPosition >= armsMaxPosition){
+     * currentArmPosition -= iPosition; }
+     * articulationTalon.set(ControlMode.MotionMagic,currentArmPosition); }else{
+     * articulationTalon.set(ControlMode.MotionMagic,currentArmPosition); }
+     */
+
+    if (Math.abs(input) > 0.01) {
+      if (input < 0) {
+        if (currentArmPosition <= 0) {
           currentArmPosition += iPosition;
         }
-        articulationTalon.set(ControlMode.MotionMagic,currentArmPosition);
-      }else if(input > 0.01){
-        if(currentArmPosition >= armsMaxPosition){
+        articulationTalon.set(ControlMode.MotionMagic, currentArmPosition);
+      } else if (input > 0) {
+        if (currentArmPosition >= armsMaxPosition) {
           currentArmPosition -= iPosition;
         }
-        articulationTalon.set(ControlMode.MotionMagic,currentArmPosition);
-      }else{
-        articulationTalon.set(ControlMode.MotionMagic,currentArmPosition);
+        articulationTalon.set(ControlMode.MotionMagic, currentArmPosition);
       }
-      */
 
-      
-      if(Math.abs(input) > 0.01){
-        if(input < 0){
-          if(currentArmPosition <= 0){
-            currentArmPosition += iPosition;
-          }
-          articulationTalon.set(ControlMode.MotionMagic,currentArmPosition);
-        }
-        else if(input > 0){
-          if(currentArmPosition >= armsMaxPosition){
-            currentArmPosition -= iPosition;
-          }
-          articulationTalon.set(ControlMode.MotionMagic,currentArmPosition);
-        }
-        
-      }else{
-        articulationTalon.set(ControlMode.MotionMagic,currentArmPosition);
-      }
-      
-
-    //SmartDashboard.putNumber("ARTICULATION POV", Robot.m_oi.operatorJoystick.getPOV());
-  }
-
-  public void articulateWrist(double up,double down){
-    if(up > 0.01){
-      if(currentWristPosition <= 0){
-        currentWristPosition += wristIPosition;
-      }
-      wristTalon.set(ControlMode.MotionMagic,currentWristPosition);
-    }else if(down > 0.01){
-      if(currentWristPosition >= wristMaxPosition){
-        currentWristPosition -= wristIPosition;
-      }
-      wristTalon.set(ControlMode.MotionMagic,currentWristPosition);
-    }else{
-      wristTalon.set(ControlMode.MotionMagic,currentWristPosition);
+    } else {
+      articulationTalon.set(ControlMode.MotionMagic, currentArmPosition);
     }
 
-  //  SmartDashboard.putNumber("currentWristPosition", currentWristPosition);
+    // SmartDashboard.putNumber("ARTICULATION POV",
+    // Robot.m_oi.operatorJoystick.getPOV());
   }
 
+  public void articulateWrist(double up, double down) {
+    if (up > 0.01) {
+      if (currentWristPosition <= 0) {
+        currentWristPosition += wristIPosition;
+      }
+      wristTalon.set(ControlMode.MotionMagic, currentWristPosition);
+    } else if (down > 0.01) {
+      if (currentWristPosition >= wristMaxPosition) {
+        currentWristPosition -= wristIPosition;
+      }
+      wristTalon.set(ControlMode.MotionMagic, currentWristPosition);
+    } else {
+      wristTalon.set(ControlMode.MotionMagic, currentWristPosition);
+    }
 
+    // SmartDashboard.putNumber("currentWristPosition", currentWristPosition);
+  }
 
-  public boolean isZero(double input){
-    if(input > 0.01){
+  public boolean isZero(double input) {
+    if (input > 0.01) {
       return true;
-    }else{
+    } else {
       return false;
     }
   }
 
-  public void reset(){
+  public void reset() {
     articulationTalon.setSelectedSensorPosition(0);
     wristTalon.setSelectedSensorPosition(0);
   }
 
   @Override
   public void periodic() {
-   // SmartDashboard.putNumber("articulation VELOCITY", articulationTalon.getSelectedSensorVelocity());
-    //SmartDashboard.putNumber("articulation PID ERROR", articulationTalon.getClosedLoopError());
-  
-  
-  //  SmartDashboard.putNumber("Articulation  POSITION ", articulationTalon.getSelectedSensorPosition());
-  //  SmartDashboard.putNumber("WRIST POSITION", wristTalon.getSelectedSensorPosition());
+    // SmartDashboard.putNumber("articulation VELOCITY",
+    // articulationTalon.getSelectedSensorVelocity());
+    // SmartDashboard.putNumber("articulation PID ERROR",
+    // articulationTalon.getClosedLoopError());
+
+    // SmartDashboard.putNumber("Articulation POSITION ",
+    // articulationTalon.getSelectedSensorPosition());
+    // SmartDashboard.putNumber("WRIST POSITION",
+    // wristTalon.getSelectedSensorPosition());
   }
 
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
-   
+
     setDefaultCommand(new ArticulationCommand());
   }
 }

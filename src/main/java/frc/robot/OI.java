@@ -53,16 +53,15 @@ public class OI {
     JoystickButton buttonbox8 = new JoystickButton(m_buttonbox, 8);
     JoystickButton buttonbox9 = new JoystickButton(m_buttonbox, 9);
 
-    
-    
-    /*aOperator.toggleWhenPressed(new ArticulationCommand(2000));
-    bOperator.toggleWhenPressed(new ArticulationCommand(1000));
-*/
     /*
-    yOperator.toggleWhenPressed(new liftGotoCommand(36));
-    aOperator.toggleWhenPressed(new liftGotoCommand(0));
-    */
-    
+     * aOperator.toggleWhenPressed(new ArticulationCommand(2000));
+     * bOperator.toggleWhenPressed(new ArticulationCommand(1000));
+     */
+    /*
+     * yOperator.toggleWhenPressed(new liftGotoCommand(36));
+     * aOperator.toggleWhenPressed(new liftGotoCommand(0));
+     */
+
     buttonbox1.whenPressed(new liftGotoCommand(HLVL1));
     buttonbox2.whenPressed(new liftGotoCommand(RSH2));
     buttonbox3.whenPressed(new liftGotoCommand(RSH3));
@@ -78,7 +77,6 @@ public class OI {
     startOperator.whenPressed(new liftGotoCommand(HLVL1));
     backOperator.whenPressed(new liftGotoCommand(ZERO));
 
-
     JoystickButton expandsFrontlegs = new JoystickButton(driverJoystick, 7);
     expandsFrontlegs.whenPressed(new LegsCommand(7));
 
@@ -91,11 +89,7 @@ public class OI {
     JoystickButton expandsBackLeg = new JoystickButton(driverJoystick, 10);
     expandsBackLeg.whenPressed(new LegsCommand(10));
 
-    
-
     aOperator.toggleWhenPressed(new DeliverHatchCommand());
   }
-
-
 
 }

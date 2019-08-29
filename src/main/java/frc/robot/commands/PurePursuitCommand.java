@@ -27,7 +27,7 @@ public class PurePursuitCommand extends Command {
   }
 
   // Called just before this Command runs the first time
-  
+
   @Override
   protected void initialize() {
     Robot.m_drivesubsystem.frontLeftTalon.setSelectedSensorPosition(0);
@@ -43,12 +43,12 @@ public class PurePursuitCommand extends Command {
   protected void execute() {
     double newLeftEncoderTicks = Robot.m_drivesubsystem.frontLeftTalon.getSelectedSensorPosition();
     double newRightEncoderTicks = Robot.m_drivesubsystem.frontRightTalon.getSelectedSensorPosition();
-    
+
     double leftChange = Robot.m_drivesubsystem.talonUnitsToInches(newLeftEncoderTicks - lastLeftEncoderTicks);
     double rightChange = Robot.m_drivesubsystem.talonUnitsToInches(newRightEncoderTicks - lastRightEncoderTicks);
-    
+
     isFinished = purePursuit.controlLoop(leftChange, rightChange, Robot.m_drivesubsystem.ahrs.getYaw());
-    
+
     lastLeftEncoderTicks = newLeftEncoderTicks;
     lastRightEncoderTicks = newRightEncoderTicks;
   }
@@ -61,13 +61,12 @@ public class PurePursuitCommand extends Command {
   }
 
   // Called once after isFinished returns true
-  
+
   @Override
   protected void end() {
     Robot.m_drivesubsystem.reset();
     isFinished = false;
   }
-
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
