@@ -46,7 +46,6 @@ public class DriveSubsystem extends Subsystem {
 
     private int legsPosition = 0;
 
-
     private double talonPIDkF = 0.0;
     private double talonPIDkP = 0.0;
     private double talonPIDkI = 0.0;
@@ -77,7 +76,6 @@ public class DriveSubsystem extends Subsystem {
     private double dkP = 0.05, dkI, dkD = 0.0;
     private double driveToTargetOutput = 0.0;
     private DriveToTargetInput driveToTargetInput;
-
 
     private int PRIMARY_PID = 0;
     private int Talon_PID_TIMEOUT = 30;
@@ -118,7 +116,6 @@ public class DriveSubsystem extends Subsystem {
         frontRightTalon.configFactoryDefault();
         backRightTalon.configFactoryDefault();
 
-
         frontLeftTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 30);
         frontLeftTalon.setSensorPhase(true);
 
@@ -130,37 +127,31 @@ public class DriveSubsystem extends Subsystem {
         frontRightTalon.configPeakOutputReverse(-1);
         frontRightTalon.configPeakOutputForward(1);
 
-
-
-
         talonsPIDTuner = new PIDController(0, 0, 0, new DriveToTargetInput(), new DriveToTargetOutput());
-        ///SmartDashboard.putData("Talon PID", talonsPIDTuner);
+        /// SmartDashboard.putData("Talon PID", talonsPIDTuner);
 
         m_left = new SpeedControllerGroup(frontLeftTalon, backLeftTalon);
         m_right = new SpeedControllerGroup(frontRightTalon, backRightTalon);
 
-      //  m_drive = new DifferentialDrive(m_left, m_right);
-       // m_drive.setRightSideInverted(false);
+        // m_drive = new DifferentialDrive(m_left, m_right);
+        // m_drive.setRightSideInverted(false);
 
         reset();
-
 
         frontLeftTalon.config_kF(0, 0.02);
         frontLeftTalon.config_kP(0, 0.5);
         frontLeftTalon.config_kI(0, 0);
         frontLeftTalon.config_kD(0, 0);
 
-
         frontRightTalon.config_kF(0, 0.02);
         frontRightTalon.config_kP(0, 0.5);
         frontRightTalon.config_kI(0, 0);
         frontRightTalon.config_kD(0, 0);
 
-
         legsTalon = new TalonSRX(RobotMap.legsMotor);
 
         legsTalon.configFactoryDefault();
-    
+
         legsTalon.config_kF(0, 0.02);
         legsTalon.config_kP(0, 0.5);
         legsTalon.config_kI(0, 0);
@@ -182,51 +173,49 @@ public class DriveSubsystem extends Subsystem {
     public void periodic() {
         seekTarget();
 
-        //dashboard();
-        ///setTalonPIDGains(talonsPIDTuner.getF(), talonsPIDTuner.getP(), talonsPIDTuner.getI(), talonsPIDTuner.getD());
+        // dashboard();
+        /// setTalonPIDGains(talonsPIDTuner.getF(), talonsPIDTuner.getP(),
+        // talonsPIDTuner.getI(), talonsPIDTuner.getD());
 
     }
 
-  /*public void manualDrive(double speed, double rotation) {
-        if(!Robot.m_oi.driverJoystick.getRawButton(7) && !Robot.m_oi.driverJoystick.getRawButton(8)){
-        double Mspeed = ((Robot.m_oi.driverJoystick.getRawAxis(3) - 1) / 2) * (-1);
-        m_drive.setMaxOutput(Mspeed);
-        m_drive.arcadeDrive(speed * -1, rotation);
-        }
+    /*
+     * public void manualDrive(double speed, double rotation) {
+     * if(!Robot.m_oi.driverJoystick.getRawButton(7) &&
+     * !Robot.m_oi.driverJoystick.getRawButton(8)){ double Mspeed =
+     * ((Robot.m_oi.driverJoystick.getRawAxis(3) - 1) / 2) * (-1);
+     * m_drive.setMaxOutput(Mspeed); m_drive.arcadeDrive(speed * -1, rotation); }
+     * 
+     * if(Robot.m_oi.driverJoystick.getRawButton(7)){ m_drive.tankDrive(1, 1);
+     * 
+     * }
+     * 
+     * if(Robot.m_oi.driverJoystick.getRawButton(8)){ m_drive.tankDrive(-1, -1);
+     * 
+     * }
+     * 
+     * }
+     */
 
-        if(Robot.m_oi.driverJoystick.getRawButton(7)){
-            m_drive.tankDrive(1, 1);
+    public void legsControl(int input) {
 
-        }
+        if (input == 0) {
+            legsTalon.set(ControlMode.PercentOutput, -0.2);
+            legsPosition += legsIPosition;
+        } else if (input == 180) {
 
-        if(Robot.m_oi.driverJoystick.getRawButton(8)){
-            m_drive.tankDrive(-1, -1);
-
+            legsTalon.set(ControlMode.PercentOutput, 0.2);
+            legsPosition -= legsIPosition;
+        } else {
+            legsTalon.set(ControlMode.PercentOutput, 0);
         }
 
     }
-*/
-
-public void legsControl(int input){
-  
-  if(input == 0){
-        legsTalon.set(ControlMode.PercentOutput, -0.2);
-        legsPosition += legsIPosition;
-    }else if(input == 180){
-
-        legsTalon.set(ControlMode.PercentOutput, 0.2);
-        legsPosition -= legsIPosition;
-    }else{
-        legsTalon.set(ControlMode.PercentOutput, 0);
-    }
-    
-}
-
 
     public void manualDrive2(double speed, double rotation) {
         boolean test = false;
-        SmartDashboard.putBoolean("TEST",Robot.m_oi.driverJoystick.getRawButton(11) );
-        if(!Robot.m_oi.driverJoystick.getRawButton(11) & !Robot.m_oi.driverJoystick.getRawButton(12)){
+        SmartDashboard.putBoolean("TEST", Robot.m_oi.driverJoystick.getRawButton(11));
+        if (!Robot.m_oi.driverJoystick.getRawButton(11) & !Robot.m_oi.driverJoystick.getRawButton(12)) {
             test = true;
             frontLeftTalon.set(ControlMode.PercentOutput, -speed, DemandType.ArbitraryFeedForward, rotation);
             frontRightTalon.set(ControlMode.PercentOutput, -speed, DemandType.ArbitraryFeedForward, -rotation);
@@ -236,21 +225,19 @@ public void legsControl(int input){
 
         }
 
-   // legsControl(Robot.m_oi.operatorJoystick.getPOV());
-        
+        // legsControl(Robot.m_oi.operatorJoystick.getPOV());
 
-        if(Robot.m_oi.driverJoystick.getRawButton(11)){
+        if (Robot.m_oi.driverJoystick.getRawButton(11)) {
             frontLeftTalon.set(ControlMode.PercentOutput, -1);
             frontRightTalon.set(ControlMode.PercentOutput, -1);
             backLeftTalon.follow(frontLeftTalon);
             backRightTalon.follow(frontRightTalon);
-            test  = true;
+            test = true;
         }
 
         SmartDashboard.putBoolean("TEST2", test);
 
-
-        if(Robot.m_oi.driverJoystick.getRawButton(12)){
+        if (Robot.m_oi.driverJoystick.getRawButton(12)) {
 
             frontLeftTalon.set(ControlMode.PercentOutput, 1);
             frontRightTalon.set(ControlMode.PercentOutput, 1);
@@ -272,11 +259,17 @@ public void legsControl(int input){
         }
     }
 
-   /* public void deliverHatch() {
-        if(hatchSwitch.get()) {
-            hatchDelivery.set(DoubleSolenoid.Value.kForward);
-            hatchDeliveryState = false;
-        } else if (hatchDeliveryState) {
+    /*
+     * public void deliverHatch() { if(hatchSwitch.get()) {
+     * hatchDelivery.set(DoubleSolenoid.Value.kForward); hatchDeliveryState = false;
+     * } else if (hatchDeliveryState) {
+     * hatchDelivery.set(DoubleSolenoid.Value.kForward); hatchDeliveryState = false;
+     * } else { hatchDelivery.set(DoubleSolenoid.Value.kReverse); hatchDeliveryState
+     * = true; } }
+     */
+
+    public void deliverHatch() {
+        if (hatchDeliveryState) {
             hatchDelivery.set(DoubleSolenoid.Value.kForward);
             hatchDeliveryState = false;
         } else {
@@ -284,17 +277,7 @@ public void legsControl(int input){
             hatchDeliveryState = true;
         }
     }
-*/
 
-public void deliverHatch() {
- if (hatchDeliveryState) {
-        hatchDelivery.set(DoubleSolenoid.Value.kForward);
-        hatchDeliveryState = false;
-    } else {
-        hatchDelivery.set(DoubleSolenoid.Value.kReverse);
-        hatchDeliveryState = true;
-    }
-}
     private void seekTarget() {
         if (vision.hasTarget()) {
             visionState = VisionState.HASTARGET;
@@ -326,7 +309,7 @@ public void deliverHatch() {
 
     public boolean distanceCascadePID(double setPoint, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE type, double minOutput,
             double maxOutput, int errorMargin) {
-        
+
         rotateToTargetInput.setType(type);
         driveToTargetPID.setAbsoluteTolerance(errorMargin);
         driveToTargetPID.setSetpoint(setPoint);
@@ -347,9 +330,9 @@ public void deliverHatch() {
 
     public boolean rotateToTarget(int errorMargin) {
         if (!rotateToTargetPID.isEnabled()) {
-            rotationCascadePID(0, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION,errorMargin);
+            rotationCascadePID(0, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION, errorMargin);
         }
-       
+
         backLeftTalon.follow(frontLeftTalon);
         backRightTalon.follow(frontRightTalon);
 
@@ -366,7 +349,7 @@ public void deliverHatch() {
 
     public boolean rotateToTarget(double angle, int errorMargin) {
         if (!rotateToTargetPID.isEnabled()) {
-            rotationCascadePID(angle, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION,errorMargin);
+            rotationCascadePID(angle, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION, errorMargin);
         }
 
         backLeftTalon.follow(frontLeftTalon);
@@ -385,13 +368,13 @@ public void deliverHatch() {
 
     public boolean driveToTarget(int errorMargin) {
         if (!driveToTargetPID.isEnabled()) {
-           distanceCascadePID(0,DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION,errorMargin);
+            distanceCascadePID(0, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION, errorMargin);
         }
-       
+
         backLeftTalon.follow(frontLeftTalon);
         backRightTalon.follow(frontRightTalon);
-        double rightOutput = (driveToTargetOutput+rotateToTargetOutput);
-        double leftOutput = (driveToTargetOutput-rotateToTargetOutput);
+        double rightOutput = (driveToTargetOutput + rotateToTargetOutput);
+        double leftOutput = (driveToTargetOutput - rotateToTargetOutput);
         double rightTalonTargetVelocity = velocityToTalonVelocity(rightOutput * 12);
         double leftTalonTargetVelocity = velocityToTalonVelocity(leftOutput * 12);
         SmartDashboard.putNumber("rightTalonTargetVelocity", rightTalonTargetVelocity);
@@ -419,17 +402,17 @@ public void deliverHatch() {
 
     public boolean driveRotateToTarget(int errorMargin) {
         if (!rotateToTargetPID.isEnabled()) {
-            rotationCascadePID(0, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION,errorMargin);
+            rotationCascadePID(0, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION, errorMargin);
         }
 
         if (!driveToTargetPID.isEnabled()) {
-            distanceCascadePID(0, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION,errorMargin);
+            distanceCascadePID(0, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION, errorMargin);
         }
-     
+
         backLeftTalon.follow(frontLeftTalon);
         backRightTalon.follow(frontRightTalon);
-        double rightOutput = (driveToTargetOutput+rotateToTargetOutput);
-        double leftOutput = (driveToTargetOutput-rotateToTargetOutput);
+        double rightOutput = (driveToTargetOutput + rotateToTargetOutput);
+        double leftOutput = (driveToTargetOutput - rotateToTargetOutput);
         double rightTalonTargetVelocity = velocityToTalonVelocity(rightOutput * 12);
         double leftTalonTargetVelocity = velocityToTalonVelocity(leftOutput * 12);
         SmartDashboard.putNumber("rightTalonTargetVelocity", rightTalonTargetVelocity);
@@ -438,7 +421,7 @@ public void deliverHatch() {
         frontRightTalon.set(ControlMode.Velocity, rightTalonTargetVelocity);
         onTarget(frontLeftTalon, errorMargin);
         onTarget(frontRightTalon, errorMargin);
-        
+
         return driveToTargetPID.onTarget();
     }
 
@@ -503,7 +486,7 @@ public void deliverHatch() {
         public double pidGet() {
 
             if (type == DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE.VISION) {
-                input = vision.tx()*-1;
+                input = vision.tx() * -1;
             } else {
                 input = ahrs.getYaw();
             }
@@ -624,12 +607,11 @@ public void deliverHatch() {
         frontLeftTalon.config_kI(0, talonsPIDTuner.getI());
         frontLeftTalon.config_kD(0, talonsPIDTuner.getD());
 
-
         frontRightTalon.config_kF(0, talonsPIDTuner.getF());
         frontRightTalon.config_kP(0, talonsPIDTuner.getP());
         frontRightTalon.config_kI(0, talonsPIDTuner.getI());
         frontRightTalon.config_kD(0, talonsPIDTuner.getD());
-        
+
     }
 
 }

@@ -17,10 +17,11 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class testPath extends CommandGroup {
   boolean isPurePursuit;
+
   public testPath(boolean type) {
     if (type) {
-      Point[] path = {new Point(1,1,0), new Point(157.25,1)};
+      Point[] path = { new Point(1, 1, 0), new Point(157.25, 1) };
       addSequential(new PurePursuitCommand(path));
     }
-  } 
+  }
 }

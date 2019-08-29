@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
 /**
- * An example command.  You can replace me with your own command.
+ * An example command. You can replace me with your own command.
  */
 public class ArticulationCommand extends Command {
   private int position;
@@ -22,17 +22,16 @@ public class ArticulationCommand extends Command {
 
   public ArticulationCommand() {
     // Use requires() here to declare subsystem dependencies
-      ControlMode = "manual";
+    ControlMode = "manual";
     requires(Robot.m_intake);
   }
 
   public ArticulationCommand(int p) {
     // Use requires() here to declare subsystem dependencies
-      position =  p;
-      ControlMode = "controlLoop";
+    position = p;
+    ControlMode = "controlLoop";
     requires(Robot.m_intake);
   }
-
 
   // Called just before this Command runs the first time
   @Override
@@ -43,9 +42,10 @@ public class ArticulationCommand extends Command {
   @Override
   protected void execute() {
 
-    if(ControlMode == "manual"){
-      Robot.m_intake.control(Robot.m_oi.operatorJoystick.getRawAxis(1),Robot.m_oi.operatorJoystick.getRawAxis(5),Robot.m_oi.operatorJoystick.getRawAxis(3),Robot.m_oi.operatorJoystick.getRawAxis(2));
-    }else{
+    if (ControlMode == "manual") {
+      Robot.m_intake.control(Robot.m_oi.operatorJoystick.getRawAxis(1), Robot.m_oi.operatorJoystick.getRawAxis(5),
+          Robot.m_oi.operatorJoystick.getRawAxis(3), Robot.m_oi.operatorJoystick.getRawAxis(2));
+    } else {
       Robot.m_intake.articulateArms(position);
     }
   }

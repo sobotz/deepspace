@@ -41,13 +41,12 @@ public class Robot extends TimedRobot {
   public static LiftSubsystem m_lift;
   public static LegsSubsystem m_legssubsystem;
 
-
   Command m_autonomousCommand;
   SendableChooser<Command> m_chooser = new SendableChooser<>();
 
   /**
-   * This function is run when the robot is first started up and should be
-   * used for any initialization code.
+   * This function is run when the robot is first started up and should be used
+   * for any initialization code.
    */
   @Override
   public void robotInit() {
@@ -56,9 +55,9 @@ public class Robot extends TimedRobot {
     m_lift = new LiftSubsystem();
     m_legssubsystem = new LegsSubsystem();
     m_oi = new OI();
- //   m_pdp = new PowerDistributionPanel();
+    // m_pdp = new PowerDistributionPanel();
     // starting from L1
-  m_chooser.addDefault("Path L1R1L (Pure Pursuit)", new PathL1R1L(true));
+    m_chooser.addDefault("Path L1R1L (Pure Pursuit)", new PathL1R1L(true));
     m_chooser.addObject("Path L1R1L (Regular)", new PathL1R1L(false));
     m_chooser.addObject("Path L1C3 (Pure Pursuit)", new PathL1C3(true));
     m_chooser.addObject("Path L1C3 (Regular)", new PathL1C3(false));
@@ -76,50 +75,50 @@ public class Robot extends TimedRobot {
     m_chooser.addObject("Path L3R1R (Regular)", new PathL3R1R(false));
     m_chooser.addObject("Path L3C6 (Pure Pursuit)", new PathL3C6(true));
     m_chooser.addObject("Path L3C6 (Regular)", new PathL3C6(false));
-    
+
     // m_chooser.setDefaultOption("Default Auto", new ExampleCommand());
     // chooser.addOption("My Auto", new MyAutoCommand());
     SmartDashboard.putData("Auto mode", m_chooser);
 
-   /* new Thread(() -> {
-      UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-      camera.setResolution(160, 120);
-  }).start();
-  */
-}
-  
+    /*
+     * new Thread(() -> { UsbCamera camera =
+     * CameraServer.getInstance().startAutomaticCapture(); camera.setResolution(160,
+     * 120); }).start();
+     */
+  }
 
   /**
-   * This function is called every robot packet, no matter the mode. Use
-   * this for items like diagnostics that you want ran during disabled,
-   * autonomous, teleoperated and test.
+   * This function is called every robot packet, no matter the mode. Use this for
+   * items like diagnostics that you want ran during disabled, autonomous,
+   * teleoperated and test.
    *
-   * <p>This runs after the mode specific periodic functions, but before
-   * LiveWindow and SmartDashboard integrated updating.
+   * <p>
+   * This runs after the mode specific periodic functions, but before LiveWindow
+   * and SmartDashboard integrated updating.
    */
   @Override
   public void robotPeriodic() {
     /*
-    System.out.println("Motor: Drive, BR: " + m_pdp.getCurrent(0) + " amps");
-    System.out.println("Motor: Drive, BL: " + m_pdp.getCurrent(15) + " amps");
-    System.out.println("Motor: Drive, FR: " + m_pdp.getCurrent(1) + " amps");
-    System.out.println("Motor: Drive, FL: " + m_pdp.getCurrent(14) + " amps");
-    System.out.println("Motor: Intake, Articulation: " + m_pdp.getCurrent(13) + " amps");
-    System.out.println("Motor: Intake, Roller: " + m_pdp.getCurrent(12) + " amps");
-    System.out.println("Motor: Intake, Roller Slave: " + m_pdp.getCurrent(9) + " amps");
-    System.out.println("Motor: Intake, Wrist: " + m_pdp.getCurrent(7) + " amps");
-    System.out.println("Motor: Lift, Lift: " + m_pdp.getCurrent(4) + " amps");
-    System.out.println("Motor: Lift, Slave: " + m_pdp.getCurrent(5) + " amps");
-    System.out.println("Voltage: " + m_pdp.getVoltage());
-    System.out.println("Temperature: " + ((m_pdp.getTemperature()*9/5)+32));
-    System.out.println("");
-    */
+     * System.out.println("Motor: Drive, BR: " + m_pdp.getCurrent(0) + " amps");
+     * System.out.println("Motor: Drive, BL: " + m_pdp.getCurrent(15) + " amps");
+     * System.out.println("Motor: Drive, FR: " + m_pdp.getCurrent(1) + " amps");
+     * System.out.println("Motor: Drive, FL: " + m_pdp.getCurrent(14) + " amps");
+     * System.out.println("Motor: Intake, Articulation: " + m_pdp.getCurrent(13) +
+     * " amps"); System.out.println("Motor: Intake, Roller: " + m_pdp.getCurrent(12)
+     * + " amps"); System.out.println("Motor: Intake, Roller Slave: " +
+     * m_pdp.getCurrent(9) + " amps"); System.out.println("Motor: Intake, Wrist: " +
+     * m_pdp.getCurrent(7) + " amps"); System.out.println("Motor: Lift, Lift: " +
+     * m_pdp.getCurrent(4) + " amps"); System.out.println("Motor: Lift, Slave: " +
+     * m_pdp.getCurrent(5) + " amps"); System.out.println("Voltage: " +
+     * m_pdp.getVoltage()); System.out.println("Temperature: " +
+     * ((m_pdp.getTemperature()*9/5)+32)); System.out.println("");
+     */
   }
 
   /**
-   * This function is called once each time the robot enters Disabled mode.
-   * You can use it to reset any subsystem information you want to clear when
-   * the robot is disabled.
+   * This function is called once each time the robot enters Disabled mode. You
+   * can use it to reset any subsystem information you want to clear when the
+   * robot is disabled.
    */
   @Override
   public void disabledInit() {
@@ -132,30 +131,30 @@ public class Robot extends TimedRobot {
 
   /**
    * This autonomous (along with the chooser code above) shows how to select
-   * between different autonomous modes using the dashboard. The sendable
-   * chooser code works with the Java SmartDashboard. If you prefer the
-   * LabVIEW Dashboard, remove all of the chooser co  de and uncomment the
-   * getString code to get the auto name from the text box below the Gyro
+   * between different autonomous modes using the dashboard. The sendable chooser
+   * code works with the Java SmartDashboard. If you prefer the LabVIEW Dashboard,
+   * remove all of the chooser co de and uncomment the getString code to get the
+   * auto name from the text box below the Gyro
    *
-   * <p>You can add additional auto modes by adding additional commands to the
-   * chooser code above (like the commented example) or additional comparisons
-   * to the switch structure below with additional strings & commands.
+   * <p>
+   * You can add additional auto modes by adding additional commands to the
+   * chooser code above (like the commented example) or additional comparisons to
+   * the switch structure below with additional strings & commands.
    */
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_chooser.getSelected();
     /*
-     * String autoSelected = SmartDashboard.getString("Auto Selector",
-     * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
-     * = new MyAutoCommand(); break; case "Default Auto": default:
-     * autonomousCommand = new ExampleCommand(); break; }
+     * String autoSelected = SmartDashboard.getString("Auto Selector", "Default");
+     * switch(autoSelected) { case "My Auto": autonomousCommand = new
+     * MyAutoCommand(); break; case "Default Auto": default: autonomousCommand = new
+     * ExampleCommand(); break; }
      */
 
     // schedule the autonomous command (example)
-    /*if (m_autonomousCommand != null) {
-      m_autonomousCommand.start();
-    }
-    */
+    /*
+     * if (m_autonomousCommand != null) { m_autonomousCommand.start(); }
+     */
 
     teleopPeriodic();
   }

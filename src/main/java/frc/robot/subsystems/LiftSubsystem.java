@@ -165,11 +165,10 @@ public class LiftSubsystem extends Subsystem {
       liftTalon.set(ControlMode.MotionMagic, lastPosition);
     }
 
-  
-
-  /// SmartDashboard.putNumber("TALON RAW VELOCITY",
-  /// liftTalon.getSelectedSensorVelocity());
-  SmartDashboard.putNumber("Lift max position",liftMaxPosition);SmartDashboard.putNumber("Lift current position",lastPosition);
+    /// SmartDashboard.putNumber("TALON RAW VELOCITY",
+    /// liftTalon.getSelectedSensorVelocity());
+    SmartDashboard.putNumber("Lift max position", liftMaxPosition);
+    SmartDashboard.putNumber("Lift current position", lastPosition);
 
   }
 

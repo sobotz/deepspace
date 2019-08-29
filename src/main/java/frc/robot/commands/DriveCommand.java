@@ -21,16 +21,18 @@ public class DriveCommand extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-  //  Robot.m_drivesubsystem.m_drive.setSafetyEnabled(true);
+    // Robot.m_drivesubsystem.m_drive.setSafetyEnabled(true);
 
-    Robot.m_drivesubsystem.manualDrive2(Robot.m_oi.driverJoystick.getRawAxis(1), Robot.m_oi.driverJoystick.getRawAxis(0));
+    Robot.m_drivesubsystem.manualDrive2(Robot.m_oi.driverJoystick.getRawAxis(1),
+        Robot.m_oi.driverJoystick.getRawAxis(0));
 
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Robot.m_drivesubsystem.manualDrive2(Robot.m_oi.driverJoystick.getRawAxis(1), Robot.m_oi.driverJoystick.getRawAxis(0));
+    Robot.m_drivesubsystem.manualDrive2(Robot.m_oi.driverJoystick.getRawAxis(1),
+        Robot.m_oi.driverJoystick.getRawAxis(0));
   }
 
   // Make this return true when this Command no longer needs to run execute()
@@ -41,18 +43,19 @@ public class DriveCommand extends Command {
 
   // Called once after isFinished returns true
   @Override
-  protected void end() { 
-    /*Robot.m_drivesubsystem.m_drive.stopMotor();
-    Robot.m_drivesubsystem.m_drive.feedWatchdog();
-    Robot.m_drivesubsystem.m_drive.feed();
-    Robot.m_drivesubsystem.m_drive.setSafetyEnabled(false);
-    */
+  protected void end() {
+    /*
+     * Robot.m_drivesubsystem.m_drive.stopMotor();
+     * Robot.m_drivesubsystem.m_drive.feedWatchdog();
+     * Robot.m_drivesubsystem.m_drive.feed();
+     * Robot.m_drivesubsystem.m_drive.setSafetyEnabled(false);
+     */
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-  
+
   }
 }

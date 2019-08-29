@@ -26,31 +26,30 @@ public class LegsSubsystem extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 
-  DoubleSolenoid frontLeftLegs = new DoubleSolenoid(4,5);
-  DoubleSolenoid backLeg= new DoubleSolenoid(6,7);
+  DoubleSolenoid frontLeftLegs = new DoubleSolenoid(4, 5);
+  DoubleSolenoid backLeg = new DoubleSolenoid(6, 7);
 
   public LegsSubsystem() {
-  
+
   }
 
-
-public void shift(int action){
-  switch(action){
+  public void shift(int action) {
+    switch (action) {
     case 8:
-    frontLeftLegs.set(DoubleSolenoid.Value.kReverse);
-    break;
+      frontLeftLegs.set(DoubleSolenoid.Value.kReverse);
+      break;
     case 7:
-    frontLeftLegs.set(DoubleSolenoid.Value.kForward);
-    break;
+      frontLeftLegs.set(DoubleSolenoid.Value.kForward);
+      break;
     case 9:
-    backLeg.set(DoubleSolenoid.Value.kForward);
-    break;
+      backLeg.set(DoubleSolenoid.Value.kForward);
+      break;
     case 10:
-    backLeg.set(DoubleSolenoid.Value.kReverse);
-    break;
+      backLeg.set(DoubleSolenoid.Value.kReverse);
+      break;
+    }
   }
-}
-  
+
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.

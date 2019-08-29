@@ -13,10 +13,11 @@ import frc.robot.Robot;
 public class DriveToTargetCommand extends Command {
   double distance;
   boolean isFinished = false;
+
   public DriveToTargetCommand(double myDistance) {
     requires(Robot.m_drivesubsystem);
     distance = myDistance;
-    
+
   }
 
   // Called just before this Command runs the first time

@@ -40,61 +40,61 @@ public class Point {
 		return this.dist_Along_Path;
 	}
 
-	public void setVel(double v){
+	public void setVel(double v) {
 		targetV = v;
 	}
 
-	public double getVel(){
+	public double getVel() {
 		return targetV;
 	}
 
 	public double getX() {
 		return x;
 	}
-	
+
 	public double getY() {
 		return y;
 	}
-	
+
 	public void setX(double x) {
 		this.x = x;
 	}
-	
+
 	public void setY(double y) {
 		this.y = y;
 	}
-	
+
 	public double angleBetween(Point p) {
-		return Math.toDegrees(Math.asin(y-p.getY()/x-p.getX()));
+		return Math.toDegrees(Math.asin(y - p.getY() / x - p.getX()));
 	}
 
 	public double distFrom(Point p) {
-		return Math.sqrt(Math.abs(p.getX()-x)*Math.abs(p.getX()-x) + Math.abs(p.getY()-y)
-			*Math.abs(p.getY()-y));
+		return Math.sqrt(
+				Math.abs(p.getX() - x) * Math.abs(p.getX() - x) + Math.abs(p.getY() - y) * Math.abs(p.getY() - y));
 	}
-	
+
 	public String toString() {
 		return "(" + x + ", " + y + ")";
 	}
 
 	public String toStringAll() {
-		return "Point [x = " + this.x + ", y = " + this.y + ", targetV = " + this.targetV + 
-			", distance along the path = " + this.dist_Along_Path + ", curvature = " + this.curvature + "]";
+		return "Point [x = " + this.x + ", y = " + this.y + ", targetV = " + this.targetV
+				+ ", distance along the path = " + this.dist_Along_Path + ", curvature = " + this.curvature + "]";
 	}
 
-	public static double curvature(double lookAheadDistance, Point robotPosition, double heading, 
-		Point lookAheadPoint) {
-		
-		//variable instantiation
+	public static double curvature(double lookAheadDistance, Point robotPosition, double heading,
+			Point lookAheadPoint) {
+
+		// variable instantiation
 		double robotX = robotPosition.getX();
 		double robotY = robotPosition.getY();
-		
+
 		double a = -Math.tan(Math.toRadians(heading));
 		double b = 1;
 		double c = Math.tan(Math.toRadians(heading)) * robotX - robotY;
-		
-		//calculations
-		double side = Math.signum(Math.sin(Math.toRadians(heading)) * (lookAheadPoint.getX() - robotX) 
+
+		// calculations
+		double side = Math.signum(Math.sin(Math.toRadians(heading)) * (lookAheadPoint.getX() - robotX)
 				- Math.cos(Math.toRadians(heading)) * (lookAheadPoint.getY() - robotY));
 
 		double x = Math.abs(a * lookAheadPoint.getX() + b * lookAheadPoint.getY() + c)
@@ -104,7 +104,7 @@ public class Point {
 
 		double sCurvature = side * curvature;
 
-		if(Double.isNaN(sCurvature) ){
+		if (Double.isNaN(sCurvature)) {
 			return 0.001;
 		}
 

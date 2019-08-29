@@ -12,11 +12,11 @@ import frc.robot.Robot;
 
 public class liftGotoCommand extends Command {
   int position;
+
   public liftGotoCommand(int p) {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-     position = p;
-
+    position = p;
 
     requires(Robot.m_lift);
   }
@@ -31,7 +31,7 @@ public class liftGotoCommand extends Command {
   protected void execute() {
     Robot.m_lift.goTo(position);
 
-    if(Robot.m_oi.operatorJoystick.getRawButton(5) || Robot.m_oi.operatorJoystick.getRawButton(6)){
+    if (Robot.m_oi.operatorJoystick.getRawButton(5) || Robot.m_oi.operatorJoystick.getRawButton(6)) {
       this.cancel();
     }
   }

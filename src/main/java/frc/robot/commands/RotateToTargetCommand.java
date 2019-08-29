@@ -13,6 +13,7 @@ import frc.robot.Robot;
 public class RotateToTargetCommand extends Command {
   double angle;
   boolean isFinished;
+
   public RotateToTargetCommand(double myAngle) {
     angle = myAngle;
     // Use requires() here to declare subsystem dependencies

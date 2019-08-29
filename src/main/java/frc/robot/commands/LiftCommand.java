@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
 /**
- * An example command.  You can replace me with your own command.
+ * An example command. You can replace me with your own command.
  */
 public class LiftCommand extends Command {
   public LiftCommand() {
@@ -31,7 +31,7 @@ public class LiftCommand extends Command {
   // 1ft -> 45
   @Override
   protected void execute() {
-       Robot.m_lift.control(Robot.m_oi.operatorJoystick.getRawButton(5),Robot.m_oi.operatorJoystick.getRawButton(6));
+    Robot.m_lift.control(Robot.m_oi.operatorJoystick.getRawButton(5), Robot.m_oi.operatorJoystick.getRawButton(6));
   }
 
   // Make this return true when this Command no longer needs to run execute()
