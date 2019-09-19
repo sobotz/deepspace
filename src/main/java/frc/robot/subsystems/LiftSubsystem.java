@@ -7,20 +7,12 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.PIDOutput;
-import edu.wpi.first.wpilibj.PIDSource;
-import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotMap;
 import frc.robot.commands.LiftCommand;
-
-import java.util.ArrayList;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -33,16 +25,12 @@ public class LiftSubsystem extends Subsystem {
   // here. Call these from Commands.
   public TalonSRX liftTalon;
   public TalonSRX liftTalonSlave;
-  private PIDController liftPidController;
 
   private double liftMaxPosition = inchesToTalonUnits(60);
   private double lastPosition = 0;
-  private double liftIposition = 100;
-  private double liftCurrentPosition = 0;
 
   private boolean liftControlSwitch = true;
 
-  private ArrayList<Integer> velocities = new ArrayList<Integer>();
   private Timer recordPeakVelocityTimer = new Timer();
   private boolean recordPeakVelocityStarted = false;
   private int peakVelocity = 0;
@@ -73,31 +61,7 @@ public class LiftSubsystem extends Subsystem {
     liftTalon.config_kD(0, 0.0);
 
     onTarget(1);
-    /// THIS IS A DUMMY Object !!! NEEDED only for testing !!!!!!!
-    liftPidController = new PIDController(0, 0, 0, new PIDSource() {
 
-      @Override
-      public void setPIDSourceType(PIDSourceType pidSource) {
-
-      }
-
-      @Override
-      public double pidGet() {
-        return 0;
-      }
-
-      @Override
-      public PIDSourceType getPIDSourceType() {
-        return null;
-      }
-    }, new PIDOutput() {
-
-      @Override
-      public void pidWrite(double output) {
-
-      }
-    });
-    // SmartDashboard.putData("LIFT PID", liftPidController);
     liftTalon.configMotionCruiseVelocity((int) velocityToTalonVelocity(40), 30);
     liftTalon.configMotionAcceleration((int) velocityToTalonVelocity(25), 30);
 
@@ -106,37 +70,8 @@ public class LiftSubsystem extends Subsystem {
 
   @Override
   public void periodic() {
-    /*
-     * SmartDashboard.putNumber("TALON VELOCITY", talonVelocityToNormal());
-     * SmartDashboard.putNumber("INCHES TO  ENCODER POSITION",
-     * liftTalon.getSelectedSensorPosition());
-     * SmartDashboard.putNumber("LIFT PID ERROR", liftTalon.getClosedLoopError());
-     * SmartDashboard.putNumber("INCHES", talonUnitsToInches());
-     */
-    /*
-     * liftTalon.config_kF(0, liftPidController.getF()); liftTalon.config_kP(0,
-     * liftPidController.getP()); liftTalon.config_kI(0, liftPidController.getI());
-     * liftTalon.config_kD(0, liftPidController.getD());
-     * 
-     */
-  }
 
-  /*
-   * public void control(boolean left,boolean right) {
-   * 
-   * double upSpeed = 0.4; // changed from 0.2 double downSpeed = -0.2;
-   * 
-   * if(right){ lastPosition = liftTalon.getSelectedSensorPosition();
-   * 
-   * liftTalon.set(ControlMode.PercentOutput, upSpeed); }else if(left){
-   * lastPosition = liftTalon.getSelectedSensorPosition();
-   * 
-   * liftTalon.set(ControlMode.PercentOutput, downSpeed); }else{
-   * liftTalon.set(ControlMode.MotionMagic, lastPosition); }
-   * 
-   * ///SmartDashboard.putNumber("TALON RAW VELOCITY",
-   * liftTalon.getSelectedSensorVelocity()); }
-   */
+  }
 
   public void control(boolean left, boolean right) {
 
@@ -165,8 +100,6 @@ public class LiftSubsystem extends Subsystem {
       liftTalon.set(ControlMode.MotionMagic, lastPosition);
     }
 
-    /// SmartDashboard.putNumber("TALON RAW VELOCITY",
-    /// liftTalon.getSelectedSensorVelocity());
     SmartDashboard.putNumber("Lift max position", liftMaxPosition);
     SmartDashboard.putNumber("Lift current position", lastPosition);
 
@@ -176,8 +109,6 @@ public class LiftSubsystem extends Subsystem {
     liftTalon.set(ControlMode.MotionMagic, inchesToTalonUnits(position));
     lastPosition = liftTalon.getSelectedSensorPosition();
     liftControlSwitch = true;
-
-    // SmartDashboard.putNumber("LIFT PID TARGET", liftTalon.getClosedLoopTarget());
   }
 
   public boolean onTarget(int margin) {
@@ -232,7 +163,6 @@ public class LiftSubsystem extends Subsystem {
           peakVelocity = liftTalon.getSelectedSensorVelocity() / 4096;
         }
       } else {
-        /// SmartDashboard.putNumber("PEAK VELOCITY", peakVelocity);
         recordPeakVelocityStarted = false;
       }
     }

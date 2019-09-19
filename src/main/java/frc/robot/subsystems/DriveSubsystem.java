@@ -9,7 +9,6 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
@@ -19,18 +18,14 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.DriveCommand;
-import frc.robot.navigation.*;
-import frc.robot.subsystems.VisionSubsystem.camMode;
-
-import java.util.HashMap;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.can.SlotConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
@@ -41,16 +36,6 @@ public class DriveSubsystem extends Subsystem {
 
     public TalonSRX legsTalon;
 
-    private int legsMaxPosition = 1000;
-    private int legsIPosition = 50;
-
-    private int legsPosition = 0;
-
-    private double talonPIDkF = 0.0;
-    private double talonPIDkP = 0.0;
-    private double talonPIDkI = 0.0;
-    private double talonPIDkD = 0.0;
-
     private double wheelDiameter = 6.25;
 
     PIDController talonsPIDTuner;
@@ -60,7 +45,6 @@ public class DriveSubsystem extends Subsystem {
     private DoubleSolenoid hatchDelivery;
     private boolean gearShifterState = false;
     private boolean hatchDeliveryState = false;
-    private DigitalInput hatchSwitch;
 
     public final AHRS ahrs = new AHRS(SPI.Port.kMXP);;
 
@@ -77,9 +61,6 @@ public class DriveSubsystem extends Subsystem {
     private double driveToTargetOutput = 0.0;
     private DriveToTargetInput driveToTargetInput;
 
-    private int PRIMARY_PID = 0;
-    private int Talon_PID_TIMEOUT = 30;
-
     public static enum VisionState {
         HASTARGET, SEEKING
     }
@@ -91,7 +72,6 @@ public class DriveSubsystem extends Subsystem {
     public DriveSubsystem() {
         gearShifter = new DoubleSolenoid(0, 1);
         hatchDelivery = new DoubleSolenoid(2, 3);
-        hatchSwitch = new DigitalInput(0);
         rotateToTargetInput = new RotateToTargetInput();
 
         rotateToTargetPID = new PIDController(rkP, rkI, rkD, rotateToTargetInput, new RotateToTargetOutput());
@@ -128,13 +108,9 @@ public class DriveSubsystem extends Subsystem {
         frontRightTalon.configPeakOutputForward(1);
 
         talonsPIDTuner = new PIDController(0, 0, 0, new DriveToTargetInput(), new DriveToTargetOutput());
-        /// SmartDashboard.putData("Talon PID", talonsPIDTuner);
 
         m_left = new SpeedControllerGroup(frontLeftTalon, backLeftTalon);
         m_right = new SpeedControllerGroup(frontRightTalon, backRightTalon);
-
-        // m_drive = new DifferentialDrive(m_left, m_right);
-        // m_drive.setRightSideInverted(false);
 
         reset();
 
@@ -158,8 +134,6 @@ public class DriveSubsystem extends Subsystem {
         legsTalon.config_kD(0, 0);
 
         legsTalon.setSelectedSensorPosition(0);
-
-        legsPosition = legsTalon.getSelectedSensorPosition();
     }
 
     @Override
@@ -172,40 +146,15 @@ public class DriveSubsystem extends Subsystem {
     @Override
     public void periodic() {
         seekTarget();
-
-        // dashboard();
-        /// setTalonPIDGains(talonsPIDTuner.getF(), talonsPIDTuner.getP(),
-        // talonsPIDTuner.getI(), talonsPIDTuner.getD());
-
     }
-
-    /*
-     * public void manualDrive(double speed, double rotation) {
-     * if(!Robot.m_oi.driverJoystick.getRawButton(7) &&
-     * !Robot.m_oi.driverJoystick.getRawButton(8)){ double Mspeed =
-     * ((Robot.m_oi.driverJoystick.getRawAxis(3) - 1) / 2) * (-1);
-     * m_drive.setMaxOutput(Mspeed); m_drive.arcadeDrive(speed * -1, rotation); }
-     * 
-     * if(Robot.m_oi.driverJoystick.getRawButton(7)){ m_drive.tankDrive(1, 1);
-     * 
-     * }
-     * 
-     * if(Robot.m_oi.driverJoystick.getRawButton(8)){ m_drive.tankDrive(-1, -1);
-     * 
-     * }
-     * 
-     * }
-     */
 
     public void legsControl(int input) {
 
         if (input == 0) {
             legsTalon.set(ControlMode.PercentOutput, -0.2);
-            legsPosition += legsIPosition;
         } else if (input == 180) {
 
             legsTalon.set(ControlMode.PercentOutput, 0.2);
-            legsPosition -= legsIPosition;
         } else {
             legsTalon.set(ControlMode.PercentOutput, 0);
         }
@@ -224,8 +173,6 @@ public class DriveSubsystem extends Subsystem {
             backRightTalon.follow(frontRightTalon);
 
         }
-
-        // legsControl(Robot.m_oi.operatorJoystick.getPOV());
 
         if (Robot.m_oi.driverJoystick.getRawButton(11)) {
             frontLeftTalon.set(ControlMode.PercentOutput, -1);
@@ -259,15 +206,6 @@ public class DriveSubsystem extends Subsystem {
         }
     }
 
-    /*
-     * public void deliverHatch() { if(hatchSwitch.get()) {
-     * hatchDelivery.set(DoubleSolenoid.Value.kForward); hatchDeliveryState = false;
-     * } else if (hatchDeliveryState) {
-     * hatchDelivery.set(DoubleSolenoid.Value.kForward); hatchDeliveryState = false;
-     * } else { hatchDelivery.set(DoubleSolenoid.Value.kReverse); hatchDeliveryState
-     * = true; } }
-     */
-
     public void deliverHatch() {
         if (hatchDeliveryState) {
             hatchDelivery.set(DoubleSolenoid.Value.kForward);
@@ -288,7 +226,6 @@ public class DriveSubsystem extends Subsystem {
 
     public boolean rotationCascadePID(double setPoint, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE type, double minOutput,
             double maxOutput, int errorMargin) {
-
         rotateToTargetInput.setType(type);
         rotateToTargetPID.setAbsoluteTolerance(errorMargin);
         rotateToTargetPID.setSetpoint(setPoint);
@@ -298,7 +235,6 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public boolean rotationCascadePID(double setPoint, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE type, int errorMargin) {
-
         rotateToTargetInput.setType(type);
         rotateToTargetPID.setAbsoluteTolerance(errorMargin);
         rotateToTargetPID.setSetpoint(setPoint);
@@ -309,7 +245,6 @@ public class DriveSubsystem extends Subsystem {
 
     public boolean distanceCascadePID(double setPoint, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE type, double minOutput,
             double maxOutput, int errorMargin) {
-
         rotateToTargetInput.setType(type);
         driveToTargetPID.setAbsoluteTolerance(errorMargin);
         driveToTargetPID.setSetpoint(setPoint);
@@ -319,7 +254,6 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public boolean distanceCascadePID(double setPoint, DRIVETRAIN_CONTROL_LOOP_INPUT_TYPE type, int errorMargin) {
-
         rotateToTargetInput.setType(type);
         driveToTargetPID.setAbsoluteTolerance(errorMargin);
         driveToTargetPID.setSetpoint(setPoint);

@@ -7,7 +7,6 @@
 
 package frc.robot.autonomous;
 
-import frc.robot.Robot;
 import frc.robot.commands.DriveToTargetCommand;
 import frc.robot.commands.PurePursuitCommand;
 import frc.robot.commands.RotateToTargetCommand;

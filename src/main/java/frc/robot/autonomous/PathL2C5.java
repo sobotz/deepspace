@@ -7,10 +7,8 @@
 
 package frc.robot.autonomous;
 
-import frc.robot.Robot;
 import frc.robot.commands.DriveToTargetCommand;
 import frc.robot.commands.PurePursuitCommand;
-import frc.robot.commands.RotateToTargetCommand;
 import frc.robot.navigation.*;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;

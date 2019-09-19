@@ -38,11 +38,13 @@ public class OI {
 
   public OI() {
     JoystickButton aOperator = new JoystickButton(operatorJoystick, 1);
-    JoystickButton bOperator = new JoystickButton(operatorJoystick, 2);
-    JoystickButton xOperator = new JoystickButton(operatorJoystick, 3);
-    JoystickButton yOperator = new JoystickButton(operatorJoystick, 4);
     JoystickButton startOperator = new JoystickButton(operatorJoystick, 8);
     JoystickButton backOperator = new JoystickButton(operatorJoystick, 7);
+
+    aOperator.toggleWhenPressed(new DeliverHatchCommand());
+    startOperator.whenPressed(new liftGotoCommand(HLVL1));
+    backOperator.whenPressed(new liftGotoCommand(ZERO));
+
     JoystickButton buttonbox1 = new JoystickButton(m_buttonbox, 1);
     JoystickButton buttonbox2 = new JoystickButton(m_buttonbox, 2);
     JoystickButton buttonbox3 = new JoystickButton(m_buttonbox, 3);
@@ -52,15 +54,6 @@ public class OI {
     JoystickButton buttonbox7 = new JoystickButton(m_buttonbox, 7);
     JoystickButton buttonbox8 = new JoystickButton(m_buttonbox, 8);
     JoystickButton buttonbox9 = new JoystickButton(m_buttonbox, 9);
-
-    /*
-     * aOperator.toggleWhenPressed(new ArticulationCommand(2000));
-     * bOperator.toggleWhenPressed(new ArticulationCommand(1000));
-     */
-    /*
-     * yOperator.toggleWhenPressed(new liftGotoCommand(36));
-     * aOperator.toggleWhenPressed(new liftGotoCommand(0));
-     */
 
     buttonbox1.whenPressed(new liftGotoCommand(HLVL1));
     buttonbox2.whenPressed(new liftGotoCommand(RSH2));
@@ -74,8 +67,6 @@ public class OI {
 
     JoystickButton gearShiftButton = new JoystickButton(driverJoystick, 1);
     gearShiftButton.toggleWhenPressed(new ShiftGearCommand());
-    startOperator.whenPressed(new liftGotoCommand(HLVL1));
-    backOperator.whenPressed(new liftGotoCommand(ZERO));
 
     JoystickButton expandsFrontlegs = new JoystickButton(driverJoystick, 7);
     expandsFrontlegs.whenPressed(new LegsCommand(7));
@@ -89,7 +80,6 @@ public class OI {
     JoystickButton expandsBackLeg = new JoystickButton(driverJoystick, 10);
     expandsBackLeg.whenPressed(new LegsCommand(10));
 
-    aOperator.toggleWhenPressed(new DeliverHatchCommand());
   }
 
 }

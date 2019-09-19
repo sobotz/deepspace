@@ -1,16 +1,16 @@
 [
   {
-    "artifact": "frcJava (in project deepspace - SPBLI)",
-    "target": "roborio",
-    "debugfile": "frcJava_roborio.debugconfig",
-    "project": "deepspace - SPBLI",
-    "language": "java"
-  },
-  {
     "artifact": "frcJava (in project deepspace)",
     "target": "roborio",
     "debugfile": "frcJava_roborio.debugconfig",
     "project": "deepspace",
+    "language": "java"
+  },
+  {
+    "artifact": "frcJava (in project deepspace - SPBLI)",
+    "target": "roborio",
+    "debugfile": "frcJava_roborio.debugconfig",
+    "project": "deepspace - SPBLI",
     "language": "java"
   }
 ]

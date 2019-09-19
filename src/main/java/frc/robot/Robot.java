@@ -7,18 +7,9 @@
 
 package frc.robot;
 
-import org.opencv.core.Mat;
-import org.opencv.imgproc.Imgproc;
-
-import edu.wpi.cscore.CvSink;
-import edu.wpi.cscore.CvSource;
-import edu.wpi.cscore.UsbCamera;
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
-
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -33,7 +24,6 @@ import frc.robot.subsystems.*;
  * project.
  */
 public class Robot extends TimedRobot {
-  // public static ExampleSubsystem m_subsystem = new ExampleSubsystem();
   public static OI m_oi;
   public static PowerDistributionPanel m_pdp;
   public static DriveSubsystem m_drivesubsystem;
@@ -55,36 +45,30 @@ public class Robot extends TimedRobot {
     m_lift = new LiftSubsystem();
     m_legssubsystem = new LegsSubsystem();
     m_oi = new OI();
-    // m_pdp = new PowerDistributionPanel();
-    // starting from L1
-    m_chooser.addDefault("Path L1R1L (Pure Pursuit)", new PathL1R1L(true));
-    m_chooser.addObject("Path L1R1L (Regular)", new PathL1R1L(false));
-    m_chooser.addObject("Path L1C3 (Pure Pursuit)", new PathL1C3(true));
-    m_chooser.addObject("Path L1C3 (Regular)", new PathL1C3(false));
-    // starting from L2
-    m_chooser.addObject("Path L2C3 (Pure Pursuit)", new PathL2C3(true));
-    m_chooser.addObject("Path L2C3 (Regular)", new PathL2C3(false));
-    m_chooser.addObject("Path L2C4 (Pure Pursuit)", new PathL2C4(true));
-    m_chooser.addObject("Path L2C4 (Regular)", new PathL2C4(false));
-    m_chooser.addObject("Path L2C5 (Pure Pursuit)", new PathL2C5(true));
-    m_chooser.addObject("Path L2C5 (Regular)", new PathL2C5(false));
-    m_chooser.addObject("Path L2C6 (Pure Pursuit)", new PathL2C6(true));
-    m_chooser.addObject("Path L2C6 (Regular)", new PathL2C6(false));
-    // starting from L3
-    m_chooser.addObject("Path L3R1R (Pure Pursuit)", new PathL3R1R(true));
-    m_chooser.addObject("Path L3R1R (Regular)", new PathL3R1R(false));
-    m_chooser.addObject("Path L3C6 (Pure Pursuit)", new PathL3C6(true));
-    m_chooser.addObject("Path L3C6 (Regular)", new PathL3C6(false));
 
-    // m_chooser.setDefaultOption("Default Auto", new ExampleCommand());
-    // chooser.addOption("My Auto", new MyAutoCommand());
+    // Starting from L1
+    m_chooser.setDefaultOption("Path L1R1L (Pure Pursuit)", new PathL1R1L(true));
+    m_chooser.addOption("Path L1R1L (Regular)", new PathL1R1L(false));
+    m_chooser.addOption("Path L1C3 (Pure Pursuit)", new PathL1C3(true));
+    m_chooser.addOption("Path L1C3 (Regular)", new PathL1C3(false));
+
+    // Starting from L2
+    m_chooser.addOption("Path L2C3 (Pure Pursuit)", new PathL2C3(true));
+    m_chooser.addOption("Path L2C3 (Regular)", new PathL2C3(false));
+    m_chooser.addOption("Path L2C4 (Pure Pursuit)", new PathL2C4(true));
+    m_chooser.addOption("Path L2C4 (Regular)", new PathL2C4(false));
+    m_chooser.addOption("Path L2C5 (Pure Pursuit)", new PathL2C5(true));
+    m_chooser.addOption("Path L2C5 (Regular)", new PathL2C5(false));
+    m_chooser.addOption("Path L2C6 (Pure Pursuit)", new PathL2C6(true));
+    m_chooser.addOption("Path L2C6 (Regular)", new PathL2C6(false));
+
+    // Starting from L3
+    m_chooser.addOption("Path L3R1R (Pure Pursuit)", new PathL3R1R(true));
+    m_chooser.addOption("Path L3R1R (Regular)", new PathL3R1R(false));
+    m_chooser.addOption("Path L3C6 (Pure Pursuit)", new PathL3C6(true));
+    m_chooser.addOption("Path L3C6 (Regular)", new PathL3C6(false));
+
     SmartDashboard.putData("Auto mode", m_chooser);
-
-    /*
-     * new Thread(() -> { UsbCamera camera =
-     * CameraServer.getInstance().startAutomaticCapture(); camera.setResolution(160,
-     * 120); }).start();
-     */
   }
 
   /**
@@ -98,21 +82,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    /*
-     * System.out.println("Motor: Drive, BR: " + m_pdp.getCurrent(0) + " amps");
-     * System.out.println("Motor: Drive, BL: " + m_pdp.getCurrent(15) + " amps");
-     * System.out.println("Motor: Drive, FR: " + m_pdp.getCurrent(1) + " amps");
-     * System.out.println("Motor: Drive, FL: " + m_pdp.getCurrent(14) + " amps");
-     * System.out.println("Motor: Intake, Articulation: " + m_pdp.getCurrent(13) +
-     * " amps"); System.out.println("Motor: Intake, Roller: " + m_pdp.getCurrent(12)
-     * + " amps"); System.out.println("Motor: Intake, Roller Slave: " +
-     * m_pdp.getCurrent(9) + " amps"); System.out.println("Motor: Intake, Wrist: " +
-     * m_pdp.getCurrent(7) + " amps"); System.out.println("Motor: Lift, Lift: " +
-     * m_pdp.getCurrent(4) + " amps"); System.out.println("Motor: Lift, Slave: " +
-     * m_pdp.getCurrent(5) + " amps"); System.out.println("Voltage: " +
-     * m_pdp.getVoltage()); System.out.println("Temperature: " +
-     * ((m_pdp.getTemperature()*9/5)+32)); System.out.println("");
-     */
+
   }
 
   /**
@@ -144,17 +114,6 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_chooser.getSelected();
-    /*
-     * String autoSelected = SmartDashboard.getString("Auto Selector", "Default");
-     * switch(autoSelected) { case "My Auto": autonomousCommand = new
-     * MyAutoCommand(); break; case "Default Auto": default: autonomousCommand = new
-     * ExampleCommand(); break; }
-     */
-
-    // schedule the autonomous command (example)
-    /*
-     * if (m_autonomousCommand != null) { m_autonomousCommand.start(); }
-     */
 
     teleopPeriodic();
   }
