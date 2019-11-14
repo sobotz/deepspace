@@ -8,6 +8,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotMap;
 import frc.robot.commands.ArticulationCommand;
 
@@ -32,10 +33,21 @@ public class IntakeSubsystem extends Subsystem {
   private double iPosition = 100;
   private double currentArmPosition = 0;
 
-  private double wristMaxPosition = 2000;
+  /**
+   * A configuration specifying the max wrist position, as well as the wrist adjustment
+   * gradient (i.e. how much the wrist should be moved per each button press).
+   **/
+  private static class WristConfiguration {
+      /* The wrist's max position */
+      private double wristMaxPosition = 2000;
+
+      /* The amount the wrist is moved on every press of a button */
+      private double wristIPosition = 5000;
+  }
+
+  private WristConfiguration wristConfig;
 
   private double currentWristPosition = 0;
-  private double wristIPosition = 5000;
 
   public IntakeSubsystem() {
     articulationTalon = new TalonSRX(RobotMap.articulationMotor);
@@ -93,6 +105,12 @@ public class IntakeSubsystem extends Subsystem {
     wristTalon.config_kI(0, 0);
     wristTalon.config_kD(0, 0);
 
+    // Set the parameters for the wrist to the default values
+    this.wristConfig = new WristConfiguration(); 
+
+    // Allow the maximum position of the wrist, as well as the amount the wrist opens on each button press to be configured from the shuffleboard
+    SmartDashboard.putData("wristConfig", this.wristConfig);
+
     reset();
   }
 
@@ -124,14 +142,16 @@ public class IntakeSubsystem extends Subsystem {
 
   public void articulateWrist(double up, double down) {
     if (up > 0.01) {
-      if (currentWristPosition <= 0) {
-        currentWristPosition += wristIPosition;
+      if (currentWristPosition <= 0 && currentWristPosition <= this.wristConfig.wristMaxPosition) {
+        currentWristPosition += this.wristConfig.wristIPosition;
       }
+
       wristTalon.set(ControlMode.MotionMagic, currentWristPosition);
     } else if (down > 0.01) {
-      if (currentWristPosition >= wristMaxPosition) {
-        currentWristPosition -= wristIPosition;
+      if (currentWristPosition >= this.wristConfig.wristMaxPosition) {
+        currentWristPosition -= this.wristConfig.wristIPosition;
       }
+      
       wristTalon.set(ControlMode.MotionMagic, currentWristPosition);
     } else {
       wristTalon.set(ControlMode.MotionMagic, currentWristPosition);
