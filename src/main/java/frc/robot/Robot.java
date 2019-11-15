@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
@@ -26,6 +27,7 @@ import frc.robot.subsystems.*;
 public class Robot extends TimedRobot {
   public static OI m_oi;
   public static PowerDistributionPanel m_pdp;
+  public static Preferences m_dashboard_preferences;
   public static DriveSubsystem m_drivesubsystem;
   public static IntakeSubsystem m_intake;
   public static LiftSubsystem m_lift;
@@ -40,6 +42,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    // Get settings for the robot from the SmartDashboard
+    m_preferences = Preferences.getInstance();
+
     m_drivesubsystem = new DriveSubsystem();
     m_intake = new IntakeSubsystem();
     m_lift = new LiftSubsystem();
