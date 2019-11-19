@@ -33,8 +33,9 @@ public class OI {
   public int ZERO = 0; // good
 
   public Joystick driverJoystick = new Joystick(0);
-  public Joystick operatorJoystick = new Joystick(1);
-  public Joystick m_buttonbox = new Joystick(2);
+  public Joystick secondaryDriverJoystick = new Joystick(1);
+  public Joystick operatorJoystick = new Joystick(2);
+  public Joystick m_buttonbox = new Joystick(3);
 
   public OI() {
     JoystickButton aOperator = new JoystickButton(operatorJoystick, 1);

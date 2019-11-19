@@ -22,8 +22,8 @@ public class DriveCommand extends Command {
   protected void initialize() {
     // Robot.m_drivesubsystem.m_drive.setSafetyEnabled(true);
 
-    Robot.m_drivesubsystem.manualDrive2(Robot.m_oi.driverJoystick.getRawAxis(1),
-        Robot.m_oi.driverJoystick.getRawAxis(0));
+    Robot.m_drivesubsystem.manualDrive2(Robot.m_oi.driverJoystick.getRawAxis(1), 0); // The left side controller
+    Robot.m_drivesubsystem.manualDrive2(Robot.m_oi.secondaryDriverJoystick.getRawAxis(1), 1); // The right side controller
 
   }
 
@@ -31,7 +31,8 @@ public class DriveCommand extends Command {
   @Override
   protected void execute() {
     Robot.m_drivesubsystem.manualDrive2(Robot.m_oi.driverJoystick.getRawAxis(1),
-        Robot.m_oi.driverJoystick.getRawAxis(0));
+        0); // The left side controller
+    Robot.m_drivesubsystem.manualDrive2(Robot.m_oi.driverJoystick.getRawAxis(1), 1); // The right side controller
   }
 
   // Make this return true when this Command no longer needs to run execute()

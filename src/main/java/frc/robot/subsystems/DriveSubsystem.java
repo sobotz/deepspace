@@ -161,17 +161,20 @@ public class DriveSubsystem extends Subsystem {
 
     }
 
-    public void manualDrive2(double speed, double rotation) {
+    public void manualDrive2(double speed, int side) {
         boolean test = false;
         SmartDashboard.putBoolean("TEST", Robot.m_oi.driverJoystick.getRawButton(11));
         if (!Robot.m_oi.driverJoystick.getRawButton(11) & !Robot.m_oi.driverJoystick.getRawButton(12)) {
             test = true;
-            frontLeftTalon.set(ControlMode.PercentOutput, -speed, DemandType.ArbitraryFeedForward, rotation);
-            frontRightTalon.set(ControlMode.PercentOutput, -speed, DemandType.ArbitraryFeedForward, -rotation);
 
-            backLeftTalon.follow(frontLeftTalon);
-            backRightTalon.follow(frontRightTalon);
-
+            switch (side) {
+            case 0:
+                frontLeftTalon.set(ControlMode.PercentOutput, -speed, DemandType.ArbitraryFeedForward, 0);
+                backLeftTalon.follow(frontLeftTalon);
+            case 1:
+                frontRightTalon.set(ControlMode.PercentOutput, -speed, DemandType.ArbitraryFeedForward, 0);
+                backRightTalon.follow(frontRightTalon);
+            }
         }
 
         if (Robot.m_oi.driverJoystick.getRawButton(11)) {
@@ -445,7 +448,8 @@ public class DriveSubsystem extends Subsystem {
     class RotateToTargetOutput implements PIDOutput {
         @Override
         public void pidWrite(double output) {
-            rotateToTargetOutput = output;
+            // Rino drive doesn't support rotation
+            // rotateToTargetOutput = output;
         }
 
     }
