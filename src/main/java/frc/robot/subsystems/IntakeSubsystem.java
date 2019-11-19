@@ -9,6 +9,8 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Sendable;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 import frc.robot.RobotMap;
 import frc.robot.commands.ArticulationCommand;
 
@@ -37,12 +39,38 @@ public class IntakeSubsystem extends Subsystem {
    * A configuration specifying the max wrist position, as well as the wrist adjustment
    * gradient (i.e. how much the wrist should be moved per each button press).
    **/
-  private static class WristConfiguration {
+  private static class WristConfiguration implements Sendable {
       /* The wrist's max position */
-      private double wristMaxPosition = 2000;
+      public double wristMaxPosition = 2000;
 
       /* The amount the wrist is moved on every press of a button */
-      private double wristIPosition = 5000;
+      public double wristIPosition = 5000;
+
+      /* The parent subsystem */
+      public String subsystemName = "intakeSubsystem";
+
+      /* The name of the configuration variable */
+      public String configName = "writeConfiguration";
+
+      public String getName() {
+        return "wristConfiguration";
+      }
+
+      public String getSubsystem() {
+        return this.subsystemName;
+      }
+
+      public void setSubsystem(String s) {
+        this.subsystemName = s; 
+      }
+
+      public void setName(String s) {
+          this.configName = s;
+      }
+
+      public void initSendable(SendableBuilder builder) {
+        this.subsystemName = "intakeSubsystem";
+      }
   }
 
   private WristConfiguration wristConfig;
