@@ -161,6 +161,29 @@ public class DriveSubsystem extends Subsystem {
 
     }
 
+    public void rhinoDrive(double speed1, double speed2) {
+        SmartDashboard.putBoolean("RHINO_ENABLED", true);
+
+        if (Robot.m_oi.driverJoystick.getRawButton(11)) {
+            frontLeftTalon.set(ControlMode.PercentOutput, -1);
+            backLeftTalon.follow(frontLeftTalon);
+
+            return;
+        }
+
+        if (Robot.m_oi.secondaryDriverJoystick.getRawButton(11)) {
+            frontRightTalon.set(ControlMode.PercentOutput, -1);
+            backRightTalon.follow(frontRightTalon);
+
+            return;
+        }
+
+        frontLeftTalon.set(ControlMode.PercentOutput, -speed1, DemandType.ArbitraryFeedForward, 0);
+        backLeftTalon.follow(frontLeftTalon);
+
+        frontRightTalon.set(ControlMode.PercentOutput, -speed2, DemandType.ArbitraryFeedForward, 0);
+    }
+
     public void manualDrive2(double speed, int side) {
         boolean test = false;
         SmartDashboard.putBoolean("TEST", Robot.m_oi.driverJoystick.getRawButton(11));

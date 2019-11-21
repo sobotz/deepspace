@@ -20,19 +20,13 @@ public class DriveCommand extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    // Robot.m_drivesubsystem.m_drive.setSafetyEnabled(true);
-
-    Robot.m_drivesubsystem.manualDrive2(Robot.m_oi.driverJoystick.getRawAxis(1), 0); // The left side controller
-    Robot.m_drivesubsystem.manualDrive2(Robot.m_oi.secondaryDriverJoystick.getRawAxis(1), 1); // The right side controller
-
+    Robot.m_drivesubsystem.rhinoDrive(Robot.m_oi.driverJoystick.getRawAxis(1), Robot.m_oi.secondaryDriverJoystick.getRawAxis(1));
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Robot.m_drivesubsystem.manualDrive2(Robot.m_oi.driverJoystick.getRawAxis(1),
-        0); // The left side controller
-    Robot.m_drivesubsystem.manualDrive2(Robot.m_oi.driverJoystick.getRawAxis(1), 1); // The right side controller
+    Robot.m_drivesubsystem.rhinoDrive(Robot.m_oi.driverJoystick.getRawAxis(1), Robot.m_oi.secondaryDriverJoystick.getRawAxis(1));
   }
 
   // Make this return true when this Command no longer needs to run execute()
