@@ -172,6 +172,9 @@ public class DriveSubsystem extends Subsystem {
                 frontLeftTalon.set(ControlMode.PercentOutput, -speed, DemandType.ArbitraryFeedForward, 0);
                 backLeftTalon.follow(frontLeftTalon);
             case 1:
+                for (int i = 0; i < 1000; i++) {
+                    System.out.println("test");
+                }
                 frontRightTalon.set(ControlMode.PercentOutput, -speed, DemandType.ArbitraryFeedForward, 0);
                 backRightTalon.follow(frontRightTalon);
             }
