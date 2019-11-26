@@ -21,8 +21,6 @@ public class DriveCommand extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Robot.m_drivesubsystem.m_drive.setSafetyEnabled(true);
-
     // Check if we should use the legacy drive or rhino drive
     if (DriveSubsystem.usesRhinoDrive()) {
     Robot.m_drivesubsystem.rhinoDrive(Robot.m_oi.driverJoystick.getRawAxis(1), Robot.m_oi.secondaryDriverJoystick.getRawAxis(1));
