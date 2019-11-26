@@ -27,7 +27,7 @@ import frc.robot.subsystems.*;
 public class Robot extends TimedRobot {
   public static OI m_oi;
   public static PowerDistributionPanel m_pdp;
-  public static Preferences m_dashboard_preferences;
+  public static Preferences m_preferences;
   public static DriveSubsystem m_drivesubsystem;
   public static IntakeSubsystem m_intake;
   public static LiftSubsystem m_lift;

@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 import frc.robot.RobotMap;
+import frc.robot.Robot;
 import frc.robot.commands.ArticulationCommand;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -35,46 +36,7 @@ public class IntakeSubsystem extends Subsystem {
   private double iPosition = 100;
   private double currentArmPosition = 0;
 
-  /**
-   * A configuration specifying the max wrist position, as well as the wrist adjustment
-   * gradient (i.e. how much the wrist should be moved per each button press).
-   **/
-  private static class WristConfiguration implements Sendable {
-      /* The wrist's max position */
-      public double wristMaxPosition = 2000;
-
-      /* The amount the wrist is moved on every press of a button */
-      public double wristIPosition = 5000;
-
-      /* The parent subsystem */
-      public String subsystemName = "intakeSubsystem";
-
-      /* The name of the configuration variable */
-      public String configName = "writeConfiguration";
-
-      public String getName() {
-        return "wristConfiguration";
-      }
-
-      public String getSubsystem() {
-        return this.subsystemName;
-      }
-
-      public void setSubsystem(String s) {
-        this.subsystemName = s; 
-      }
-
-      public void setName(String s) {
-          this.configName = s;
-      }
-
-      public void initSendable(SendableBuilder builder) {
-        this.subsystemName = "intakeSubsystem";
-      }
-  }
-
-  private WristConfiguration wristConfig;
-
+  /* The wrist's current position */
   private double currentWristPosition = 0;
 
   public IntakeSubsystem() {
@@ -133,12 +95,6 @@ public class IntakeSubsystem extends Subsystem {
     wristTalon.config_kI(0, 0);
     wristTalon.config_kD(0, 0);
 
-    // Set the parameters for the wrist to the default values
-    this.wristConfig = new WristConfiguration(); 
-
-    // Allow the maximum position of the wrist, as well as the amount the wrist opens on each button press to be configured from the shuffleboard
-    SmartDashboard.putData("wristConfig", this.wristConfig);
-
     reset();
   }
 
@@ -170,14 +126,14 @@ public class IntakeSubsystem extends Subsystem {
 
   public void articulateWrist(double up, double down) {
     if (up > 0.01) {
-      if (currentWristPosition <= 0 && currentWristPosition <= this.wristConfig.wristMaxPosition) {
-        currentWristPosition += this.wristConfig.wristIPosition;
+      if (currentWristPosition <= 0 && currentWristPosition <= this.wristMaxPosition()) {
+        currentWristPosition += this.wristIPosition();
       }
 
       wristTalon.set(ControlMode.MotionMagic, currentWristPosition);
     } else if (down > 0.01) {
-      if (currentWristPosition >= this.wristConfig.wristMaxPosition) {
-        currentWristPosition -= this.wristConfig.wristIPosition;
+      if (currentWristPosition >= this.wristMaxPosition()) {
+        currentWristPosition -= this.wristIPosition();
       }
       
       wristTalon.set(ControlMode.MotionMagic, currentWristPosition);
@@ -186,12 +142,28 @@ public class IntakeSubsystem extends Subsystem {
     }
   }
 
-  public boolean isZero(double input) {
-    if (input > 0.01) {
-      return true;
-    } else {
-      return false;
-    }
+  /**
+   * Gets the maximum wrist position as-per SmartDashboard configuration. If
+   * the "WristMaxPosition" key has not been set, or is 0, 2000 will be 
+   * returned.
+   *
+   * @return the maximum possible value for currentWristPosition
+   **/
+  public double wristMaxPosition() {
+    // Get the max position set in the SmartDashboard. If it doesn't exist, use
+    // 2000 instead.
+    double maxPosition = Robot.m_preferences.getDouble("WristMaxPosition", 2000);
+
+    return maxPosition > 0 ? maxPosition : 2000; // If the max pos. is invalid, return 2000
+  }
+
+  /**
+   * Gets the number of units that the wrist is moved on each press of a button.
+   * If the "WristIPosition" key has not been set, 5000 is returned.
+   **/
+  public double wristIPosition() {
+    // Return the increment num set in the SmartDashboard
+    return Robot.m_preferences.getDouble("WristIPosition", 5000);
   }
 
   public void reset() {

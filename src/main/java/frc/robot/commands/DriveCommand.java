@@ -9,6 +9,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
+import frc.robot.subsystems.DriveSubsystem;
 
 public class DriveCommand extends Command {
   public DriveCommand() {
@@ -20,13 +21,27 @@ public class DriveCommand extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    Robot.m_drivesubsystem.m_drive.setSafetyEnabled(true);
+
+    // Check if we should use the legacy drive or rhino drive
+    if (DriveSubsystem.usesRhinoDrive()) {
     Robot.m_drivesubsystem.rhinoDrive(Robot.m_oi.driverJoystick.getRawAxis(1), Robot.m_oi.secondaryDriverJoystick.getRawAxis(1));
+    } else {
+      Robot.m_drivesubsystem.manualDrive2(Robot.m_oi.driverJoystick.getRawAxis(1),
+                  Robot.m_oi.driverJoystick.getRawAxis(0));
+    }
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    // Check if we should use the legacy drive or rhino drive
+    if (DriveSubsystem.usesRhinoDrive()) {
     Robot.m_drivesubsystem.rhinoDrive(Robot.m_oi.driverJoystick.getRawAxis(1), Robot.m_oi.secondaryDriverJoystick.getRawAxis(1));
+    } else {
+      Robot.m_drivesubsystem.manualDrive2(Robot.m_oi.driverJoystick.getRawAxis(1),
+                  Robot.m_oi.driverJoystick.getRawAxis(0));
+    }
   }
 
   // Make this return true when this Command no longer needs to run execute()

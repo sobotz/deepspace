@@ -149,7 +149,6 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public void legsControl(int input) {
-
         if (input == 0) {
             legsTalon.set(ControlMode.PercentOutput, -0.2);
         } else if (input == 180) {
@@ -161,9 +160,18 @@ public class DriveSubsystem extends Subsystem {
 
     }
 
+    /**
+     * Drives the robot using the provided left and right controller speeds.
+     *
+     * @param speed1 the speed of the left controller
+     * @param speed2 the speed of the right controller
+     **/
     public void rhinoDrive(double speed1, double speed2) {
-        SmartDashboard.putBoolean("RHINO_ENABLED", true);
+        // Apply a logarithmic aplifier to the left and right speeds
+        speed1 = normalizeVelocity(speed);
+        speed2 = normalizeVelocity(rotation);
 
+        // The left FULL_FWD button
         if (Robot.m_oi.driverJoystick.getRawButton(11)) {
             frontLeftTalon.set(ControlMode.PercentOutput, -1);
             backLeftTalon.follow(frontLeftTalon);
@@ -171,8 +179,25 @@ public class DriveSubsystem extends Subsystem {
             return;
         }
 
+        // The right FULL_FWD button
         if (Robot.m_oi.secondaryDriverJoystick.getRawButton(11)) {
             frontRightTalon.set(ControlMode.PercentOutput, -1);
+            backRightTalon.follow(frontRightTalon);
+
+            return;
+        }
+
+        // The left FULL_REV button
+        if (Robot.m_oi.driverJoystick.getRawButton(11)) {
+            frontLeftTalon.set(ControlMode.PercentOutput, 1);
+            backLeftTalon.follow(frontLeftTalon);
+
+            return;
+        }
+
+        // The right FULL_REV button
+        if (Robot.m_oi.secondaryDriverJoystick.getRawButton(11)) {
+            frontRightTalon.set(ControlMode.PercentOutput, 1);
             backRightTalon.follow(frontRightTalon);
 
             return;
@@ -182,25 +207,23 @@ public class DriveSubsystem extends Subsystem {
         backLeftTalon.follow(frontLeftTalon);
 
         frontRightTalon.set(ControlMode.PercentOutput, -speed2, DemandType.ArbitraryFeedForward, 0);
+        backRightTalon.follow(frontRightTalon);
     }
 
-    public void manualDrive2(double speed, int side) {
+    public void manualDrive2(double speed, double rotation) {
+        // Apply a logarithmic aplifier to the speed and rotation according to SmartDashboard prefs
+        speed = normalizeVelocity(speed);
+        rotation = normalizeVelocity(rotation);
+
         boolean test = false;
         SmartDashboard.putBoolean("TEST", Robot.m_oi.driverJoystick.getRawButton(11));
         if (!Robot.m_oi.driverJoystick.getRawButton(11) & !Robot.m_oi.driverJoystick.getRawButton(12)) {
             test = true;
+            frontLeftTalon.set(ControlMode.PercentOutput, -speed, DemandType.ArbitraryFeedForward, rotation);
+            backLeftTalon.follow(frontLeftTalon);
 
-            switch (side) {
-            case 0:
-                frontLeftTalon.set(ControlMode.PercentOutput, -speed, DemandType.ArbitraryFeedForward, 0);
-                backLeftTalon.follow(frontLeftTalon);
-            case 1:
-                for (int i = 0; i < 1000; i++) {
-                    System.out.println("test");
-                }
-                frontRightTalon.set(ControlMode.PercentOutput, -speed, DemandType.ArbitraryFeedForward, 0);
-                backRightTalon.follow(frontRightTalon);
-            }
+            frontRightTalon.set(ControlMode.PercentOutput, -speed, DemandType.ArbitraryFeedForward, -rotation);
+            backRightTalon.follow(frontRightTalon);
         }
 
         if (Robot.m_oi.driverJoystick.getRawButton(11)) {
@@ -578,4 +601,27 @@ public class DriveSubsystem extends Subsystem {
 
     }
 
+    /**
+     * Determines whether or not this drive train uses rhino drive or legacy
+     * mode. If the "RhinoEnabled" key has not been set in the SmartDashboard,
+     * RhinoEnabled is assumed to be false.
+     *
+     * @return whether or not this drive train uses rhino drive
+     **/
+    public static boolean usesRhinoDrive() {
+        // If the technician hasn't enabled rhino drive, keep it turned off
+        return Robot.m_preferences.getBoolean("RhinoEnabled", false);
+    }
+
+    /**
+     * Applies a logarithmic amplifier to the given velocity according to the
+     * SmartDashboard's settings.
+     *
+     * @param d the velocity to normalize
+     * @return the normalized velocity
+     **/
+    public static double normalizeVelocity(double d) {
+        // Use 1 if the technician hasn't specified a JoystickInputAmplificationFactor
+        return Math.pow(d, Robotm.m_preferences.getDouble("JoystickInputAmplificationFactor", 1));
+    }
 }
