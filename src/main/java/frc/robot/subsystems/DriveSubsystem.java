@@ -622,6 +622,6 @@ public class DriveSubsystem extends Subsystem {
      **/
     public static double normalizeVelocity(double d) {
         // Use 1 if the technician hasn't specified a JoystickInputAmplificationFactor
-        return Math.pow(d, Robotm.m_preferences.getDouble("JoystickInputAmplificationFactor", 1));
+        return Math.pow(d, Robot.m_preferences.getDouble("JoystickInputAmplificationFactor", 1));
     }
 }
