@@ -168,8 +168,8 @@ public class DriveSubsystem extends Subsystem {
      **/
     public void rhinoDrive(double speed1, double speed2) {
         // Apply a logarithmic aplifier to the left and right speeds
-        speed1 = normalizeVelocity(speed);
-        speed2 = normalizeVelocity(rotation);
+        speed1 = normalizeVelocity(speed1);
+        speed2 = normalizeVelocity(speed2);
 
         // The left FULL_FWD button
         if (Robot.m_oi.driverJoystick.getRawButton(11)) {
