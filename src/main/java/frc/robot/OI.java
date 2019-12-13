@@ -22,14 +22,27 @@ import frc.robot.commands.liftGotoCommand;
  * interface to the commands and command groups that allow control of the robot.
  */
 public class OI {
+  /* 
+   * Various heights for the lift subsystem
+   */
+
+  /* An old height (no longer in use) */
   public int HLVL1 = 18; // NOT IN USE
+
+  /* The only cargo ship height */
   public int CSC1 = 38; // good
+
+  /* The rocket ship heights */
   public int RSH2 = 40; // good
   public int RSH3 = 65; // good
   public int RSC1 = 27;
   public int RSC2 = 50; // good
   public int RSC3 = 67; // good
+
+  /* An old height (no longer in use) */
   public int FSH1 = 19; // good (pneu)
+
+  /* Zero */
   public int ZERO = 0; // good
 
   public Joystick driverJoystick = new Joystick(0);
