@@ -16,6 +16,7 @@ import frc.robot.commands.DeliverHatchCommand;
 import frc.robot.commands.LegsCommand;
 import frc.robot.commands.ShiftGearCommand;
 import frc.robot.commands.liftGotoCommand;
+import frc.robot.commands.MoveToReflectiveTargetCommand;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -55,16 +56,18 @@ public class OI {
     JoystickButton buttonbox7 = new JoystickButton(m_buttonbox, 7);
     JoystickButton buttonbox8 = new JoystickButton(m_buttonbox, 8);
     JoystickButton buttonbox9 = new JoystickButton(m_buttonbox, 9);
+    JoystickButton buttonbox10 = new JoystickButton(m_buttonbox, 10);
 
-    buttonbox1.whenPressed(new liftGotoCommand(HLVL1));
-    buttonbox2.whenPressed(new liftGotoCommand(RSH2));
-    buttonbox3.whenPressed(new liftGotoCommand(RSH3));
-    buttonbox4.whenPressed(new liftGotoCommand(CSC1));
-    buttonbox5.whenPressed(new liftGotoCommand(RSC1));
-    buttonbox6.whenPressed(new liftGotoCommand(RSC2));
-    buttonbox7.whenPressed(new liftGotoCommand(RSC3));
-    buttonbox8.whenPressed(new liftGotoCommand(FSH1));
-    buttonbox9.whenPressed(new liftGotoCommand(ZERO));
+    buttonbox1.whenPressed(new liftGotoCommand(HLVL1)); // Button with the tape around it
+    buttonbox2.whenPressed(new liftGotoCommand(RSH2)); // Rocket hatch L2
+    buttonbox3.whenPressed(new liftGotoCommand(RSH3)); // Rocket hatch L3
+    buttonbox4.whenPressed(new liftGotoCommand(CSC1)); // "Cargoship | Cargo"
+    buttonbox5.whenPressed(new liftGotoCommand(RSC1)); // "Rocket | Cargo L1"
+    buttonbox6.whenPressed(new liftGotoCommand(RSC2)); // "Rocket | Cargo L2"
+    buttonbox7.whenPressed(new liftGotoCommand(RSC3)); // "Rocket | Cargo L3"
+    buttonbox8.whenPressed(new liftGotoCommand(FSH1)); // "Pneu Lvl 1"
+    buttonbox9.whenPressed(new liftGotoCommand(ZERO)); // Zero
+    buttonbox10.whenPressed(new MoveToReflectiveTargetCommand(0.25, 0.1, 5));
 
     JoystickButton gearShiftButton = new JoystickButton(driverJoystick, 1);
     gearShiftButton.toggleWhenPressed(new ShiftGearCommand());
@@ -80,7 +83,6 @@ public class OI {
 
     JoystickButton expandsBackLeg = new JoystickButton(driverJoystick, 10);
     expandsBackLeg.whenPressed(new LegsCommand(10));
-
   }
 
 }

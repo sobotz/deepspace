@@ -13,7 +13,25 @@ public class VisionSubsystem {
     private double cameraAngle = 73.5;
 
     public enum ledMode {
-        DEFAULT, BLINK, ON, OFF
+        DEFAULT(1), BLINK(2), ON(3), OFF(4)
+
+        private final int intVal;
+
+        /**
+         * Initializes a new ledMode with the given value.
+         **/
+        private ledMode(int value) {
+            this.intVal = value;
+        }
+
+        /**
+         * Converts the ledMode into an integer.
+         *
+         * @return the integer representation of the ledMode
+         **/
+        public int integerValue() {
+            return this.intVal;
+        }
     }
 
     public enum camMode {
@@ -74,21 +92,7 @@ public class VisionSubsystem {
     }
 
     public void setLEDMode(ledMode mode) {
-        int x = 0;
-        switch (mode) {
-        case OFF:
-            x = 1;
-            break;
-        case BLINK:
-            x = 2;
-            break;
-        case ON:
-            x = 3;
-            break;
-        default:
-            break;
-        }
-        table.getEntry("ledMode").setNumber(x);
+        table.getEntry("ledMode").setNumber(mode.integerValue());
     }
 
     public void setCamDMode(camMode mode) {
