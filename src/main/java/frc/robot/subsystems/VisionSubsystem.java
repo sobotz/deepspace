@@ -13,7 +13,7 @@ public class VisionSubsystem {
     private double cameraAngle = 73.5;
 
     public enum ledMode {
-        DEFAULT(1), BLINK(2), ON(3), OFF(4)
+        DEFAULT(1), BLINK(2), ON(3), OFF(4);
 
         private final int intVal;
 

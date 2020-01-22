@@ -10,7 +10,7 @@ import frc.robot.subsystems.VisionSubsystem.ledMode;
  *
  * @author Dowland Aiello
  **/
-public class MoveToReflectiveTarget extends Command {
+public class MoveToReflectiveTargetCommand extends Command {
     /* The proportional value for the command's PID loop. This is the amount
      * that the input error value is multiplied by on each call. */
     public final double kP = 0.25;
@@ -26,7 +26,7 @@ public class MoveToReflectiveTarget extends Command {
      * Initializes a new MoveToReflectiveTarget command.
      * This subsystem needs access to the vision and drive subsystems.
      **/
-    public MoveToReflectiveTarget(kP double, errorTolerance double, targetDistanceZ double) {
+    public MoveToReflectiveTargetCommand(double kP, double errorTolerance, double targetDistanceZ) {
         // Set values for the PID loop embedded in this command
         this.kP = kP;
         this.errorTolerance = errorTolerance;
@@ -59,10 +59,10 @@ public class MoveToReflectiveTarget extends Command {
         double offsetY = Robot.m_visionsubsystem.ty();
 
         // Check if we need to correct for X at all
-        if Math.abs(offsetX) > errorTolerance {
+        if (Math.abs(offsetX) > errorTolerance) {
             // Drive to correct for the X
             Robot.m_drivesubsystem.rhinoDrive(kP / offsetX, -kP / offsetX);
-        } else if Math.abs(offsetY) > errorTolerance {
+        } else if (Math.abs(offsetY) > errorTolerance) {
             Robot.m_drivesubsystem.rhinoDrive(kP / offsetX, kP / offsetX);
         }
     }
