@@ -4,7 +4,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class VisionSubsystem {
+public class VisionSubsystem extends Subsystem {
     static NetworkTable table;
     static NetworkTableInstance NI;
 

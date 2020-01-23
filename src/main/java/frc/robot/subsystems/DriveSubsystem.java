@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -30,8 +30,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
-public class DriveSubsystem extends Subsystem {
-
+public class DriveSubsystem extends SubsystemBase {
     public WPI_TalonSRX frontLeftTalon, backLeftTalon, frontRightTalon, backRightTalon;
 
     public TalonSRX legsTalon;
@@ -211,7 +210,8 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public void manualDrive2(double speed, double rotation) {
-        // Apply a logarithmic aplifier to the speed and rotation according to SmartDashboard prefs
+        // Apply a logarithmic aplifier to the speed and rotation according to
+        // SmartDashboard prefs
         speed = normalizeVelocity(speed);
         rotation = normalizeVelocity(rotation);
 
@@ -602,8 +602,8 @@ public class DriveSubsystem extends Subsystem {
     }
 
     /**
-     * Determines whether or not this drive train uses rhino drive or legacy
-     * mode. If the "RhinoEnabled" key has not been set in the SmartDashboard,
+     * Determines whether or not this drive train uses rhino drive or legacy mode.
+     * If the "RhinoEnabled" key has not been set in the SmartDashboard,
      * RhinoEnabled is assumed to be false.
      *
      * @return whether or not this drive train uses rhino drive
@@ -621,7 +621,10 @@ public class DriveSubsystem extends Subsystem {
      * @return the normalized velocity
      **/
     public static double normalizeVelocity(double d) {
-        double normalized = Math.pow(Math.abs(d), Robot.m_preferences.getDouble("JoystickInputAmplificationFactor", 1)); // Normalize the inputted velocity
+        double normalized = Math.pow(Math.abs(d), Robot.m_preferences.getDouble("JoystickInputAmplificationFactor", 1)); // Normalize
+                                                                                                                         // the
+                                                                                                                         // inputted
+                                                                                                                         // velocity
 
         return d < 0 ? (-1 * normalized) : normalized;
     }

@@ -32,6 +32,7 @@ public class Robot extends TimedRobot {
   public static IntakeSubsystem m_intake;
   public static LiftSubsystem m_lift;
   public static LegsSubsystem m_legssubsystem;
+  public static VisionSubsystem m_visionsubsystem;
 
   Command m_autonomousCommand;
   SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -49,6 +50,7 @@ public class Robot extends TimedRobot {
     m_intake = new IntakeSubsystem();
     m_lift = new LiftSubsystem();
     m_legssubsystem = new LegsSubsystem();
+    m_visionsubsystem = new VisionSubsystem();
     m_oi = new OI();
 
     // Starting from L1

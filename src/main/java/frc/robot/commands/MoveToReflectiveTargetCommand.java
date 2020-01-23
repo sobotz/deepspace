@@ -10,14 +10,14 @@ import frc.robot.subsystems.VisionSubsystem.ledMode;
  *
  * @author Dowland Aiello
  **/
-public class MoveToReflectiveTargetCommand extends Command {
+public abstract class MoveToReflectiveTargetCommand extends Command {
     /* The proportional value for the command's PID loop. This is the amount
      * that the input error value is multiplied by on each call. */
-    public final double kP = 0.25;
+    public final double kP;
 
     /* The tolerance to error in this command's PID loop. This is the amount that
      * the error vlaue can deviate from the target value. */
-    public final double errorTolerance = 0.1;
+    public final double errorTolerance;
 
     /* The desired distance on the z axis from the target. */
     public final double targetDistanceZ;
